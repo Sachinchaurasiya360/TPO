@@ -20,5 +20,10 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "@tailwindcss/vite": "^4.1.11",
+    "esbuild": "^0.25.9",
+    "tailwindcss": "^4.1.11"
+  }
 }
