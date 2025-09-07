@@ -4,12 +4,20 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "install:all": "npm install && cd backend && npm install && cd ../frontend/admin && npm install && cd ../student && npm install",
     "start": "cd backend && npm start",
     "dev": "cd backend && npm run dev",
+    "dev:admin": "cd frontend/admin && npm run dev",
+    "dev:student": "cd frontend/student && npm run dev",
+    "dev:all": "concurrently \"npm run dev\" \"npm run dev:admin\" \"npm run dev:student\"",
+    "build": "cd backend && npm run build && cd ../frontend/admin && npm run build && cd ../student && npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs"
+  "type": "commonjs",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
 }

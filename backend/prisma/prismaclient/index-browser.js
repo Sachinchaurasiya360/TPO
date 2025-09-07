@@ -127,7 +127,6 @@ exports.Prisma.UserScalarFieldEnum = {
   contactNo: 'contactNo',
   emailId: 'emailId',
   password: 'password',
-  cgpa: 'cgpa',
   studentId: 'studentId',
   department: 'department',
   academicYear: 'academicYear',
@@ -137,6 +136,18 @@ exports.Prisma.UserScalarFieldEnum = {
   isVerified: 'isVerified',
   createdAt: 'createdAt',
   socialProfile: 'socialProfile'
+};
+
+exports.Prisma.CgpaScalarFieldEnum = {
+  id: 'id',
+  sem1: 'sem1',
+  sem2: 'sem2',
+  sem3: 'sem3',
+  sem4: 'sem4',
+  sem5: 'sem5',
+  sem6: 'sem6',
+  sem7: 'sem7',
+  sem8: 'sem8'
 };
 
 exports.Prisma.InternshipScalarFieldEnum = {
@@ -197,6 +208,7 @@ exports.UserAcademicYear = exports.$Enums.UserAcademicYear = {
 
 exports.Prisma.ModelName = {
   User: 'User',
+  cgpa: 'cgpa',
   Internship: 'Internship',
   Achievement: 'Achievement',
   Admin: 'Admin',

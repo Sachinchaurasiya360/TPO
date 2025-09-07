@@ -24,7 +24,7 @@ model User {
   contactNo     String?
   emailId       String            @unique
   password      String
-  cgpa          Float?
+  cgpa          cgpa[]
   studentId     String
   department    String?
   academicYear  UserAcademicYear?
@@ -39,13 +39,26 @@ model User {
   internships   Internship[]
 }
 
+model cgpa {
+  id      String @unique
+  student User?  @relation(fields: [id], references: [id])
+  sem1    Float?
+  sem2    Float?
+  sem3    Float?
+  sem4    Float?
+  sem5    Float?
+  sem6    Float?
+  sem7    Float?
+  sem8    Float?
+}
+
 model Internship {
   id          String  @id @default(cuid())
   title       String?
   companyName String?
   duration    String?
   studentId   String?
-  student     User?   @relation(fields: [studentId], references: [id])
+  student     User?   @relation(fields: [id], references: [id])
 }
 
 model Achievement {
@@ -54,7 +67,7 @@ model Achievement {
   details   String?
   time      DateTime?
   studentId String
-  student   User?     @relation(fields: [studentId], references: [id])
+  student   User?     @relation(fields: [id], references: [id])
 }
 
 model Admin {

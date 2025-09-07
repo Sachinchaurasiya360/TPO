@@ -1,17 +1,16 @@
 import express, { Response, Request } from "express";
 import { PrismaClient } from "../../prisma/prismaclient";
-import { signupSchema, loginSchema } from "../../utils/types/zodSchema";
+import { signupTypes, loginTypes } from "../../utils/types/zodSchema";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import pino from "pino";
-import { success } from "zod";
 
 const prisma = new PrismaClient();
 const router = express.Router();
 
 export const signin = async (req: Request, res: Response) => {
   try {
-    const result = loginSchema.safeParse(req.body);
+    const result = loginTypes.safeParse(req.body);
 
     if (!result.success) {
       return res.status(400).json({
@@ -65,7 +64,7 @@ export const signin = async (req: Request, res: Response) => {
 
 export const signup = async (req: Request, res: Response) => {
   try {
-    const result = signupSchema.safeParse(req.body);
+    const result = signupTypes.safeParse(req.body);
     if (!result.success) {
       return res.status(400).json({
         message: "Invalid Input",

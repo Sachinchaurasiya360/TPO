@@ -9,34 +9,46 @@ datasource db {
 }
 
 enum UserAcademicYear {
-  Y2022_26
-  Y2023_27
-  Y2024_28
-  Y2025_29
-  Y2026_30
-  Y2027_31
+  FIRST_YEAR
+  SECOND_YEAR
+  THIRD_YEAR
+  FOURTH_YEAR
 }
 
+
 model User {
-  id            String           @id @default(cuid())
+  id            String            @id @default(cuid())
   fullName      String
   legalName     String?
   contactNo     String?
-  emailId       String           @unique
+  emailId       String            @unique
   password      String
-  cgpa          Float?
+  cgpa          cgpa[]
   studentId     String
-  department String?
+  department    String?
   academicYear  UserAcademicYear?
   skills        String[]
   profilePic    String?
   resumeUrl     String?
-  isVerified    Boolean          @default(false)
-  createdAt     DateTime         @default(now())
+  isVerified    Boolean           @default(false)
+  createdAt     DateTime          @default(now())
   socialProfile String?
   achievements  Achievement[]
   alumni        Alumni?
   internships   Internship[]
+}
+
+model cgpa {
+  id String @unique
+  student     User?   @relation(fields: [id], references: [id])
+  sem1 Float?
+  sem2 Float?
+  sem3 Float?
+  sem4 Float?
+  sem5 Float?
+  sem6 Float?
+  sem7 Float?
+  sem8 Float?
 }
 
 model Internship {
@@ -45,7 +57,7 @@ model Internship {
   companyName String?
   duration    String?
   studentId   String?
-  student     User?   @relation(fields: [studentId], references: [id])
+  student     User?   @relation(fields: [id], references: [id])
 }
 
 model Achievement {
@@ -54,7 +66,7 @@ model Achievement {
   details   String?
   time      DateTime?
   studentId String
-  student   User?      @relation(fields: [studentId], references: [id])
+  student   User?     @relation(fields: [id], references: [id])
 }
 
 model Admin {
@@ -72,5 +84,5 @@ model Alumni {
   pastOrg    String[]
   currentOrg String[]
   package    String
-  student    User?     @relation(fields: [id], references: [id])
+  student    User?    @relation(fields: [id], references: [id])
 }

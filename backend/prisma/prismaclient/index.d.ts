@@ -19,6 +19,11 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
  */
 export type User = $Result.DefaultSelection<Prisma.$UserPayload>
 /**
+ * Model cgpa
+ * 
+ */
+export type cgpa = $Result.DefaultSelection<Prisma.$cgpaPayload>
+/**
  * Model Internship
  * 
  */
@@ -187,6 +192,16 @@ export class PrismaClient<
     * ```
     */
   get user(): Prisma.UserDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.cgpa`: Exposes CRUD operations for the **cgpa** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Cgpas
+    * const cgpas = await prisma.cgpa.findMany()
+    * ```
+    */
+  get cgpa(): Prisma.cgpaDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.internship`: Exposes CRUD operations for the **Internship** model.
@@ -668,6 +683,7 @@ export namespace Prisma {
 
   export const ModelName: {
     User: 'User',
+    cgpa: 'cgpa',
     Internship: 'Internship',
     Achievement: 'Achievement',
     Admin: 'Admin',
@@ -690,7 +706,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "internship" | "achievement" | "admin" | "alumni"
+      modelProps: "user" | "cgpa" | "internship" | "achievement" | "admin" | "alumni"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -765,6 +781,80 @@ export namespace Prisma {
           count: {
             args: Prisma.UserCountArgs<ExtArgs>
             result: $Utils.Optional<UserCountAggregateOutputType> | number
+          }
+        }
+      }
+      cgpa: {
+        payload: Prisma.$cgpaPayload<ExtArgs>
+        fields: Prisma.cgpaFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.cgpaFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$cgpaPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.cgpaFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$cgpaPayload>
+          }
+          findFirst: {
+            args: Prisma.cgpaFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$cgpaPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.cgpaFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$cgpaPayload>
+          }
+          findMany: {
+            args: Prisma.cgpaFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$cgpaPayload>[]
+          }
+          create: {
+            args: Prisma.cgpaCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$cgpaPayload>
+          }
+          createMany: {
+            args: Prisma.cgpaCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.cgpaCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$cgpaPayload>[]
+          }
+          delete: {
+            args: Prisma.cgpaDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$cgpaPayload>
+          }
+          update: {
+            args: Prisma.cgpaUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$cgpaPayload>
+          }
+          deleteMany: {
+            args: Prisma.cgpaDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.cgpaUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.cgpaUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$cgpaPayload>[]
+          }
+          upsert: {
+            args: Prisma.cgpaUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$cgpaPayload>
+          }
+          aggregate: {
+            args: Prisma.CgpaAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCgpa>
+          }
+          groupBy: {
+            args: Prisma.cgpaGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CgpaGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.cgpaCountArgs<ExtArgs>
+            result: $Utils.Optional<CgpaCountAggregateOutputType> | number
           }
         }
       }
@@ -1157,6 +1247,7 @@ export namespace Prisma {
   }
   export type GlobalOmitConfig = {
     user?: UserOmit
+    cgpa?: cgpaOmit
     internship?: InternshipOmit
     achievement?: AchievementOmit
     admin?: AdminOmit
@@ -1241,11 +1332,13 @@ export namespace Prisma {
    */
 
   export type UserCountOutputType = {
+    cgpa: number
     achievements: number
     internships: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    cgpa?: boolean | UserCountOutputTypeCountCgpaArgs
     achievements?: boolean | UserCountOutputTypeCountAchievementsArgs
     internships?: boolean | UserCountOutputTypeCountInternshipsArgs
   }
@@ -1259,6 +1352,13 @@ export namespace Prisma {
      * Select specific fields to fetch from the UserCountOutputType
      */
     select?: UserCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountCgpaArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: cgpaWhereInput
   }
 
   /**
@@ -1286,18 +1386,8 @@ export namespace Prisma {
 
   export type AggregateUser = {
     _count: UserCountAggregateOutputType | null
-    _avg: UserAvgAggregateOutputType | null
-    _sum: UserSumAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
     _max: UserMaxAggregateOutputType | null
-  }
-
-  export type UserAvgAggregateOutputType = {
-    cgpa: number | null
-  }
-
-  export type UserSumAggregateOutputType = {
-    cgpa: number | null
   }
 
   export type UserMinAggregateOutputType = {
@@ -1307,7 +1397,6 @@ export namespace Prisma {
     contactNo: string | null
     emailId: string | null
     password: string | null
-    cgpa: number | null
     studentId: string | null
     department: string | null
     academicYear: $Enums.UserAcademicYear | null
@@ -1325,7 +1414,6 @@ export namespace Prisma {
     contactNo: string | null
     emailId: string | null
     password: string | null
-    cgpa: number | null
     studentId: string | null
     department: string | null
     academicYear: $Enums.UserAcademicYear | null
@@ -1343,7 +1431,6 @@ export namespace Prisma {
     contactNo: number
     emailId: number
     password: number
-    cgpa: number
     studentId: number
     department: number
     academicYear: number
@@ -1357,14 +1444,6 @@ export namespace Prisma {
   }
 
 
-  export type UserAvgAggregateInputType = {
-    cgpa?: true
-  }
-
-  export type UserSumAggregateInputType = {
-    cgpa?: true
-  }
-
   export type UserMinAggregateInputType = {
     id?: true
     fullName?: true
@@ -1372,7 +1451,6 @@ export namespace Prisma {
     contactNo?: true
     emailId?: true
     password?: true
-    cgpa?: true
     studentId?: true
     department?: true
     academicYear?: true
@@ -1390,7 +1468,6 @@ export namespace Prisma {
     contactNo?: true
     emailId?: true
     password?: true
-    cgpa?: true
     studentId?: true
     department?: true
     academicYear?: true
@@ -1408,7 +1485,6 @@ export namespace Prisma {
     contactNo?: true
     emailId?: true
     password?: true
-    cgpa?: true
     studentId?: true
     department?: true
     academicYear?: true
@@ -1459,18 +1535,6 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
-     * Select which fields to average
-    **/
-    _avg?: UserAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: UserSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
      * Select which fields to find the minimum value
     **/
     _min?: UserMinAggregateInputType
@@ -1501,8 +1565,6 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: UserCountAggregateInputType | true
-    _avg?: UserAvgAggregateInputType
-    _sum?: UserSumAggregateInputType
     _min?: UserMinAggregateInputType
     _max?: UserMaxAggregateInputType
   }
@@ -1514,7 +1576,6 @@ export namespace Prisma {
     contactNo: string | null
     emailId: string
     password: string
-    cgpa: number | null
     studentId: string
     department: string | null
     academicYear: $Enums.UserAcademicYear | null
@@ -1525,8 +1586,6 @@ export namespace Prisma {
     createdAt: Date
     socialProfile: string | null
     _count: UserCountAggregateOutputType | null
-    _avg: UserAvgAggregateOutputType | null
-    _sum: UserSumAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
     _max: UserMaxAggregateOutputType | null
   }
@@ -1552,7 +1611,6 @@ export namespace Prisma {
     contactNo?: boolean
     emailId?: boolean
     password?: boolean
-    cgpa?: boolean
     studentId?: boolean
     department?: boolean
     academicYear?: boolean
@@ -1562,6 +1620,7 @@ export namespace Prisma {
     isVerified?: boolean
     createdAt?: boolean
     socialProfile?: boolean
+    cgpa?: boolean | User$cgpaArgs<ExtArgs>
     achievements?: boolean | User$achievementsArgs<ExtArgs>
     alumni?: boolean | User$alumniArgs<ExtArgs>
     internships?: boolean | User$internshipsArgs<ExtArgs>
@@ -1575,7 +1634,6 @@ export namespace Prisma {
     contactNo?: boolean
     emailId?: boolean
     password?: boolean
-    cgpa?: boolean
     studentId?: boolean
     department?: boolean
     academicYear?: boolean
@@ -1594,7 +1652,6 @@ export namespace Prisma {
     contactNo?: boolean
     emailId?: boolean
     password?: boolean
-    cgpa?: boolean
     studentId?: boolean
     department?: boolean
     academicYear?: boolean
@@ -1613,7 +1670,6 @@ export namespace Prisma {
     contactNo?: boolean
     emailId?: boolean
     password?: boolean
-    cgpa?: boolean
     studentId?: boolean
     department?: boolean
     academicYear?: boolean
@@ -1625,8 +1681,9 @@ export namespace Prisma {
     socialProfile?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "fullName" | "legalName" | "contactNo" | "emailId" | "password" | "cgpa" | "studentId" | "department" | "academicYear" | "skills" | "profilePic" | "resumeUrl" | "isVerified" | "createdAt" | "socialProfile", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "fullName" | "legalName" | "contactNo" | "emailId" | "password" | "studentId" | "department" | "academicYear" | "skills" | "profilePic" | "resumeUrl" | "isVerified" | "createdAt" | "socialProfile", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    cgpa?: boolean | User$cgpaArgs<ExtArgs>
     achievements?: boolean | User$achievementsArgs<ExtArgs>
     alumni?: boolean | User$alumniArgs<ExtArgs>
     internships?: boolean | User$internshipsArgs<ExtArgs>
@@ -1638,6 +1695,7 @@ export namespace Prisma {
   export type $UserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "User"
     objects: {
+      cgpa: Prisma.$cgpaPayload<ExtArgs>[]
       achievements: Prisma.$AchievementPayload<ExtArgs>[]
       alumni: Prisma.$AlumniPayload<ExtArgs> | null
       internships: Prisma.$InternshipPayload<ExtArgs>[]
@@ -1649,7 +1707,6 @@ export namespace Prisma {
       contactNo: string | null
       emailId: string
       password: string
-      cgpa: number | null
       studentId: string
       department: string | null
       academicYear: $Enums.UserAcademicYear | null
@@ -2053,6 +2110,7 @@ export namespace Prisma {
    */
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    cgpa<T extends User$cgpaArgs<ExtArgs> = {}>(args?: Subset<T, User$cgpaArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$cgpaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     achievements<T extends User$achievementsArgs<ExtArgs> = {}>(args?: Subset<T, User$achievementsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AchievementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     alumni<T extends User$alumniArgs<ExtArgs> = {}>(args?: Subset<T, User$alumniArgs<ExtArgs>>): Prisma__AlumniClient<$Result.GetResult<Prisma.$AlumniPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     internships<T extends User$internshipsArgs<ExtArgs> = {}>(args?: Subset<T, User$internshipsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$InternshipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2091,7 +2149,6 @@ export namespace Prisma {
     readonly contactNo: FieldRef<"User", 'String'>
     readonly emailId: FieldRef<"User", 'String'>
     readonly password: FieldRef<"User", 'String'>
-    readonly cgpa: FieldRef<"User", 'Float'>
     readonly studentId: FieldRef<"User", 'String'>
     readonly department: FieldRef<"User", 'String'>
     readonly academicYear: FieldRef<"User", 'UserAcademicYear'>
@@ -2489,6 +2546,30 @@ export namespace Prisma {
   }
 
   /**
+   * User.cgpa
+   */
+  export type User$cgpaArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cgpa
+     */
+    select?: cgpaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cgpa
+     */
+    omit?: cgpaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cgpaInclude<ExtArgs> | null
+    where?: cgpaWhereInput
+    orderBy?: cgpaOrderByWithRelationInput | cgpaOrderByWithRelationInput[]
+    cursor?: cgpaWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CgpaScalarFieldEnum | CgpaScalarFieldEnum[]
+  }
+
+  /**
    * User.achievements
    */
   export type User$achievementsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2571,6 +2652,1197 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: UserInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model cgpa
+   */
+
+  export type AggregateCgpa = {
+    _count: CgpaCountAggregateOutputType | null
+    _avg: CgpaAvgAggregateOutputType | null
+    _sum: CgpaSumAggregateOutputType | null
+    _min: CgpaMinAggregateOutputType | null
+    _max: CgpaMaxAggregateOutputType | null
+  }
+
+  export type CgpaAvgAggregateOutputType = {
+    sem1: number | null
+    sem2: number | null
+    sem3: number | null
+    sem4: number | null
+    sem5: number | null
+    sem6: number | null
+    sem7: number | null
+    sem8: number | null
+  }
+
+  export type CgpaSumAggregateOutputType = {
+    sem1: number | null
+    sem2: number | null
+    sem3: number | null
+    sem4: number | null
+    sem5: number | null
+    sem6: number | null
+    sem7: number | null
+    sem8: number | null
+  }
+
+  export type CgpaMinAggregateOutputType = {
+    id: string | null
+    sem1: number | null
+    sem2: number | null
+    sem3: number | null
+    sem4: number | null
+    sem5: number | null
+    sem6: number | null
+    sem7: number | null
+    sem8: number | null
+  }
+
+  export type CgpaMaxAggregateOutputType = {
+    id: string | null
+    sem1: number | null
+    sem2: number | null
+    sem3: number | null
+    sem4: number | null
+    sem5: number | null
+    sem6: number | null
+    sem7: number | null
+    sem8: number | null
+  }
+
+  export type CgpaCountAggregateOutputType = {
+    id: number
+    sem1: number
+    sem2: number
+    sem3: number
+    sem4: number
+    sem5: number
+    sem6: number
+    sem7: number
+    sem8: number
+    _all: number
+  }
+
+
+  export type CgpaAvgAggregateInputType = {
+    sem1?: true
+    sem2?: true
+    sem3?: true
+    sem4?: true
+    sem5?: true
+    sem6?: true
+    sem7?: true
+    sem8?: true
+  }
+
+  export type CgpaSumAggregateInputType = {
+    sem1?: true
+    sem2?: true
+    sem3?: true
+    sem4?: true
+    sem5?: true
+    sem6?: true
+    sem7?: true
+    sem8?: true
+  }
+
+  export type CgpaMinAggregateInputType = {
+    id?: true
+    sem1?: true
+    sem2?: true
+    sem3?: true
+    sem4?: true
+    sem5?: true
+    sem6?: true
+    sem7?: true
+    sem8?: true
+  }
+
+  export type CgpaMaxAggregateInputType = {
+    id?: true
+    sem1?: true
+    sem2?: true
+    sem3?: true
+    sem4?: true
+    sem5?: true
+    sem6?: true
+    sem7?: true
+    sem8?: true
+  }
+
+  export type CgpaCountAggregateInputType = {
+    id?: true
+    sem1?: true
+    sem2?: true
+    sem3?: true
+    sem4?: true
+    sem5?: true
+    sem6?: true
+    sem7?: true
+    sem8?: true
+    _all?: true
+  }
+
+  export type CgpaAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which cgpa to aggregate.
+     */
+    where?: cgpaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of cgpas to fetch.
+     */
+    orderBy?: cgpaOrderByWithRelationInput | cgpaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: cgpaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` cgpas from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` cgpas.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned cgpas
+    **/
+    _count?: true | CgpaCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: CgpaAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: CgpaSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CgpaMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CgpaMaxAggregateInputType
+  }
+
+  export type GetCgpaAggregateType<T extends CgpaAggregateArgs> = {
+        [P in keyof T & keyof AggregateCgpa]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCgpa[P]>
+      : GetScalarType<T[P], AggregateCgpa[P]>
+  }
+
+
+
+
+  export type cgpaGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: cgpaWhereInput
+    orderBy?: cgpaOrderByWithAggregationInput | cgpaOrderByWithAggregationInput[]
+    by: CgpaScalarFieldEnum[] | CgpaScalarFieldEnum
+    having?: cgpaScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CgpaCountAggregateInputType | true
+    _avg?: CgpaAvgAggregateInputType
+    _sum?: CgpaSumAggregateInputType
+    _min?: CgpaMinAggregateInputType
+    _max?: CgpaMaxAggregateInputType
+  }
+
+  export type CgpaGroupByOutputType = {
+    id: string
+    sem1: number | null
+    sem2: number | null
+    sem3: number | null
+    sem4: number | null
+    sem5: number | null
+    sem6: number | null
+    sem7: number | null
+    sem8: number | null
+    _count: CgpaCountAggregateOutputType | null
+    _avg: CgpaAvgAggregateOutputType | null
+    _sum: CgpaSumAggregateOutputType | null
+    _min: CgpaMinAggregateOutputType | null
+    _max: CgpaMaxAggregateOutputType | null
+  }
+
+  type GetCgpaGroupByPayload<T extends cgpaGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CgpaGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CgpaGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CgpaGroupByOutputType[P]>
+            : GetScalarType<T[P], CgpaGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type cgpaSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    sem1?: boolean
+    sem2?: boolean
+    sem3?: boolean
+    sem4?: boolean
+    sem5?: boolean
+    sem6?: boolean
+    sem7?: boolean
+    sem8?: boolean
+    student?: boolean | cgpa$studentArgs<ExtArgs>
+  }, ExtArgs["result"]["cgpa"]>
+
+  export type cgpaSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    sem1?: boolean
+    sem2?: boolean
+    sem3?: boolean
+    sem4?: boolean
+    sem5?: boolean
+    sem6?: boolean
+    sem7?: boolean
+    sem8?: boolean
+    student?: boolean | cgpa$studentArgs<ExtArgs>
+  }, ExtArgs["result"]["cgpa"]>
+
+  export type cgpaSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    sem1?: boolean
+    sem2?: boolean
+    sem3?: boolean
+    sem4?: boolean
+    sem5?: boolean
+    sem6?: boolean
+    sem7?: boolean
+    sem8?: boolean
+    student?: boolean | cgpa$studentArgs<ExtArgs>
+  }, ExtArgs["result"]["cgpa"]>
+
+  export type cgpaSelectScalar = {
+    id?: boolean
+    sem1?: boolean
+    sem2?: boolean
+    sem3?: boolean
+    sem4?: boolean
+    sem5?: boolean
+    sem6?: boolean
+    sem7?: boolean
+    sem8?: boolean
+  }
+
+  export type cgpaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "sem1" | "sem2" | "sem3" | "sem4" | "sem5" | "sem6" | "sem7" | "sem8", ExtArgs["result"]["cgpa"]>
+  export type cgpaInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    student?: boolean | cgpa$studentArgs<ExtArgs>
+  }
+  export type cgpaIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    student?: boolean | cgpa$studentArgs<ExtArgs>
+  }
+  export type cgpaIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    student?: boolean | cgpa$studentArgs<ExtArgs>
+  }
+
+  export type $cgpaPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "cgpa"
+    objects: {
+      student: Prisma.$UserPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      sem1: number | null
+      sem2: number | null
+      sem3: number | null
+      sem4: number | null
+      sem5: number | null
+      sem6: number | null
+      sem7: number | null
+      sem8: number | null
+    }, ExtArgs["result"]["cgpa"]>
+    composites: {}
+  }
+
+  type cgpaGetPayload<S extends boolean | null | undefined | cgpaDefaultArgs> = $Result.GetResult<Prisma.$cgpaPayload, S>
+
+  type cgpaCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<cgpaFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: CgpaCountAggregateInputType | true
+    }
+
+  export interface cgpaDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['cgpa'], meta: { name: 'cgpa' } }
+    /**
+     * Find zero or one Cgpa that matches the filter.
+     * @param {cgpaFindUniqueArgs} args - Arguments to find a Cgpa
+     * @example
+     * // Get one Cgpa
+     * const cgpa = await prisma.cgpa.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends cgpaFindUniqueArgs>(args: SelectSubset<T, cgpaFindUniqueArgs<ExtArgs>>): Prisma__cgpaClient<$Result.GetResult<Prisma.$cgpaPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Cgpa that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {cgpaFindUniqueOrThrowArgs} args - Arguments to find a Cgpa
+     * @example
+     * // Get one Cgpa
+     * const cgpa = await prisma.cgpa.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends cgpaFindUniqueOrThrowArgs>(args: SelectSubset<T, cgpaFindUniqueOrThrowArgs<ExtArgs>>): Prisma__cgpaClient<$Result.GetResult<Prisma.$cgpaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Cgpa that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {cgpaFindFirstArgs} args - Arguments to find a Cgpa
+     * @example
+     * // Get one Cgpa
+     * const cgpa = await prisma.cgpa.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends cgpaFindFirstArgs>(args?: SelectSubset<T, cgpaFindFirstArgs<ExtArgs>>): Prisma__cgpaClient<$Result.GetResult<Prisma.$cgpaPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Cgpa that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {cgpaFindFirstOrThrowArgs} args - Arguments to find a Cgpa
+     * @example
+     * // Get one Cgpa
+     * const cgpa = await prisma.cgpa.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends cgpaFindFirstOrThrowArgs>(args?: SelectSubset<T, cgpaFindFirstOrThrowArgs<ExtArgs>>): Prisma__cgpaClient<$Result.GetResult<Prisma.$cgpaPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Cgpas that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {cgpaFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Cgpas
+     * const cgpas = await prisma.cgpa.findMany()
+     * 
+     * // Get first 10 Cgpas
+     * const cgpas = await prisma.cgpa.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const cgpaWithIdOnly = await prisma.cgpa.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends cgpaFindManyArgs>(args?: SelectSubset<T, cgpaFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$cgpaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Cgpa.
+     * @param {cgpaCreateArgs} args - Arguments to create a Cgpa.
+     * @example
+     * // Create one Cgpa
+     * const Cgpa = await prisma.cgpa.create({
+     *   data: {
+     *     // ... data to create a Cgpa
+     *   }
+     * })
+     * 
+     */
+    create<T extends cgpaCreateArgs>(args: SelectSubset<T, cgpaCreateArgs<ExtArgs>>): Prisma__cgpaClient<$Result.GetResult<Prisma.$cgpaPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Cgpas.
+     * @param {cgpaCreateManyArgs} args - Arguments to create many Cgpas.
+     * @example
+     * // Create many Cgpas
+     * const cgpa = await prisma.cgpa.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends cgpaCreateManyArgs>(args?: SelectSubset<T, cgpaCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Cgpas and returns the data saved in the database.
+     * @param {cgpaCreateManyAndReturnArgs} args - Arguments to create many Cgpas.
+     * @example
+     * // Create many Cgpas
+     * const cgpa = await prisma.cgpa.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Cgpas and only return the `id`
+     * const cgpaWithIdOnly = await prisma.cgpa.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends cgpaCreateManyAndReturnArgs>(args?: SelectSubset<T, cgpaCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$cgpaPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Cgpa.
+     * @param {cgpaDeleteArgs} args - Arguments to delete one Cgpa.
+     * @example
+     * // Delete one Cgpa
+     * const Cgpa = await prisma.cgpa.delete({
+     *   where: {
+     *     // ... filter to delete one Cgpa
+     *   }
+     * })
+     * 
+     */
+    delete<T extends cgpaDeleteArgs>(args: SelectSubset<T, cgpaDeleteArgs<ExtArgs>>): Prisma__cgpaClient<$Result.GetResult<Prisma.$cgpaPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Cgpa.
+     * @param {cgpaUpdateArgs} args - Arguments to update one Cgpa.
+     * @example
+     * // Update one Cgpa
+     * const cgpa = await prisma.cgpa.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends cgpaUpdateArgs>(args: SelectSubset<T, cgpaUpdateArgs<ExtArgs>>): Prisma__cgpaClient<$Result.GetResult<Prisma.$cgpaPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Cgpas.
+     * @param {cgpaDeleteManyArgs} args - Arguments to filter Cgpas to delete.
+     * @example
+     * // Delete a few Cgpas
+     * const { count } = await prisma.cgpa.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends cgpaDeleteManyArgs>(args?: SelectSubset<T, cgpaDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Cgpas.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {cgpaUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Cgpas
+     * const cgpa = await prisma.cgpa.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends cgpaUpdateManyArgs>(args: SelectSubset<T, cgpaUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Cgpas and returns the data updated in the database.
+     * @param {cgpaUpdateManyAndReturnArgs} args - Arguments to update many Cgpas.
+     * @example
+     * // Update many Cgpas
+     * const cgpa = await prisma.cgpa.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Cgpas and only return the `id`
+     * const cgpaWithIdOnly = await prisma.cgpa.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends cgpaUpdateManyAndReturnArgs>(args: SelectSubset<T, cgpaUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$cgpaPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Cgpa.
+     * @param {cgpaUpsertArgs} args - Arguments to update or create a Cgpa.
+     * @example
+     * // Update or create a Cgpa
+     * const cgpa = await prisma.cgpa.upsert({
+     *   create: {
+     *     // ... data to create a Cgpa
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Cgpa we want to update
+     *   }
+     * })
+     */
+    upsert<T extends cgpaUpsertArgs>(args: SelectSubset<T, cgpaUpsertArgs<ExtArgs>>): Prisma__cgpaClient<$Result.GetResult<Prisma.$cgpaPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Cgpas.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {cgpaCountArgs} args - Arguments to filter Cgpas to count.
+     * @example
+     * // Count the number of Cgpas
+     * const count = await prisma.cgpa.count({
+     *   where: {
+     *     // ... the filter for the Cgpas we want to count
+     *   }
+     * })
+    **/
+    count<T extends cgpaCountArgs>(
+      args?: Subset<T, cgpaCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CgpaCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Cgpa.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CgpaAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CgpaAggregateArgs>(args: Subset<T, CgpaAggregateArgs>): Prisma.PrismaPromise<GetCgpaAggregateType<T>>
+
+    /**
+     * Group by Cgpa.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {cgpaGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends cgpaGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: cgpaGroupByArgs['orderBy'] }
+        : { orderBy?: cgpaGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, cgpaGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCgpaGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the cgpa model
+   */
+  readonly fields: cgpaFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for cgpa.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__cgpaClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    student<T extends cgpa$studentArgs<ExtArgs> = {}>(args?: Subset<T, cgpa$studentArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the cgpa model
+   */
+  interface cgpaFieldRefs {
+    readonly id: FieldRef<"cgpa", 'String'>
+    readonly sem1: FieldRef<"cgpa", 'Float'>
+    readonly sem2: FieldRef<"cgpa", 'Float'>
+    readonly sem3: FieldRef<"cgpa", 'Float'>
+    readonly sem4: FieldRef<"cgpa", 'Float'>
+    readonly sem5: FieldRef<"cgpa", 'Float'>
+    readonly sem6: FieldRef<"cgpa", 'Float'>
+    readonly sem7: FieldRef<"cgpa", 'Float'>
+    readonly sem8: FieldRef<"cgpa", 'Float'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * cgpa findUnique
+   */
+  export type cgpaFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cgpa
+     */
+    select?: cgpaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cgpa
+     */
+    omit?: cgpaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cgpaInclude<ExtArgs> | null
+    /**
+     * Filter, which cgpa to fetch.
+     */
+    where: cgpaWhereUniqueInput
+  }
+
+  /**
+   * cgpa findUniqueOrThrow
+   */
+  export type cgpaFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cgpa
+     */
+    select?: cgpaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cgpa
+     */
+    omit?: cgpaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cgpaInclude<ExtArgs> | null
+    /**
+     * Filter, which cgpa to fetch.
+     */
+    where: cgpaWhereUniqueInput
+  }
+
+  /**
+   * cgpa findFirst
+   */
+  export type cgpaFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cgpa
+     */
+    select?: cgpaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cgpa
+     */
+    omit?: cgpaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cgpaInclude<ExtArgs> | null
+    /**
+     * Filter, which cgpa to fetch.
+     */
+    where?: cgpaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of cgpas to fetch.
+     */
+    orderBy?: cgpaOrderByWithRelationInput | cgpaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for cgpas.
+     */
+    cursor?: cgpaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` cgpas from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` cgpas.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of cgpas.
+     */
+    distinct?: CgpaScalarFieldEnum | CgpaScalarFieldEnum[]
+  }
+
+  /**
+   * cgpa findFirstOrThrow
+   */
+  export type cgpaFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cgpa
+     */
+    select?: cgpaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cgpa
+     */
+    omit?: cgpaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cgpaInclude<ExtArgs> | null
+    /**
+     * Filter, which cgpa to fetch.
+     */
+    where?: cgpaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of cgpas to fetch.
+     */
+    orderBy?: cgpaOrderByWithRelationInput | cgpaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for cgpas.
+     */
+    cursor?: cgpaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` cgpas from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` cgpas.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of cgpas.
+     */
+    distinct?: CgpaScalarFieldEnum | CgpaScalarFieldEnum[]
+  }
+
+  /**
+   * cgpa findMany
+   */
+  export type cgpaFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cgpa
+     */
+    select?: cgpaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cgpa
+     */
+    omit?: cgpaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cgpaInclude<ExtArgs> | null
+    /**
+     * Filter, which cgpas to fetch.
+     */
+    where?: cgpaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of cgpas to fetch.
+     */
+    orderBy?: cgpaOrderByWithRelationInput | cgpaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing cgpas.
+     */
+    cursor?: cgpaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` cgpas from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` cgpas.
+     */
+    skip?: number
+    distinct?: CgpaScalarFieldEnum | CgpaScalarFieldEnum[]
+  }
+
+  /**
+   * cgpa create
+   */
+  export type cgpaCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cgpa
+     */
+    select?: cgpaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cgpa
+     */
+    omit?: cgpaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cgpaInclude<ExtArgs> | null
+    /**
+     * The data needed to create a cgpa.
+     */
+    data: XOR<cgpaCreateInput, cgpaUncheckedCreateInput>
+  }
+
+  /**
+   * cgpa createMany
+   */
+  export type cgpaCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many cgpas.
+     */
+    data: cgpaCreateManyInput | cgpaCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * cgpa createManyAndReturn
+   */
+  export type cgpaCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cgpa
+     */
+    select?: cgpaSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the cgpa
+     */
+    omit?: cgpaOmit<ExtArgs> | null
+    /**
+     * The data used to create many cgpas.
+     */
+    data: cgpaCreateManyInput | cgpaCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cgpaIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * cgpa update
+   */
+  export type cgpaUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cgpa
+     */
+    select?: cgpaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cgpa
+     */
+    omit?: cgpaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cgpaInclude<ExtArgs> | null
+    /**
+     * The data needed to update a cgpa.
+     */
+    data: XOR<cgpaUpdateInput, cgpaUncheckedUpdateInput>
+    /**
+     * Choose, which cgpa to update.
+     */
+    where: cgpaWhereUniqueInput
+  }
+
+  /**
+   * cgpa updateMany
+   */
+  export type cgpaUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update cgpas.
+     */
+    data: XOR<cgpaUpdateManyMutationInput, cgpaUncheckedUpdateManyInput>
+    /**
+     * Filter which cgpas to update
+     */
+    where?: cgpaWhereInput
+    /**
+     * Limit how many cgpas to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * cgpa updateManyAndReturn
+   */
+  export type cgpaUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cgpa
+     */
+    select?: cgpaSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the cgpa
+     */
+    omit?: cgpaOmit<ExtArgs> | null
+    /**
+     * The data used to update cgpas.
+     */
+    data: XOR<cgpaUpdateManyMutationInput, cgpaUncheckedUpdateManyInput>
+    /**
+     * Filter which cgpas to update
+     */
+    where?: cgpaWhereInput
+    /**
+     * Limit how many cgpas to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cgpaIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * cgpa upsert
+   */
+  export type cgpaUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cgpa
+     */
+    select?: cgpaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cgpa
+     */
+    omit?: cgpaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cgpaInclude<ExtArgs> | null
+    /**
+     * The filter to search for the cgpa to update in case it exists.
+     */
+    where: cgpaWhereUniqueInput
+    /**
+     * In case the cgpa found by the `where` argument doesn't exist, create a new cgpa with this data.
+     */
+    create: XOR<cgpaCreateInput, cgpaUncheckedCreateInput>
+    /**
+     * In case the cgpa was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<cgpaUpdateInput, cgpaUncheckedUpdateInput>
+  }
+
+  /**
+   * cgpa delete
+   */
+  export type cgpaDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cgpa
+     */
+    select?: cgpaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cgpa
+     */
+    omit?: cgpaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cgpaInclude<ExtArgs> | null
+    /**
+     * Filter which cgpa to delete.
+     */
+    where: cgpaWhereUniqueInput
+  }
+
+  /**
+   * cgpa deleteMany
+   */
+  export type cgpaDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which cgpas to delete
+     */
+    where?: cgpaWhereInput
+    /**
+     * Limit how many cgpas to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * cgpa.student
+   */
+  export type cgpa$studentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * cgpa without action
+   */
+  export type cgpaDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cgpa
+     */
+    select?: cgpaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cgpa
+     */
+    omit?: cgpaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cgpaInclude<ExtArgs> | null
   }
 
 
@@ -6826,7 +8098,6 @@ export namespace Prisma {
     contactNo: 'contactNo',
     emailId: 'emailId',
     password: 'password',
-    cgpa: 'cgpa',
     studentId: 'studentId',
     department: 'department',
     academicYear: 'academicYear',
@@ -6839,6 +8110,21 @@ export namespace Prisma {
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+  export const CgpaScalarFieldEnum: {
+    id: 'id',
+    sem1: 'sem1',
+    sem2: 'sem2',
+    sem3: 'sem3',
+    sem4: 'sem4',
+    sem5: 'sem5',
+    sem6: 'sem6',
+    sem7: 'sem7',
+    sem8: 'sem8'
+  };
+
+  export type CgpaScalarFieldEnum = (typeof CgpaScalarFieldEnum)[keyof typeof CgpaScalarFieldEnum]
 
 
   export const InternshipScalarFieldEnum: {
@@ -6930,20 +8216,6 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'Float'
-   */
-  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
-    
-
-
-  /**
-   * Reference to a field of type 'Float[]'
-   */
-  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
-    
-
-
-  /**
    * Reference to a field of type 'UserAcademicYear'
    */
   export type EnumUserAcademicYearFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserAcademicYear'>
@@ -6979,6 +8251,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Float'
+   */
+  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+    
+
+
+  /**
+   * Reference to a field of type 'Float[]'
+   */
+  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Int'
    */
   export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
@@ -7005,7 +8291,6 @@ export namespace Prisma {
     contactNo?: StringNullableFilter<"User"> | string | null
     emailId?: StringFilter<"User"> | string
     password?: StringFilter<"User"> | string
-    cgpa?: FloatNullableFilter<"User"> | number | null
     studentId?: StringFilter<"User"> | string
     department?: StringNullableFilter<"User"> | string | null
     academicYear?: EnumUserAcademicYearNullableFilter<"User"> | $Enums.UserAcademicYear | null
@@ -7015,6 +8300,7 @@ export namespace Prisma {
     isVerified?: BoolFilter<"User"> | boolean
     createdAt?: DateTimeFilter<"User"> | Date | string
     socialProfile?: StringNullableFilter<"User"> | string | null
+    cgpa?: CgpaListRelationFilter
     achievements?: AchievementListRelationFilter
     alumni?: XOR<AlumniNullableScalarRelationFilter, AlumniWhereInput> | null
     internships?: InternshipListRelationFilter
@@ -7027,7 +8313,6 @@ export namespace Prisma {
     contactNo?: SortOrderInput | SortOrder
     emailId?: SortOrder
     password?: SortOrder
-    cgpa?: SortOrderInput | SortOrder
     studentId?: SortOrder
     department?: SortOrderInput | SortOrder
     academicYear?: SortOrderInput | SortOrder
@@ -7037,6 +8322,7 @@ export namespace Prisma {
     isVerified?: SortOrder
     createdAt?: SortOrder
     socialProfile?: SortOrderInput | SortOrder
+    cgpa?: cgpaOrderByRelationAggregateInput
     achievements?: AchievementOrderByRelationAggregateInput
     alumni?: AlumniOrderByWithRelationInput
     internships?: InternshipOrderByRelationAggregateInput
@@ -7052,7 +8338,6 @@ export namespace Prisma {
     legalName?: StringNullableFilter<"User"> | string | null
     contactNo?: StringNullableFilter<"User"> | string | null
     password?: StringFilter<"User"> | string
-    cgpa?: FloatNullableFilter<"User"> | number | null
     studentId?: StringFilter<"User"> | string
     department?: StringNullableFilter<"User"> | string | null
     academicYear?: EnumUserAcademicYearNullableFilter<"User"> | $Enums.UserAcademicYear | null
@@ -7062,6 +8347,7 @@ export namespace Prisma {
     isVerified?: BoolFilter<"User"> | boolean
     createdAt?: DateTimeFilter<"User"> | Date | string
     socialProfile?: StringNullableFilter<"User"> | string | null
+    cgpa?: CgpaListRelationFilter
     achievements?: AchievementListRelationFilter
     alumni?: XOR<AlumniNullableScalarRelationFilter, AlumniWhereInput> | null
     internships?: InternshipListRelationFilter
@@ -7074,7 +8360,6 @@ export namespace Prisma {
     contactNo?: SortOrderInput | SortOrder
     emailId?: SortOrder
     password?: SortOrder
-    cgpa?: SortOrderInput | SortOrder
     studentId?: SortOrder
     department?: SortOrderInput | SortOrder
     academicYear?: SortOrderInput | SortOrder
@@ -7085,10 +8370,8 @@ export namespace Prisma {
     createdAt?: SortOrder
     socialProfile?: SortOrderInput | SortOrder
     _count?: UserCountOrderByAggregateInput
-    _avg?: UserAvgOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
     _min?: UserMinOrderByAggregateInput
-    _sum?: UserSumOrderByAggregateInput
   }
 
   export type UserScalarWhereWithAggregatesInput = {
@@ -7101,7 +8384,6 @@ export namespace Prisma {
     contactNo?: StringNullableWithAggregatesFilter<"User"> | string | null
     emailId?: StringWithAggregatesFilter<"User"> | string
     password?: StringWithAggregatesFilter<"User"> | string
-    cgpa?: FloatNullableWithAggregatesFilter<"User"> | number | null
     studentId?: StringWithAggregatesFilter<"User"> | string
     department?: StringNullableWithAggregatesFilter<"User"> | string | null
     academicYear?: EnumUserAcademicYearNullableWithAggregatesFilter<"User"> | $Enums.UserAcademicYear | null
@@ -7111,6 +8393,83 @@ export namespace Prisma {
     isVerified?: BoolWithAggregatesFilter<"User"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     socialProfile?: StringNullableWithAggregatesFilter<"User"> | string | null
+  }
+
+  export type cgpaWhereInput = {
+    AND?: cgpaWhereInput | cgpaWhereInput[]
+    OR?: cgpaWhereInput[]
+    NOT?: cgpaWhereInput | cgpaWhereInput[]
+    id?: StringFilter<"cgpa"> | string
+    sem1?: FloatNullableFilter<"cgpa"> | number | null
+    sem2?: FloatNullableFilter<"cgpa"> | number | null
+    sem3?: FloatNullableFilter<"cgpa"> | number | null
+    sem4?: FloatNullableFilter<"cgpa"> | number | null
+    sem5?: FloatNullableFilter<"cgpa"> | number | null
+    sem6?: FloatNullableFilter<"cgpa"> | number | null
+    sem7?: FloatNullableFilter<"cgpa"> | number | null
+    sem8?: FloatNullableFilter<"cgpa"> | number | null
+    student?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+  }
+
+  export type cgpaOrderByWithRelationInput = {
+    id?: SortOrder
+    sem1?: SortOrderInput | SortOrder
+    sem2?: SortOrderInput | SortOrder
+    sem3?: SortOrderInput | SortOrder
+    sem4?: SortOrderInput | SortOrder
+    sem5?: SortOrderInput | SortOrder
+    sem6?: SortOrderInput | SortOrder
+    sem7?: SortOrderInput | SortOrder
+    sem8?: SortOrderInput | SortOrder
+    student?: UserOrderByWithRelationInput
+  }
+
+  export type cgpaWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: cgpaWhereInput | cgpaWhereInput[]
+    OR?: cgpaWhereInput[]
+    NOT?: cgpaWhereInput | cgpaWhereInput[]
+    sem1?: FloatNullableFilter<"cgpa"> | number | null
+    sem2?: FloatNullableFilter<"cgpa"> | number | null
+    sem3?: FloatNullableFilter<"cgpa"> | number | null
+    sem4?: FloatNullableFilter<"cgpa"> | number | null
+    sem5?: FloatNullableFilter<"cgpa"> | number | null
+    sem6?: FloatNullableFilter<"cgpa"> | number | null
+    sem7?: FloatNullableFilter<"cgpa"> | number | null
+    sem8?: FloatNullableFilter<"cgpa"> | number | null
+    student?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+  }, "id">
+
+  export type cgpaOrderByWithAggregationInput = {
+    id?: SortOrder
+    sem1?: SortOrderInput | SortOrder
+    sem2?: SortOrderInput | SortOrder
+    sem3?: SortOrderInput | SortOrder
+    sem4?: SortOrderInput | SortOrder
+    sem5?: SortOrderInput | SortOrder
+    sem6?: SortOrderInput | SortOrder
+    sem7?: SortOrderInput | SortOrder
+    sem8?: SortOrderInput | SortOrder
+    _count?: cgpaCountOrderByAggregateInput
+    _avg?: cgpaAvgOrderByAggregateInput
+    _max?: cgpaMaxOrderByAggregateInput
+    _min?: cgpaMinOrderByAggregateInput
+    _sum?: cgpaSumOrderByAggregateInput
+  }
+
+  export type cgpaScalarWhereWithAggregatesInput = {
+    AND?: cgpaScalarWhereWithAggregatesInput | cgpaScalarWhereWithAggregatesInput[]
+    OR?: cgpaScalarWhereWithAggregatesInput[]
+    NOT?: cgpaScalarWhereWithAggregatesInput | cgpaScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"cgpa"> | string
+    sem1?: FloatNullableWithAggregatesFilter<"cgpa"> | number | null
+    sem2?: FloatNullableWithAggregatesFilter<"cgpa"> | number | null
+    sem3?: FloatNullableWithAggregatesFilter<"cgpa"> | number | null
+    sem4?: FloatNullableWithAggregatesFilter<"cgpa"> | number | null
+    sem5?: FloatNullableWithAggregatesFilter<"cgpa"> | number | null
+    sem6?: FloatNullableWithAggregatesFilter<"cgpa"> | number | null
+    sem7?: FloatNullableWithAggregatesFilter<"cgpa"> | number | null
+    sem8?: FloatNullableWithAggregatesFilter<"cgpa"> | number | null
   }
 
   export type InternshipWhereInput = {
@@ -7342,7 +8701,6 @@ export namespace Prisma {
     contactNo?: string | null
     emailId: string
     password: string
-    cgpa?: number | null
     studentId: string
     department?: string | null
     academicYear?: $Enums.UserAcademicYear | null
@@ -7352,6 +8710,7 @@ export namespace Prisma {
     isVerified?: boolean
     createdAt?: Date | string
     socialProfile?: string | null
+    cgpa?: cgpaCreateNestedManyWithoutStudentInput
     achievements?: AchievementCreateNestedManyWithoutStudentInput
     alumni?: AlumniCreateNestedOneWithoutStudentInput
     internships?: InternshipCreateNestedManyWithoutStudentInput
@@ -7364,7 +8723,6 @@ export namespace Prisma {
     contactNo?: string | null
     emailId: string
     password: string
-    cgpa?: number | null
     studentId: string
     department?: string | null
     academicYear?: $Enums.UserAcademicYear | null
@@ -7374,6 +8732,7 @@ export namespace Prisma {
     isVerified?: boolean
     createdAt?: Date | string
     socialProfile?: string | null
+    cgpa?: cgpaUncheckedCreateNestedManyWithoutStudentInput
     achievements?: AchievementUncheckedCreateNestedManyWithoutStudentInput
     alumni?: AlumniUncheckedCreateNestedOneWithoutStudentInput
     internships?: InternshipUncheckedCreateNestedManyWithoutStudentInput
@@ -7386,7 +8745,6 @@ export namespace Prisma {
     contactNo?: NullableStringFieldUpdateOperationsInput | string | null
     emailId?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
-    cgpa?: NullableFloatFieldUpdateOperationsInput | number | null
     studentId?: StringFieldUpdateOperationsInput | string
     department?: NullableStringFieldUpdateOperationsInput | string | null
     academicYear?: NullableEnumUserAcademicYearFieldUpdateOperationsInput | $Enums.UserAcademicYear | null
@@ -7396,6 +8754,7 @@ export namespace Prisma {
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     socialProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    cgpa?: cgpaUpdateManyWithoutStudentNestedInput
     achievements?: AchievementUpdateManyWithoutStudentNestedInput
     alumni?: AlumniUpdateOneWithoutStudentNestedInput
     internships?: InternshipUpdateManyWithoutStudentNestedInput
@@ -7408,7 +8767,6 @@ export namespace Prisma {
     contactNo?: NullableStringFieldUpdateOperationsInput | string | null
     emailId?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
-    cgpa?: NullableFloatFieldUpdateOperationsInput | number | null
     studentId?: StringFieldUpdateOperationsInput | string
     department?: NullableStringFieldUpdateOperationsInput | string | null
     academicYear?: NullableEnumUserAcademicYearFieldUpdateOperationsInput | $Enums.UserAcademicYear | null
@@ -7418,6 +8776,7 @@ export namespace Prisma {
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     socialProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    cgpa?: cgpaUncheckedUpdateManyWithoutStudentNestedInput
     achievements?: AchievementUncheckedUpdateManyWithoutStudentNestedInput
     alumni?: AlumniUncheckedUpdateOneWithoutStudentNestedInput
     internships?: InternshipUncheckedUpdateManyWithoutStudentNestedInput
@@ -7430,7 +8789,6 @@ export namespace Prisma {
     contactNo?: string | null
     emailId: string
     password: string
-    cgpa?: number | null
     studentId: string
     department?: string | null
     academicYear?: $Enums.UserAcademicYear | null
@@ -7449,7 +8807,6 @@ export namespace Prisma {
     contactNo?: NullableStringFieldUpdateOperationsInput | string | null
     emailId?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
-    cgpa?: NullableFloatFieldUpdateOperationsInput | number | null
     studentId?: StringFieldUpdateOperationsInput | string
     department?: NullableStringFieldUpdateOperationsInput | string | null
     academicYear?: NullableEnumUserAcademicYearFieldUpdateOperationsInput | $Enums.UserAcademicYear | null
@@ -7468,7 +8825,6 @@ export namespace Prisma {
     contactNo?: NullableStringFieldUpdateOperationsInput | string | null
     emailId?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
-    cgpa?: NullableFloatFieldUpdateOperationsInput | number | null
     studentId?: StringFieldUpdateOperationsInput | string
     department?: NullableStringFieldUpdateOperationsInput | string | null
     academicYear?: NullableEnumUserAcademicYearFieldUpdateOperationsInput | $Enums.UserAcademicYear | null
@@ -7480,11 +8836,94 @@ export namespace Prisma {
     socialProfile?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
+  export type cgpaCreateInput = {
+    sem1?: number | null
+    sem2?: number | null
+    sem3?: number | null
+    sem4?: number | null
+    sem5?: number | null
+    sem6?: number | null
+    sem7?: number | null
+    sem8?: number | null
+    student?: UserCreateNestedOneWithoutCgpaInput
+  }
+
+  export type cgpaUncheckedCreateInput = {
+    id: string
+    sem1?: number | null
+    sem2?: number | null
+    sem3?: number | null
+    sem4?: number | null
+    sem5?: number | null
+    sem6?: number | null
+    sem7?: number | null
+    sem8?: number | null
+  }
+
+  export type cgpaUpdateInput = {
+    sem1?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem2?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem3?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem4?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem5?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem6?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem7?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem8?: NullableFloatFieldUpdateOperationsInput | number | null
+    student?: UserUpdateOneWithoutCgpaNestedInput
+  }
+
+  export type cgpaUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sem1?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem2?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem3?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem4?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem5?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem6?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem7?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem8?: NullableFloatFieldUpdateOperationsInput | number | null
+  }
+
+  export type cgpaCreateManyInput = {
+    id: string
+    sem1?: number | null
+    sem2?: number | null
+    sem3?: number | null
+    sem4?: number | null
+    sem5?: number | null
+    sem6?: number | null
+    sem7?: number | null
+    sem8?: number | null
+  }
+
+  export type cgpaUpdateManyMutationInput = {
+    sem1?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem2?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem3?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem4?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem5?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem6?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem7?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem8?: NullableFloatFieldUpdateOperationsInput | number | null
+  }
+
+  export type cgpaUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sem1?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem2?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem3?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem4?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem5?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem6?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem7?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem8?: NullableFloatFieldUpdateOperationsInput | number | null
+  }
+
   export type InternshipCreateInput = {
-    id?: string
     title?: string | null
     companyName?: string | null
     duration?: string | null
+    studentId?: string | null
     student?: UserCreateNestedOneWithoutInternshipsInput
   }
 
@@ -7497,10 +8936,10 @@ export namespace Prisma {
   }
 
   export type InternshipUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
     title?: NullableStringFieldUpdateOperationsInput | string | null
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     duration?: NullableStringFieldUpdateOperationsInput | string | null
+    studentId?: NullableStringFieldUpdateOperationsInput | string | null
     student?: UserUpdateOneWithoutInternshipsNestedInput
   }
 
@@ -7521,10 +8960,10 @@ export namespace Prisma {
   }
 
   export type InternshipUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
     title?: NullableStringFieldUpdateOperationsInput | string | null
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     duration?: NullableStringFieldUpdateOperationsInput | string | null
+    studentId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type InternshipUncheckedUpdateManyInput = {
@@ -7536,10 +8975,10 @@ export namespace Prisma {
   }
 
   export type AchievementCreateInput = {
-    id?: string
     title?: string | null
     details?: string | null
     time?: Date | string | null
+    studentId: string
     student?: UserCreateNestedOneWithoutAchievementsInput
   }
 
@@ -7552,10 +8991,10 @@ export namespace Prisma {
   }
 
   export type AchievementUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
     title?: NullableStringFieldUpdateOperationsInput | string | null
     details?: NullableStringFieldUpdateOperationsInput | string | null
     time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    studentId?: StringFieldUpdateOperationsInput | string
     student?: UserUpdateOneWithoutAchievementsNestedInput
   }
 
@@ -7576,10 +9015,10 @@ export namespace Prisma {
   }
 
   export type AchievementUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
     title?: NullableStringFieldUpdateOperationsInput | string | null
     details?: NullableStringFieldUpdateOperationsInput | string | null
     time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    studentId?: StringFieldUpdateOperationsInput | string
   }
 
   export type AchievementUncheckedUpdateManyInput = {
@@ -7738,17 +9177,6 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
-  export type FloatNullableFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
-  }
-
   export type EnumUserAcademicYearNullableFilter<$PrismaModel = never> = {
     equals?: $Enums.UserAcademicYear | EnumUserAcademicYearFieldRefInput<$PrismaModel> | null
     in?: $Enums.UserAcademicYear[] | ListEnumUserAcademicYearFieldRefInput<$PrismaModel> | null
@@ -7780,6 +9208,12 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
+  export type CgpaListRelationFilter = {
+    every?: cgpaWhereInput
+    some?: cgpaWhereInput
+    none?: cgpaWhereInput
+  }
+
   export type AchievementListRelationFilter = {
     every?: AchievementWhereInput
     some?: AchievementWhereInput
@@ -7802,6 +9236,10 @@ export namespace Prisma {
     nulls?: NullsOrder
   }
 
+  export type cgpaOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type AchievementOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -7817,7 +9255,6 @@ export namespace Prisma {
     contactNo?: SortOrder
     emailId?: SortOrder
     password?: SortOrder
-    cgpa?: SortOrder
     studentId?: SortOrder
     department?: SortOrder
     academicYear?: SortOrder
@@ -7829,10 +9266,6 @@ export namespace Prisma {
     socialProfile?: SortOrder
   }
 
-  export type UserAvgOrderByAggregateInput = {
-    cgpa?: SortOrder
-  }
-
   export type UserMaxOrderByAggregateInput = {
     id?: SortOrder
     fullName?: SortOrder
@@ -7840,7 +9273,6 @@ export namespace Prisma {
     contactNo?: SortOrder
     emailId?: SortOrder
     password?: SortOrder
-    cgpa?: SortOrder
     studentId?: SortOrder
     department?: SortOrder
     academicYear?: SortOrder
@@ -7858,7 +9290,6 @@ export namespace Prisma {
     contactNo?: SortOrder
     emailId?: SortOrder
     password?: SortOrder
-    cgpa?: SortOrder
     studentId?: SortOrder
     department?: SortOrder
     academicYear?: SortOrder
@@ -7867,10 +9298,6 @@ export namespace Prisma {
     isVerified?: SortOrder
     createdAt?: SortOrder
     socialProfile?: SortOrder
-  }
-
-  export type UserSumOrderByAggregateInput = {
-    cgpa?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -7909,22 +9336,6 @@ export namespace Prisma {
     _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
-  export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedFloatNullableFilter<$PrismaModel>
-    _min?: NestedFloatNullableFilter<$PrismaModel>
-    _max?: NestedFloatNullableFilter<$PrismaModel>
-  }
-
   export type EnumUserAcademicYearNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.UserAcademicYear | EnumUserAcademicYearFieldRefInput<$PrismaModel> | null
     in?: $Enums.UserAcademicYear[] | ListEnumUserAcademicYearFieldRefInput<$PrismaModel> | null
@@ -7957,9 +9368,94 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type FloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
   export type UserNullableScalarRelationFilter = {
     is?: UserWhereInput | null
     isNot?: UserWhereInput | null
+  }
+
+  export type cgpaCountOrderByAggregateInput = {
+    id?: SortOrder
+    sem1?: SortOrder
+    sem2?: SortOrder
+    sem3?: SortOrder
+    sem4?: SortOrder
+    sem5?: SortOrder
+    sem6?: SortOrder
+    sem7?: SortOrder
+    sem8?: SortOrder
+  }
+
+  export type cgpaAvgOrderByAggregateInput = {
+    sem1?: SortOrder
+    sem2?: SortOrder
+    sem3?: SortOrder
+    sem4?: SortOrder
+    sem5?: SortOrder
+    sem6?: SortOrder
+    sem7?: SortOrder
+    sem8?: SortOrder
+  }
+
+  export type cgpaMaxOrderByAggregateInput = {
+    id?: SortOrder
+    sem1?: SortOrder
+    sem2?: SortOrder
+    sem3?: SortOrder
+    sem4?: SortOrder
+    sem5?: SortOrder
+    sem6?: SortOrder
+    sem7?: SortOrder
+    sem8?: SortOrder
+  }
+
+  export type cgpaMinOrderByAggregateInput = {
+    id?: SortOrder
+    sem1?: SortOrder
+    sem2?: SortOrder
+    sem3?: SortOrder
+    sem4?: SortOrder
+    sem5?: SortOrder
+    sem6?: SortOrder
+    sem7?: SortOrder
+    sem8?: SortOrder
+  }
+
+  export type cgpaSumOrderByAggregateInput = {
+    sem1?: SortOrder
+    sem2?: SortOrder
+    sem3?: SortOrder
+    sem4?: SortOrder
+    sem5?: SortOrder
+    sem6?: SortOrder
+    sem7?: SortOrder
+    sem8?: SortOrder
+  }
+
+  export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
   }
 
   export type InternshipCountOrderByAggregateInput = {
@@ -8086,6 +9582,13 @@ export namespace Prisma {
     set: string[]
   }
 
+  export type cgpaCreateNestedManyWithoutStudentInput = {
+    create?: XOR<cgpaCreateWithoutStudentInput, cgpaUncheckedCreateWithoutStudentInput> | cgpaCreateWithoutStudentInput[] | cgpaUncheckedCreateWithoutStudentInput[]
+    connectOrCreate?: cgpaCreateOrConnectWithoutStudentInput | cgpaCreateOrConnectWithoutStudentInput[]
+    createMany?: cgpaCreateManyStudentInputEnvelope
+    connect?: cgpaWhereUniqueInput | cgpaWhereUniqueInput[]
+  }
+
   export type AchievementCreateNestedManyWithoutStudentInput = {
     create?: XOR<AchievementCreateWithoutStudentInput, AchievementUncheckedCreateWithoutStudentInput> | AchievementCreateWithoutStudentInput[] | AchievementUncheckedCreateWithoutStudentInput[]
     connectOrCreate?: AchievementCreateOrConnectWithoutStudentInput | AchievementCreateOrConnectWithoutStudentInput[]
@@ -8104,6 +9607,13 @@ export namespace Prisma {
     connectOrCreate?: InternshipCreateOrConnectWithoutStudentInput | InternshipCreateOrConnectWithoutStudentInput[]
     createMany?: InternshipCreateManyStudentInputEnvelope
     connect?: InternshipWhereUniqueInput | InternshipWhereUniqueInput[]
+  }
+
+  export type cgpaUncheckedCreateNestedManyWithoutStudentInput = {
+    create?: XOR<cgpaCreateWithoutStudentInput, cgpaUncheckedCreateWithoutStudentInput> | cgpaCreateWithoutStudentInput[] | cgpaUncheckedCreateWithoutStudentInput[]
+    connectOrCreate?: cgpaCreateOrConnectWithoutStudentInput | cgpaCreateOrConnectWithoutStudentInput[]
+    createMany?: cgpaCreateManyStudentInputEnvelope
+    connect?: cgpaWhereUniqueInput | cgpaWhereUniqueInput[]
   }
 
   export type AchievementUncheckedCreateNestedManyWithoutStudentInput = {
@@ -8134,14 +9644,6 @@ export namespace Prisma {
     set?: string | null
   }
 
-  export type NullableFloatFieldUpdateOperationsInput = {
-    set?: number | null
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
-  }
-
   export type NullableEnumUserAcademicYearFieldUpdateOperationsInput = {
     set?: $Enums.UserAcademicYear | null
   }
@@ -8157,6 +9659,20 @@ export namespace Prisma {
 
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
+  }
+
+  export type cgpaUpdateManyWithoutStudentNestedInput = {
+    create?: XOR<cgpaCreateWithoutStudentInput, cgpaUncheckedCreateWithoutStudentInput> | cgpaCreateWithoutStudentInput[] | cgpaUncheckedCreateWithoutStudentInput[]
+    connectOrCreate?: cgpaCreateOrConnectWithoutStudentInput | cgpaCreateOrConnectWithoutStudentInput[]
+    upsert?: cgpaUpsertWithWhereUniqueWithoutStudentInput | cgpaUpsertWithWhereUniqueWithoutStudentInput[]
+    createMany?: cgpaCreateManyStudentInputEnvelope
+    set?: cgpaWhereUniqueInput | cgpaWhereUniqueInput[]
+    disconnect?: cgpaWhereUniqueInput | cgpaWhereUniqueInput[]
+    delete?: cgpaWhereUniqueInput | cgpaWhereUniqueInput[]
+    connect?: cgpaWhereUniqueInput | cgpaWhereUniqueInput[]
+    update?: cgpaUpdateWithWhereUniqueWithoutStudentInput | cgpaUpdateWithWhereUniqueWithoutStudentInput[]
+    updateMany?: cgpaUpdateManyWithWhereWithoutStudentInput | cgpaUpdateManyWithWhereWithoutStudentInput[]
+    deleteMany?: cgpaScalarWhereInput | cgpaScalarWhereInput[]
   }
 
   export type AchievementUpdateManyWithoutStudentNestedInput = {
@@ -8197,6 +9713,20 @@ export namespace Prisma {
     deleteMany?: InternshipScalarWhereInput | InternshipScalarWhereInput[]
   }
 
+  export type cgpaUncheckedUpdateManyWithoutStudentNestedInput = {
+    create?: XOR<cgpaCreateWithoutStudentInput, cgpaUncheckedCreateWithoutStudentInput> | cgpaCreateWithoutStudentInput[] | cgpaUncheckedCreateWithoutStudentInput[]
+    connectOrCreate?: cgpaCreateOrConnectWithoutStudentInput | cgpaCreateOrConnectWithoutStudentInput[]
+    upsert?: cgpaUpsertWithWhereUniqueWithoutStudentInput | cgpaUpsertWithWhereUniqueWithoutStudentInput[]
+    createMany?: cgpaCreateManyStudentInputEnvelope
+    set?: cgpaWhereUniqueInput | cgpaWhereUniqueInput[]
+    disconnect?: cgpaWhereUniqueInput | cgpaWhereUniqueInput[]
+    delete?: cgpaWhereUniqueInput | cgpaWhereUniqueInput[]
+    connect?: cgpaWhereUniqueInput | cgpaWhereUniqueInput[]
+    update?: cgpaUpdateWithWhereUniqueWithoutStudentInput | cgpaUpdateWithWhereUniqueWithoutStudentInput[]
+    updateMany?: cgpaUpdateManyWithWhereWithoutStudentInput | cgpaUpdateManyWithWhereWithoutStudentInput[]
+    deleteMany?: cgpaScalarWhereInput | cgpaScalarWhereInput[]
+  }
+
   export type AchievementUncheckedUpdateManyWithoutStudentNestedInput = {
     create?: XOR<AchievementCreateWithoutStudentInput, AchievementUncheckedCreateWithoutStudentInput> | AchievementCreateWithoutStudentInput[] | AchievementUncheckedCreateWithoutStudentInput[]
     connectOrCreate?: AchievementCreateOrConnectWithoutStudentInput | AchievementCreateOrConnectWithoutStudentInput[]
@@ -8233,6 +9763,30 @@ export namespace Prisma {
     update?: InternshipUpdateWithWhereUniqueWithoutStudentInput | InternshipUpdateWithWhereUniqueWithoutStudentInput[]
     updateMany?: InternshipUpdateManyWithWhereWithoutStudentInput | InternshipUpdateManyWithWhereWithoutStudentInput[]
     deleteMany?: InternshipScalarWhereInput | InternshipScalarWhereInput[]
+  }
+
+  export type UserCreateNestedOneWithoutCgpaInput = {
+    create?: XOR<UserCreateWithoutCgpaInput, UserUncheckedCreateWithoutCgpaInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCgpaInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type NullableFloatFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type UserUpdateOneWithoutCgpaNestedInput = {
+    create?: XOR<UserCreateWithoutCgpaInput, UserUncheckedCreateWithoutCgpaInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCgpaInput
+    upsert?: UserUpsertWithoutCgpaInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCgpaInput, UserUpdateWithoutCgpaInput>, UserUncheckedUpdateWithoutCgpaInput>
   }
 
   export type UserCreateNestedOneWithoutInternshipsInput = {
@@ -8333,17 +9887,6 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
-  export type NestedFloatNullableFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
-  }
-
   export type NestedEnumUserAcademicYearNullableFilter<$PrismaModel = never> = {
     equals?: $Enums.UserAcademicYear | EnumUserAcademicYearFieldRefInput<$PrismaModel> | null
     in?: $Enums.UserAcademicYear[] | ListEnumUserAcademicYearFieldRefInput<$PrismaModel> | null
@@ -8423,22 +9966,6 @@ export namespace Prisma {
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
-  export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedFloatNullableFilter<$PrismaModel>
-    _min?: NestedFloatNullableFilter<$PrismaModel>
-    _max?: NestedFloatNullableFilter<$PrismaModel>
-  }
-
   export type NestedEnumUserAcademicYearNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.UserAcademicYear | EnumUserAcademicYearFieldRefInput<$PrismaModel> | null
     in?: $Enums.UserAcademicYear[] | ListEnumUserAcademicYearFieldRefInput<$PrismaModel> | null
@@ -8471,6 +9998,33 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type NestedFloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
+  }
+
   export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
@@ -8496,18 +10050,50 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
+  export type cgpaCreateWithoutStudentInput = {
+    sem1?: number | null
+    sem2?: number | null
+    sem3?: number | null
+    sem4?: number | null
+    sem5?: number | null
+    sem6?: number | null
+    sem7?: number | null
+    sem8?: number | null
+  }
+
+  export type cgpaUncheckedCreateWithoutStudentInput = {
+    sem1?: number | null
+    sem2?: number | null
+    sem3?: number | null
+    sem4?: number | null
+    sem5?: number | null
+    sem6?: number | null
+    sem7?: number | null
+    sem8?: number | null
+  }
+
+  export type cgpaCreateOrConnectWithoutStudentInput = {
+    where: cgpaWhereUniqueInput
+    create: XOR<cgpaCreateWithoutStudentInput, cgpaUncheckedCreateWithoutStudentInput>
+  }
+
+  export type cgpaCreateManyStudentInputEnvelope = {
+    data: cgpaCreateManyStudentInput | cgpaCreateManyStudentInput[]
+    skipDuplicates?: boolean
+  }
+
   export type AchievementCreateWithoutStudentInput = {
-    id?: string
     title?: string | null
     details?: string | null
     time?: Date | string | null
+    studentId: string
   }
 
   export type AchievementUncheckedCreateWithoutStudentInput = {
-    id?: string
     title?: string | null
     details?: string | null
     time?: Date | string | null
+    studentId: string
   }
 
   export type AchievementCreateOrConnectWithoutStudentInput = {
@@ -8540,17 +10126,17 @@ export namespace Prisma {
   }
 
   export type InternshipCreateWithoutStudentInput = {
-    id?: string
     title?: string | null
     companyName?: string | null
     duration?: string | null
+    studentId?: string | null
   }
 
   export type InternshipUncheckedCreateWithoutStudentInput = {
-    id?: string
     title?: string | null
     companyName?: string | null
     duration?: string | null
+    studentId?: string | null
   }
 
   export type InternshipCreateOrConnectWithoutStudentInput = {
@@ -8561,6 +10147,37 @@ export namespace Prisma {
   export type InternshipCreateManyStudentInputEnvelope = {
     data: InternshipCreateManyStudentInput | InternshipCreateManyStudentInput[]
     skipDuplicates?: boolean
+  }
+
+  export type cgpaUpsertWithWhereUniqueWithoutStudentInput = {
+    where: cgpaWhereUniqueInput
+    update: XOR<cgpaUpdateWithoutStudentInput, cgpaUncheckedUpdateWithoutStudentInput>
+    create: XOR<cgpaCreateWithoutStudentInput, cgpaUncheckedCreateWithoutStudentInput>
+  }
+
+  export type cgpaUpdateWithWhereUniqueWithoutStudentInput = {
+    where: cgpaWhereUniqueInput
+    data: XOR<cgpaUpdateWithoutStudentInput, cgpaUncheckedUpdateWithoutStudentInput>
+  }
+
+  export type cgpaUpdateManyWithWhereWithoutStudentInput = {
+    where: cgpaScalarWhereInput
+    data: XOR<cgpaUpdateManyMutationInput, cgpaUncheckedUpdateManyWithoutStudentInput>
+  }
+
+  export type cgpaScalarWhereInput = {
+    AND?: cgpaScalarWhereInput | cgpaScalarWhereInput[]
+    OR?: cgpaScalarWhereInput[]
+    NOT?: cgpaScalarWhereInput | cgpaScalarWhereInput[]
+    id?: StringFilter<"cgpa"> | string
+    sem1?: FloatNullableFilter<"cgpa"> | number | null
+    sem2?: FloatNullableFilter<"cgpa"> | number | null
+    sem3?: FloatNullableFilter<"cgpa"> | number | null
+    sem4?: FloatNullableFilter<"cgpa"> | number | null
+    sem5?: FloatNullableFilter<"cgpa"> | number | null
+    sem6?: FloatNullableFilter<"cgpa"> | number | null
+    sem7?: FloatNullableFilter<"cgpa"> | number | null
+    sem8?: FloatNullableFilter<"cgpa"> | number | null
   }
 
   export type AchievementUpsertWithWhereUniqueWithoutStudentInput = {
@@ -8642,14 +10259,13 @@ export namespace Prisma {
     studentId?: StringNullableFilter<"Internship"> | string | null
   }
 
-  export type UserCreateWithoutInternshipsInput = {
+  export type UserCreateWithoutCgpaInput = {
     id?: string
     fullName: string
     legalName?: string | null
     contactNo?: string | null
     emailId: string
     password: string
-    cgpa?: number | null
     studentId: string
     department?: string | null
     academicYear?: $Enums.UserAcademicYear | null
@@ -8661,16 +10277,16 @@ export namespace Prisma {
     socialProfile?: string | null
     achievements?: AchievementCreateNestedManyWithoutStudentInput
     alumni?: AlumniCreateNestedOneWithoutStudentInput
+    internships?: InternshipCreateNestedManyWithoutStudentInput
   }
 
-  export type UserUncheckedCreateWithoutInternshipsInput = {
+  export type UserUncheckedCreateWithoutCgpaInput = {
     id?: string
     fullName: string
     legalName?: string | null
     contactNo?: string | null
     emailId: string
     password: string
-    cgpa?: number | null
     studentId: string
     department?: string | null
     academicYear?: $Enums.UserAcademicYear | null
@@ -8680,6 +10296,107 @@ export namespace Prisma {
     isVerified?: boolean
     createdAt?: Date | string
     socialProfile?: string | null
+    achievements?: AchievementUncheckedCreateNestedManyWithoutStudentInput
+    alumni?: AlumniUncheckedCreateNestedOneWithoutStudentInput
+    internships?: InternshipUncheckedCreateNestedManyWithoutStudentInput
+  }
+
+  export type UserCreateOrConnectWithoutCgpaInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutCgpaInput, UserUncheckedCreateWithoutCgpaInput>
+  }
+
+  export type UserUpsertWithoutCgpaInput = {
+    update: XOR<UserUpdateWithoutCgpaInput, UserUncheckedUpdateWithoutCgpaInput>
+    create: XOR<UserCreateWithoutCgpaInput, UserUncheckedCreateWithoutCgpaInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutCgpaInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutCgpaInput, UserUncheckedUpdateWithoutCgpaInput>
+  }
+
+  export type UserUpdateWithoutCgpaInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNo?: NullableStringFieldUpdateOperationsInput | string | null
+    emailId?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
+    department?: NullableStringFieldUpdateOperationsInput | string | null
+    academicYear?: NullableEnumUserAcademicYearFieldUpdateOperationsInput | $Enums.UserAcademicYear | null
+    skills?: UserUpdateskillsInput | string[]
+    profilePic?: NullableStringFieldUpdateOperationsInput | string | null
+    resumeUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    socialProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    achievements?: AchievementUpdateManyWithoutStudentNestedInput
+    alumni?: AlumniUpdateOneWithoutStudentNestedInput
+    internships?: InternshipUpdateManyWithoutStudentNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutCgpaInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    legalName?: NullableStringFieldUpdateOperationsInput | string | null
+    contactNo?: NullableStringFieldUpdateOperationsInput | string | null
+    emailId?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
+    department?: NullableStringFieldUpdateOperationsInput | string | null
+    academicYear?: NullableEnumUserAcademicYearFieldUpdateOperationsInput | $Enums.UserAcademicYear | null
+    skills?: UserUpdateskillsInput | string[]
+    profilePic?: NullableStringFieldUpdateOperationsInput | string | null
+    resumeUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    socialProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    achievements?: AchievementUncheckedUpdateManyWithoutStudentNestedInput
+    alumni?: AlumniUncheckedUpdateOneWithoutStudentNestedInput
+    internships?: InternshipUncheckedUpdateManyWithoutStudentNestedInput
+  }
+
+  export type UserCreateWithoutInternshipsInput = {
+    id?: string
+    fullName: string
+    legalName?: string | null
+    contactNo?: string | null
+    emailId: string
+    password: string
+    studentId: string
+    department?: string | null
+    academicYear?: $Enums.UserAcademicYear | null
+    skills?: UserCreateskillsInput | string[]
+    profilePic?: string | null
+    resumeUrl?: string | null
+    isVerified?: boolean
+    createdAt?: Date | string
+    socialProfile?: string | null
+    cgpa?: cgpaCreateNestedManyWithoutStudentInput
+    achievements?: AchievementCreateNestedManyWithoutStudentInput
+    alumni?: AlumniCreateNestedOneWithoutStudentInput
+  }
+
+  export type UserUncheckedCreateWithoutInternshipsInput = {
+    id?: string
+    fullName: string
+    legalName?: string | null
+    contactNo?: string | null
+    emailId: string
+    password: string
+    studentId: string
+    department?: string | null
+    academicYear?: $Enums.UserAcademicYear | null
+    skills?: UserCreateskillsInput | string[]
+    profilePic?: string | null
+    resumeUrl?: string | null
+    isVerified?: boolean
+    createdAt?: Date | string
+    socialProfile?: string | null
+    cgpa?: cgpaUncheckedCreateNestedManyWithoutStudentInput
     achievements?: AchievementUncheckedCreateNestedManyWithoutStudentInput
     alumni?: AlumniUncheckedCreateNestedOneWithoutStudentInput
   }
@@ -8707,7 +10424,6 @@ export namespace Prisma {
     contactNo?: NullableStringFieldUpdateOperationsInput | string | null
     emailId?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
-    cgpa?: NullableFloatFieldUpdateOperationsInput | number | null
     studentId?: StringFieldUpdateOperationsInput | string
     department?: NullableStringFieldUpdateOperationsInput | string | null
     academicYear?: NullableEnumUserAcademicYearFieldUpdateOperationsInput | $Enums.UserAcademicYear | null
@@ -8717,6 +10433,7 @@ export namespace Prisma {
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     socialProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    cgpa?: cgpaUpdateManyWithoutStudentNestedInput
     achievements?: AchievementUpdateManyWithoutStudentNestedInput
     alumni?: AlumniUpdateOneWithoutStudentNestedInput
   }
@@ -8728,7 +10445,6 @@ export namespace Prisma {
     contactNo?: NullableStringFieldUpdateOperationsInput | string | null
     emailId?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
-    cgpa?: NullableFloatFieldUpdateOperationsInput | number | null
     studentId?: StringFieldUpdateOperationsInput | string
     department?: NullableStringFieldUpdateOperationsInput | string | null
     academicYear?: NullableEnumUserAcademicYearFieldUpdateOperationsInput | $Enums.UserAcademicYear | null
@@ -8738,6 +10454,7 @@ export namespace Prisma {
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     socialProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    cgpa?: cgpaUncheckedUpdateManyWithoutStudentNestedInput
     achievements?: AchievementUncheckedUpdateManyWithoutStudentNestedInput
     alumni?: AlumniUncheckedUpdateOneWithoutStudentNestedInput
   }
@@ -8749,7 +10466,6 @@ export namespace Prisma {
     contactNo?: string | null
     emailId: string
     password: string
-    cgpa?: number | null
     studentId: string
     department?: string | null
     academicYear?: $Enums.UserAcademicYear | null
@@ -8759,6 +10475,7 @@ export namespace Prisma {
     isVerified?: boolean
     createdAt?: Date | string
     socialProfile?: string | null
+    cgpa?: cgpaCreateNestedManyWithoutStudentInput
     alumni?: AlumniCreateNestedOneWithoutStudentInput
     internships?: InternshipCreateNestedManyWithoutStudentInput
   }
@@ -8770,7 +10487,6 @@ export namespace Prisma {
     contactNo?: string | null
     emailId: string
     password: string
-    cgpa?: number | null
     studentId: string
     department?: string | null
     academicYear?: $Enums.UserAcademicYear | null
@@ -8780,6 +10496,7 @@ export namespace Prisma {
     isVerified?: boolean
     createdAt?: Date | string
     socialProfile?: string | null
+    cgpa?: cgpaUncheckedCreateNestedManyWithoutStudentInput
     alumni?: AlumniUncheckedCreateNestedOneWithoutStudentInput
     internships?: InternshipUncheckedCreateNestedManyWithoutStudentInput
   }
@@ -8807,7 +10524,6 @@ export namespace Prisma {
     contactNo?: NullableStringFieldUpdateOperationsInput | string | null
     emailId?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
-    cgpa?: NullableFloatFieldUpdateOperationsInput | number | null
     studentId?: StringFieldUpdateOperationsInput | string
     department?: NullableStringFieldUpdateOperationsInput | string | null
     academicYear?: NullableEnumUserAcademicYearFieldUpdateOperationsInput | $Enums.UserAcademicYear | null
@@ -8817,6 +10533,7 @@ export namespace Prisma {
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     socialProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    cgpa?: cgpaUpdateManyWithoutStudentNestedInput
     alumni?: AlumniUpdateOneWithoutStudentNestedInput
     internships?: InternshipUpdateManyWithoutStudentNestedInput
   }
@@ -8828,7 +10545,6 @@ export namespace Prisma {
     contactNo?: NullableStringFieldUpdateOperationsInput | string | null
     emailId?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
-    cgpa?: NullableFloatFieldUpdateOperationsInput | number | null
     studentId?: StringFieldUpdateOperationsInput | string
     department?: NullableStringFieldUpdateOperationsInput | string | null
     academicYear?: NullableEnumUserAcademicYearFieldUpdateOperationsInput | $Enums.UserAcademicYear | null
@@ -8838,6 +10554,7 @@ export namespace Prisma {
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     socialProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    cgpa?: cgpaUncheckedUpdateManyWithoutStudentNestedInput
     alumni?: AlumniUncheckedUpdateOneWithoutStudentNestedInput
     internships?: InternshipUncheckedUpdateManyWithoutStudentNestedInput
   }
@@ -8849,7 +10566,6 @@ export namespace Prisma {
     contactNo?: string | null
     emailId: string
     password: string
-    cgpa?: number | null
     studentId: string
     department?: string | null
     academicYear?: $Enums.UserAcademicYear | null
@@ -8859,6 +10575,7 @@ export namespace Prisma {
     isVerified?: boolean
     createdAt?: Date | string
     socialProfile?: string | null
+    cgpa?: cgpaCreateNestedManyWithoutStudentInput
     achievements?: AchievementCreateNestedManyWithoutStudentInput
     internships?: InternshipCreateNestedManyWithoutStudentInput
   }
@@ -8870,7 +10587,6 @@ export namespace Prisma {
     contactNo?: string | null
     emailId: string
     password: string
-    cgpa?: number | null
     studentId: string
     department?: string | null
     academicYear?: $Enums.UserAcademicYear | null
@@ -8880,6 +10596,7 @@ export namespace Prisma {
     isVerified?: boolean
     createdAt?: Date | string
     socialProfile?: string | null
+    cgpa?: cgpaUncheckedCreateNestedManyWithoutStudentInput
     achievements?: AchievementUncheckedCreateNestedManyWithoutStudentInput
     internships?: InternshipUncheckedCreateNestedManyWithoutStudentInput
   }
@@ -8907,7 +10624,6 @@ export namespace Prisma {
     contactNo?: NullableStringFieldUpdateOperationsInput | string | null
     emailId?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
-    cgpa?: NullableFloatFieldUpdateOperationsInput | number | null
     studentId?: StringFieldUpdateOperationsInput | string
     department?: NullableStringFieldUpdateOperationsInput | string | null
     academicYear?: NullableEnumUserAcademicYearFieldUpdateOperationsInput | $Enums.UserAcademicYear | null
@@ -8917,6 +10633,7 @@ export namespace Prisma {
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     socialProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    cgpa?: cgpaUpdateManyWithoutStudentNestedInput
     achievements?: AchievementUpdateManyWithoutStudentNestedInput
     internships?: InternshipUpdateManyWithoutStudentNestedInput
   }
@@ -8928,7 +10645,6 @@ export namespace Prisma {
     contactNo?: NullableStringFieldUpdateOperationsInput | string | null
     emailId?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
-    cgpa?: NullableFloatFieldUpdateOperationsInput | number | null
     studentId?: StringFieldUpdateOperationsInput | string
     department?: NullableStringFieldUpdateOperationsInput | string | null
     academicYear?: NullableEnumUserAcademicYearFieldUpdateOperationsInput | $Enums.UserAcademicYear | null
@@ -8938,64 +10654,109 @@ export namespace Prisma {
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     socialProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    cgpa?: cgpaUncheckedUpdateManyWithoutStudentNestedInput
     achievements?: AchievementUncheckedUpdateManyWithoutStudentNestedInput
     internships?: InternshipUncheckedUpdateManyWithoutStudentNestedInput
   }
 
+  export type cgpaCreateManyStudentInput = {
+    sem1?: number | null
+    sem2?: number | null
+    sem3?: number | null
+    sem4?: number | null
+    sem5?: number | null
+    sem6?: number | null
+    sem7?: number | null
+    sem8?: number | null
+  }
+
   export type AchievementCreateManyStudentInput = {
-    id?: string
     title?: string | null
     details?: string | null
     time?: Date | string | null
+    studentId: string
   }
 
   export type InternshipCreateManyStudentInput = {
-    id?: string
     title?: string | null
     companyName?: string | null
     duration?: string | null
+    studentId?: string | null
+  }
+
+  export type cgpaUpdateWithoutStudentInput = {
+    sem1?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem2?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem3?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem4?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem5?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem6?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem7?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem8?: NullableFloatFieldUpdateOperationsInput | number | null
+  }
+
+  export type cgpaUncheckedUpdateWithoutStudentInput = {
+    sem1?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem2?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem3?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem4?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem5?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem6?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem7?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem8?: NullableFloatFieldUpdateOperationsInput | number | null
+  }
+
+  export type cgpaUncheckedUpdateManyWithoutStudentInput = {
+    sem1?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem2?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem3?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem4?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem5?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem6?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem7?: NullableFloatFieldUpdateOperationsInput | number | null
+    sem8?: NullableFloatFieldUpdateOperationsInput | number | null
   }
 
   export type AchievementUpdateWithoutStudentInput = {
-    id?: StringFieldUpdateOperationsInput | string
     title?: NullableStringFieldUpdateOperationsInput | string | null
     details?: NullableStringFieldUpdateOperationsInput | string | null
     time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    studentId?: StringFieldUpdateOperationsInput | string
   }
 
   export type AchievementUncheckedUpdateWithoutStudentInput = {
-    id?: StringFieldUpdateOperationsInput | string
     title?: NullableStringFieldUpdateOperationsInput | string | null
     details?: NullableStringFieldUpdateOperationsInput | string | null
     time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    studentId?: StringFieldUpdateOperationsInput | string
   }
 
   export type AchievementUncheckedUpdateManyWithoutStudentInput = {
-    id?: StringFieldUpdateOperationsInput | string
     title?: NullableStringFieldUpdateOperationsInput | string | null
     details?: NullableStringFieldUpdateOperationsInput | string | null
     time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    studentId?: StringFieldUpdateOperationsInput | string
   }
 
   export type InternshipUpdateWithoutStudentInput = {
-    id?: StringFieldUpdateOperationsInput | string
     title?: NullableStringFieldUpdateOperationsInput | string | null
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     duration?: NullableStringFieldUpdateOperationsInput | string | null
+    studentId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type InternshipUncheckedUpdateWithoutStudentInput = {
-    id?: StringFieldUpdateOperationsInput | string
     title?: NullableStringFieldUpdateOperationsInput | string | null
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     duration?: NullableStringFieldUpdateOperationsInput | string | null
+    studentId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type InternshipUncheckedUpdateManyWithoutStudentInput = {
-    id?: StringFieldUpdateOperationsInput | string
     title?: NullableStringFieldUpdateOperationsInput | string | null
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
     duration?: NullableStringFieldUpdateOperationsInput | string | null
+    studentId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
 
