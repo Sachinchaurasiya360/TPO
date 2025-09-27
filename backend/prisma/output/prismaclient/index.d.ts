@@ -49,12 +49,10 @@ export type Alumni = $Result.DefaultSelection<Prisma.$AlumniPayload>
  */
 export namespace $Enums {
   export const UserAcademicYear: {
-  Y2022_26: 'Y2022_26',
-  Y2023_27: 'Y2023_27',
-  Y2024_28: 'Y2024_28',
-  Y2025_29: 'Y2025_29',
-  Y2026_30: 'Y2026_30',
-  Y2027_31: 'Y2027_31'
+  FIRST_YEAR: 'FIRST_YEAR',
+  SECOND_YEAR: 'SECOND_YEAR',
+  THIRD_YEAR: 'THIRD_YEAR',
+  FOURTH_YEAR: 'FOURTH_YEAR'
 };
 
 export type UserAcademicYear = (typeof UserAcademicYear)[keyof typeof UserAcademicYear]
@@ -2691,6 +2689,7 @@ export namespace Prisma {
 
   export type CgpaMinAggregateOutputType = {
     id: string | null
+    studentId: string | null
     sem1: number | null
     sem2: number | null
     sem3: number | null
@@ -2703,6 +2702,7 @@ export namespace Prisma {
 
   export type CgpaMaxAggregateOutputType = {
     id: string | null
+    studentId: string | null
     sem1: number | null
     sem2: number | null
     sem3: number | null
@@ -2715,6 +2715,7 @@ export namespace Prisma {
 
   export type CgpaCountAggregateOutputType = {
     id: number
+    studentId: number
     sem1: number
     sem2: number
     sem3: number
@@ -2751,6 +2752,7 @@ export namespace Prisma {
 
   export type CgpaMinAggregateInputType = {
     id?: true
+    studentId?: true
     sem1?: true
     sem2?: true
     sem3?: true
@@ -2763,6 +2765,7 @@ export namespace Prisma {
 
   export type CgpaMaxAggregateInputType = {
     id?: true
+    studentId?: true
     sem1?: true
     sem2?: true
     sem3?: true
@@ -2775,6 +2778,7 @@ export namespace Prisma {
 
   export type CgpaCountAggregateInputType = {
     id?: true
+    studentId?: true
     sem1?: true
     sem2?: true
     sem3?: true
@@ -2874,6 +2878,7 @@ export namespace Prisma {
 
   export type CgpaGroupByOutputType = {
     id: string
+    studentId: string
     sem1: number | null
     sem2: number | null
     sem3: number | null
@@ -2905,6 +2910,7 @@ export namespace Prisma {
 
   export type cgpaSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    studentId?: boolean
     sem1?: boolean
     sem2?: boolean
     sem3?: boolean
@@ -2918,6 +2924,7 @@ export namespace Prisma {
 
   export type cgpaSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    studentId?: boolean
     sem1?: boolean
     sem2?: boolean
     sem3?: boolean
@@ -2931,6 +2938,7 @@ export namespace Prisma {
 
   export type cgpaSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    studentId?: boolean
     sem1?: boolean
     sem2?: boolean
     sem3?: boolean
@@ -2944,6 +2952,7 @@ export namespace Prisma {
 
   export type cgpaSelectScalar = {
     id?: boolean
+    studentId?: boolean
     sem1?: boolean
     sem2?: boolean
     sem3?: boolean
@@ -2954,7 +2963,7 @@ export namespace Prisma {
     sem8?: boolean
   }
 
-  export type cgpaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "sem1" | "sem2" | "sem3" | "sem4" | "sem5" | "sem6" | "sem7" | "sem8", ExtArgs["result"]["cgpa"]>
+  export type cgpaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "studentId" | "sem1" | "sem2" | "sem3" | "sem4" | "sem5" | "sem6" | "sem7" | "sem8", ExtArgs["result"]["cgpa"]>
   export type cgpaInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     student?: boolean | cgpa$studentArgs<ExtArgs>
   }
@@ -2972,6 +2981,7 @@ export namespace Prisma {
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
+      studentId: string
       sem1: number | null
       sem2: number | null
       sem3: number | null
@@ -3405,6 +3415,7 @@ export namespace Prisma {
    */
   interface cgpaFieldRefs {
     readonly id: FieldRef<"cgpa", 'String'>
+    readonly studentId: FieldRef<"cgpa", 'String'>
     readonly sem1: FieldRef<"cgpa", 'Float'>
     readonly sem2: FieldRef<"cgpa", 'Float'>
     readonly sem3: FieldRef<"cgpa", 'Float'>
@@ -3858,52 +3869,82 @@ export namespace Prisma {
 
   export type InternshipMinAggregateOutputType = {
     id: string | null
+    studentId: string | null
     title: string | null
     companyName: string | null
+    roleDescription: string | null
     duration: string | null
-    studentId: string | null
+    startDate: Date | null
+    endDate: Date | null
+    certificateUrl: string | null
+    isVerified: boolean | null
   }
 
   export type InternshipMaxAggregateOutputType = {
     id: string | null
+    studentId: string | null
     title: string | null
     companyName: string | null
+    roleDescription: string | null
     duration: string | null
-    studentId: string | null
+    startDate: Date | null
+    endDate: Date | null
+    certificateUrl: string | null
+    isVerified: boolean | null
   }
 
   export type InternshipCountAggregateOutputType = {
     id: number
+    studentId: number
     title: number
     companyName: number
+    roleDescription: number
     duration: number
-    studentId: number
+    startDate: number
+    endDate: number
+    certificateUrl: number
+    isVerified: number
     _all: number
   }
 
 
   export type InternshipMinAggregateInputType = {
     id?: true
+    studentId?: true
     title?: true
     companyName?: true
+    roleDescription?: true
     duration?: true
-    studentId?: true
+    startDate?: true
+    endDate?: true
+    certificateUrl?: true
+    isVerified?: true
   }
 
   export type InternshipMaxAggregateInputType = {
     id?: true
+    studentId?: true
     title?: true
     companyName?: true
+    roleDescription?: true
     duration?: true
-    studentId?: true
+    startDate?: true
+    endDate?: true
+    certificateUrl?: true
+    isVerified?: true
   }
 
   export type InternshipCountAggregateInputType = {
     id?: true
+    studentId?: true
     title?: true
     companyName?: true
+    roleDescription?: true
     duration?: true
-    studentId?: true
+    startDate?: true
+    endDate?: true
+    certificateUrl?: true
+    isVerified?: true
     _all?: true
   }
 
@@ -3981,10 +4022,15 @@ export namespace Prisma {
 
   export type InternshipGroupByOutputType = {
     id: string
+    studentId: string
     title: string | null
     companyName: string | null
+    roleDescription: string
     duration: string | null
-    studentId: string | null
+    startDate: Date | null
+    endDate: Date | null
+    certificateUrl: string | null
+    isVerified: boolean
     _count: InternshipCountAggregateOutputType | null
     _min: InternshipMinAggregateOutputType | null
     _max: InternshipMaxAggregateOutputType | null
@@ -4006,40 +4052,60 @@ export namespace Prisma {
 
   export type InternshipSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    studentId?: boolean
     title?: boolean
     companyName?: boolean
+    roleDescription?: boolean
     duration?: boolean
-    studentId?: boolean
+    startDate?: boolean
+    endDate?: boolean
+    certificateUrl?: boolean
+    isVerified?: boolean
     student?: boolean | Internship$studentArgs<ExtArgs>
   }, ExtArgs["result"]["internship"]>
 
   export type InternshipSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    studentId?: boolean
     title?: boolean
     companyName?: boolean
+    roleDescription?: boolean
     duration?: boolean
-    studentId?: boolean
+    startDate?: boolean
+    endDate?: boolean
+    certificateUrl?: boolean
+    isVerified?: boolean
     student?: boolean | Internship$studentArgs<ExtArgs>
   }, ExtArgs["result"]["internship"]>
 
   export type InternshipSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    studentId?: boolean
     title?: boolean
     companyName?: boolean
+    roleDescription?: boolean
     duration?: boolean
-    studentId?: boolean
+    startDate?: boolean
+    endDate?: boolean
+    certificateUrl?: boolean
+    isVerified?: boolean
     student?: boolean | Internship$studentArgs<ExtArgs>
   }, ExtArgs["result"]["internship"]>
 
   export type InternshipSelectScalar = {
     id?: boolean
+    studentId?: boolean
     title?: boolean
     companyName?: boolean
+    roleDescription?: boolean
     duration?: boolean
-    studentId?: boolean
+    startDate?: boolean
+    endDate?: boolean
+    certificateUrl?: boolean
+    isVerified?: boolean
   }
 
-  export type InternshipOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "companyName" | "duration" | "studentId", ExtArgs["result"]["internship"]>
+  export type InternshipOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "studentId" | "title" | "companyName" | "roleDescription" | "duration" | "startDate" | "endDate" | "certificateUrl" | "isVerified", ExtArgs["result"]["internship"]>
   export type InternshipInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     student?: boolean | Internship$studentArgs<ExtArgs>
   }
@@ -4057,10 +4123,15 @@ export namespace Prisma {
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
+      studentId: string
       title: string | null
       companyName: string | null
+      roleDescription: string
       duration: string | null
-      studentId: string | null
+      startDate: Date | null
+      endDate: Date | null
+      certificateUrl: string | null
+      isVerified: boolean
     }, ExtArgs["result"]["internship"]>
     composites: {}
   }
@@ -4486,10 +4557,15 @@ export namespace Prisma {
    */
   interface InternshipFieldRefs {
     readonly id: FieldRef<"Internship", 'String'>
+    readonly studentId: FieldRef<"Internship", 'String'>
     readonly title: FieldRef<"Internship", 'String'>
     readonly companyName: FieldRef<"Internship", 'String'>
+    readonly roleDescription: FieldRef<"Internship", 'String'>
     readonly duration: FieldRef<"Internship", 'String'>
-    readonly studentId: FieldRef<"Internship", 'String'>
+    readonly startDate: FieldRef<"Internship", 'DateTime'>
+    readonly endDate: FieldRef<"Internship", 'DateTime'>
+    readonly certificateUrl: FieldRef<"Internship", 'String'>
+    readonly isVerified: FieldRef<"Internship", 'Boolean'>
   }
     
 
@@ -4708,7 +4784,7 @@ export namespace Prisma {
     /**
      * The data needed to create a Internship.
      */
-    data?: XOR<InternshipCreateInput, InternshipUncheckedCreateInput>
+    data: XOR<InternshipCreateInput, InternshipUncheckedCreateInput>
   }
 
   /**
@@ -4937,7 +5013,8 @@ export namespace Prisma {
     id: string | null
     title: string | null
     details: string | null
-    time: Date | null
+    certificateUrl: string | null
+    AchievementTime: string | null
     studentId: string | null
   }
 
@@ -4945,7 +5022,8 @@ export namespace Prisma {
     id: string | null
     title: string | null
     details: string | null
-    time: Date | null
+    certificateUrl: string | null
+    AchievementTime: string | null
     studentId: string | null
   }
 
@@ -4953,7 +5031,8 @@ export namespace Prisma {
     id: number
     title: number
     details: number
-    time: number
+    certificateUrl: number
+    AchievementTime: number
     studentId: number
     _all: number
   }
@@ -4963,7 +5042,8 @@ export namespace Prisma {
     id?: true
     title?: true
     details?: true
-    time?: true
+    certificateUrl?: true
+    AchievementTime?: true
     studentId?: true
   }
 
@@ -4971,7 +5051,8 @@ export namespace Prisma {
     id?: true
     title?: true
     details?: true
-    time?: true
+    certificateUrl?: true
+    AchievementTime?: true
     studentId?: true
   }
 
@@ -4979,7 +5060,8 @@ export namespace Prisma {
     id?: true
     title?: true
     details?: true
-    time?: true
+    certificateUrl?: true
+    AchievementTime?: true
     studentId?: true
     _all?: true
   }
@@ -5058,9 +5140,10 @@ export namespace Prisma {
 
   export type AchievementGroupByOutputType = {
     id: string
-    title: string | null
+    title: string
     details: string | null
-    time: Date | null
+    certificateUrl: string
+    AchievementTime: string | null
     studentId: string
     _count: AchievementCountAggregateOutputType | null
     _min: AchievementMinAggregateOutputType | null
@@ -5085,7 +5168,8 @@ export namespace Prisma {
     id?: boolean
     title?: boolean
     details?: boolean
-    time?: boolean
+    certificateUrl?: boolean
+    AchievementTime?: boolean
     studentId?: boolean
     student?: boolean | Achievement$studentArgs<ExtArgs>
   }, ExtArgs["result"]["achievement"]>
@@ -5094,7 +5178,8 @@ export namespace Prisma {
     id?: boolean
     title?: boolean
     details?: boolean
-    time?: boolean
+    certificateUrl?: boolean
+    AchievementTime?: boolean
     studentId?: boolean
     student?: boolean | Achievement$studentArgs<ExtArgs>
   }, ExtArgs["result"]["achievement"]>
@@ -5103,7 +5188,8 @@ export namespace Prisma {
     id?: boolean
     title?: boolean
     details?: boolean
-    time?: boolean
+    certificateUrl?: boolean
+    AchievementTime?: boolean
     studentId?: boolean
     student?: boolean | Achievement$studentArgs<ExtArgs>
   }, ExtArgs["result"]["achievement"]>
@@ -5112,11 +5198,12 @@ export namespace Prisma {
     id?: boolean
     title?: boolean
     details?: boolean
-    time?: boolean
+    certificateUrl?: boolean
+    AchievementTime?: boolean
     studentId?: boolean
   }
 
-  export type AchievementOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "details" | "time" | "studentId", ExtArgs["result"]["achievement"]>
+  export type AchievementOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "details" | "certificateUrl" | "AchievementTime" | "studentId", ExtArgs["result"]["achievement"]>
   export type AchievementInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     student?: boolean | Achievement$studentArgs<ExtArgs>
   }
@@ -5134,9 +5221,10 @@ export namespace Prisma {
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
-      title: string | null
+      title: string
       details: string | null
-      time: Date | null
+      certificateUrl: string
+      AchievementTime: string | null
       studentId: string
     }, ExtArgs["result"]["achievement"]>
     composites: {}
@@ -5565,7 +5653,8 @@ export namespace Prisma {
     readonly id: FieldRef<"Achievement", 'String'>
     readonly title: FieldRef<"Achievement", 'String'>
     readonly details: FieldRef<"Achievement", 'String'>
-    readonly time: FieldRef<"Achievement", 'DateTime'>
+    readonly certificateUrl: FieldRef<"Achievement", 'String'>
+    readonly AchievementTime: FieldRef<"Achievement", 'String'>
     readonly studentId: FieldRef<"Achievement", 'String'>
   }
     
@@ -7020,18 +7109,23 @@ export namespace Prisma {
 
   export type AlumniMinAggregateOutputType = {
     id: string | null
+    studentId: string | null
     placedBy: string | null
+    currentOrg: string | null
     package: string | null
   }
 
   export type AlumniMaxAggregateOutputType = {
     id: string | null
+    studentId: string | null
     placedBy: string | null
+    currentOrg: string | null
     package: string | null
   }
 
   export type AlumniCountAggregateOutputType = {
     id: number
+    studentId: number
     placedBy: number
     pastOrg: number
     currentOrg: number
@@ -7042,18 +7136,23 @@ export namespace Prisma {
 
   export type AlumniMinAggregateInputType = {
     id?: true
+    studentId?: true
     placedBy?: true
+    currentOrg?: true
     package?: true
   }
 
   export type AlumniMaxAggregateInputType = {
     id?: true
+    studentId?: true
     placedBy?: true
+    currentOrg?: true
     package?: true
   }
 
   export type AlumniCountAggregateInputType = {
     id?: true
+    studentId?: true
     placedBy?: true
     pastOrg?: true
     currentOrg?: true
@@ -7135,9 +7234,10 @@ export namespace Prisma {
 
   export type AlumniGroupByOutputType = {
     id: string
+    studentId: string
     placedBy: string
     pastOrg: string[]
-    currentOrg: string[]
+    currentOrg: string
     package: string
     _count: AlumniCountAggregateOutputType | null
     _min: AlumniMinAggregateOutputType | null
@@ -7160,6 +7260,7 @@ export namespace Prisma {
 
   export type AlumniSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    studentId?: boolean
     placedBy?: boolean
     pastOrg?: boolean
     currentOrg?: boolean
@@ -7169,6 +7270,7 @@ export namespace Prisma {
 
   export type AlumniSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    studentId?: boolean
     placedBy?: boolean
     pastOrg?: boolean
     currentOrg?: boolean
@@ -7178,6 +7280,7 @@ export namespace Prisma {
 
   export type AlumniSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    studentId?: boolean
     placedBy?: boolean
     pastOrg?: boolean
     currentOrg?: boolean
@@ -7187,13 +7290,14 @@ export namespace Prisma {
 
   export type AlumniSelectScalar = {
     id?: boolean
+    studentId?: boolean
     placedBy?: boolean
     pastOrg?: boolean
     currentOrg?: boolean
     package?: boolean
   }
 
-  export type AlumniOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "placedBy" | "pastOrg" | "currentOrg" | "package", ExtArgs["result"]["alumni"]>
+  export type AlumniOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "studentId" | "placedBy" | "pastOrg" | "currentOrg" | "package", ExtArgs["result"]["alumni"]>
   export type AlumniInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     student?: boolean | Alumni$studentArgs<ExtArgs>
   }
@@ -7211,9 +7315,10 @@ export namespace Prisma {
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
+      studentId: string
       placedBy: string
       pastOrg: string[]
-      currentOrg: string[]
+      currentOrg: string
       package: string
     }, ExtArgs["result"]["alumni"]>
     composites: {}
@@ -7640,9 +7745,10 @@ export namespace Prisma {
    */
   interface AlumniFieldRefs {
     readonly id: FieldRef<"Alumni", 'String'>
+    readonly studentId: FieldRef<"Alumni", 'String'>
     readonly placedBy: FieldRef<"Alumni", 'String'>
     readonly pastOrg: FieldRef<"Alumni", 'String[]'>
-    readonly currentOrg: FieldRef<"Alumni", 'String[]'>
+    readonly currentOrg: FieldRef<"Alumni", 'String'>
     readonly package: FieldRef<"Alumni", 'String'>
   }
     
@@ -8114,6 +8220,7 @@ export namespace Prisma {
 
   export const CgpaScalarFieldEnum: {
     id: 'id',
+    studentId: 'studentId',
     sem1: 'sem1',
     sem2: 'sem2',
     sem3: 'sem3',
@@ -8129,10 +8236,15 @@ export namespace Prisma {
 
   export const InternshipScalarFieldEnum: {
     id: 'id',
+    studentId: 'studentId',
     title: 'title',
     companyName: 'companyName',
+    roleDescription: 'roleDescription',
     duration: 'duration',
-    studentId: 'studentId'
+    startDate: 'startDate',
+    endDate: 'endDate',
+    certificateUrl: 'certificateUrl',
+    isVerified: 'isVerified'
   };
 
   export type InternshipScalarFieldEnum = (typeof InternshipScalarFieldEnum)[keyof typeof InternshipScalarFieldEnum]
@@ -8142,7 +8254,8 @@ export namespace Prisma {
     id: 'id',
     title: 'title',
     details: 'details',
-    time: 'time',
+    certificateUrl: 'certificateUrl',
+    AchievementTime: 'AchievementTime',
     studentId: 'studentId'
   };
 
@@ -8163,6 +8276,7 @@ export namespace Prisma {
 
   export const AlumniScalarFieldEnum: {
     id: 'id',
+    studentId: 'studentId',
     placedBy: 'placedBy',
     pastOrg: 'pastOrg',
     currentOrg: 'currentOrg',
@@ -8400,6 +8514,7 @@ export namespace Prisma {
     OR?: cgpaWhereInput[]
     NOT?: cgpaWhereInput | cgpaWhereInput[]
     id?: StringFilter<"cgpa"> | string
+    studentId?: StringFilter<"cgpa"> | string
     sem1?: FloatNullableFilter<"cgpa"> | number | null
     sem2?: FloatNullableFilter<"cgpa"> | number | null
     sem3?: FloatNullableFilter<"cgpa"> | number | null
@@ -8413,6 +8528,7 @@ export namespace Prisma {
 
   export type cgpaOrderByWithRelationInput = {
     id?: SortOrder
+    studentId?: SortOrder
     sem1?: SortOrderInput | SortOrder
     sem2?: SortOrderInput | SortOrder
     sem3?: SortOrderInput | SortOrder
@@ -8429,6 +8545,7 @@ export namespace Prisma {
     AND?: cgpaWhereInput | cgpaWhereInput[]
     OR?: cgpaWhereInput[]
     NOT?: cgpaWhereInput | cgpaWhereInput[]
+    studentId?: StringFilter<"cgpa"> | string
     sem1?: FloatNullableFilter<"cgpa"> | number | null
     sem2?: FloatNullableFilter<"cgpa"> | number | null
     sem3?: FloatNullableFilter<"cgpa"> | number | null
@@ -8442,6 +8559,7 @@ export namespace Prisma {
 
   export type cgpaOrderByWithAggregationInput = {
     id?: SortOrder
+    studentId?: SortOrder
     sem1?: SortOrderInput | SortOrder
     sem2?: SortOrderInput | SortOrder
     sem3?: SortOrderInput | SortOrder
@@ -8462,6 +8580,7 @@ export namespace Prisma {
     OR?: cgpaScalarWhereWithAggregatesInput[]
     NOT?: cgpaScalarWhereWithAggregatesInput | cgpaScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"cgpa"> | string
+    studentId?: StringWithAggregatesFilter<"cgpa"> | string
     sem1?: FloatNullableWithAggregatesFilter<"cgpa"> | number | null
     sem2?: FloatNullableWithAggregatesFilter<"cgpa"> | number | null
     sem3?: FloatNullableWithAggregatesFilter<"cgpa"> | number | null
@@ -8477,19 +8596,29 @@ export namespace Prisma {
     OR?: InternshipWhereInput[]
     NOT?: InternshipWhereInput | InternshipWhereInput[]
     id?: StringFilter<"Internship"> | string
+    studentId?: StringFilter<"Internship"> | string
     title?: StringNullableFilter<"Internship"> | string | null
     companyName?: StringNullableFilter<"Internship"> | string | null
+    roleDescription?: StringFilter<"Internship"> | string
     duration?: StringNullableFilter<"Internship"> | string | null
-    studentId?: StringNullableFilter<"Internship"> | string | null
+    startDate?: DateTimeNullableFilter<"Internship"> | Date | string | null
+    endDate?: DateTimeNullableFilter<"Internship"> | Date | string | null
+    certificateUrl?: StringNullableFilter<"Internship"> | string | null
+    isVerified?: BoolFilter<"Internship"> | boolean
     student?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }
 
   export type InternshipOrderByWithRelationInput = {
     id?: SortOrder
+    studentId?: SortOrder
     title?: SortOrderInput | SortOrder
     companyName?: SortOrderInput | SortOrder
+    roleDescription?: SortOrder
     duration?: SortOrderInput | SortOrder
-    studentId?: SortOrderInput | SortOrder
+    startDate?: SortOrderInput | SortOrder
+    endDate?: SortOrderInput | SortOrder
+    certificateUrl?: SortOrderInput | SortOrder
+    isVerified?: SortOrder
     student?: UserOrderByWithRelationInput
   }
 
@@ -8498,19 +8627,29 @@ export namespace Prisma {
     AND?: InternshipWhereInput | InternshipWhereInput[]
     OR?: InternshipWhereInput[]
     NOT?: InternshipWhereInput | InternshipWhereInput[]
+    studentId?: StringFilter<"Internship"> | string
     title?: StringNullableFilter<"Internship"> | string | null
     companyName?: StringNullableFilter<"Internship"> | string | null
+    roleDescription?: StringFilter<"Internship"> | string
     duration?: StringNullableFilter<"Internship"> | string | null
-    studentId?: StringNullableFilter<"Internship"> | string | null
+    startDate?: DateTimeNullableFilter<"Internship"> | Date | string | null
+    endDate?: DateTimeNullableFilter<"Internship"> | Date | string | null
+    certificateUrl?: StringNullableFilter<"Internship"> | string | null
+    isVerified?: BoolFilter<"Internship"> | boolean
     student?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }, "id">
 
   export type InternshipOrderByWithAggregationInput = {
     id?: SortOrder
+    studentId?: SortOrder
     title?: SortOrderInput | SortOrder
     companyName?: SortOrderInput | SortOrder
+    roleDescription?: SortOrder
     duration?: SortOrderInput | SortOrder
-    studentId?: SortOrderInput | SortOrder
+    startDate?: SortOrderInput | SortOrder
+    endDate?: SortOrderInput | SortOrder
+    certificateUrl?: SortOrderInput | SortOrder
+    isVerified?: SortOrder
     _count?: InternshipCountOrderByAggregateInput
     _max?: InternshipMaxOrderByAggregateInput
     _min?: InternshipMinOrderByAggregateInput
@@ -8521,10 +8660,15 @@ export namespace Prisma {
     OR?: InternshipScalarWhereWithAggregatesInput[]
     NOT?: InternshipScalarWhereWithAggregatesInput | InternshipScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Internship"> | string
+    studentId?: StringWithAggregatesFilter<"Internship"> | string
     title?: StringNullableWithAggregatesFilter<"Internship"> | string | null
     companyName?: StringNullableWithAggregatesFilter<"Internship"> | string | null
+    roleDescription?: StringWithAggregatesFilter<"Internship"> | string
     duration?: StringNullableWithAggregatesFilter<"Internship"> | string | null
-    studentId?: StringNullableWithAggregatesFilter<"Internship"> | string | null
+    startDate?: DateTimeNullableWithAggregatesFilter<"Internship"> | Date | string | null
+    endDate?: DateTimeNullableWithAggregatesFilter<"Internship"> | Date | string | null
+    certificateUrl?: StringNullableWithAggregatesFilter<"Internship"> | string | null
+    isVerified?: BoolWithAggregatesFilter<"Internship"> | boolean
   }
 
   export type AchievementWhereInput = {
@@ -8532,18 +8676,20 @@ export namespace Prisma {
     OR?: AchievementWhereInput[]
     NOT?: AchievementWhereInput | AchievementWhereInput[]
     id?: StringFilter<"Achievement"> | string
-    title?: StringNullableFilter<"Achievement"> | string | null
+    title?: StringFilter<"Achievement"> | string
     details?: StringNullableFilter<"Achievement"> | string | null
-    time?: DateTimeNullableFilter<"Achievement"> | Date | string | null
+    certificateUrl?: StringFilter<"Achievement"> | string
+    AchievementTime?: StringNullableFilter<"Achievement"> | string | null
     studentId?: StringFilter<"Achievement"> | string
     student?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }
 
   export type AchievementOrderByWithRelationInput = {
     id?: SortOrder
-    title?: SortOrderInput | SortOrder
+    title?: SortOrder
     details?: SortOrderInput | SortOrder
-    time?: SortOrderInput | SortOrder
+    certificateUrl?: SortOrder
+    AchievementTime?: SortOrderInput | SortOrder
     studentId?: SortOrder
     student?: UserOrderByWithRelationInput
   }
@@ -8553,18 +8699,20 @@ export namespace Prisma {
     AND?: AchievementWhereInput | AchievementWhereInput[]
     OR?: AchievementWhereInput[]
     NOT?: AchievementWhereInput | AchievementWhereInput[]
-    title?: StringNullableFilter<"Achievement"> | string | null
+    title?: StringFilter<"Achievement"> | string
     details?: StringNullableFilter<"Achievement"> | string | null
-    time?: DateTimeNullableFilter<"Achievement"> | Date | string | null
+    certificateUrl?: StringFilter<"Achievement"> | string
+    AchievementTime?: StringNullableFilter<"Achievement"> | string | null
     studentId?: StringFilter<"Achievement"> | string
     student?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }, "id">
 
   export type AchievementOrderByWithAggregationInput = {
     id?: SortOrder
-    title?: SortOrderInput | SortOrder
+    title?: SortOrder
     details?: SortOrderInput | SortOrder
-    time?: SortOrderInput | SortOrder
+    certificateUrl?: SortOrder
+    AchievementTime?: SortOrderInput | SortOrder
     studentId?: SortOrder
     _count?: AchievementCountOrderByAggregateInput
     _max?: AchievementMaxOrderByAggregateInput
@@ -8576,9 +8724,10 @@ export namespace Prisma {
     OR?: AchievementScalarWhereWithAggregatesInput[]
     NOT?: AchievementScalarWhereWithAggregatesInput | AchievementScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Achievement"> | string
-    title?: StringNullableWithAggregatesFilter<"Achievement"> | string | null
+    title?: StringWithAggregatesFilter<"Achievement"> | string
     details?: StringNullableWithAggregatesFilter<"Achievement"> | string | null
-    time?: DateTimeNullableWithAggregatesFilter<"Achievement"> | Date | string | null
+    certificateUrl?: StringWithAggregatesFilter<"Achievement"> | string
+    AchievementTime?: StringNullableWithAggregatesFilter<"Achievement"> | string | null
     studentId?: StringWithAggregatesFilter<"Achievement"> | string
   }
 
@@ -8644,15 +8793,17 @@ export namespace Prisma {
     OR?: AlumniWhereInput[]
     NOT?: AlumniWhereInput | AlumniWhereInput[]
     id?: StringFilter<"Alumni"> | string
+    studentId?: StringFilter<"Alumni"> | string
     placedBy?: StringFilter<"Alumni"> | string
     pastOrg?: StringNullableListFilter<"Alumni">
-    currentOrg?: StringNullableListFilter<"Alumni">
+    currentOrg?: StringFilter<"Alumni"> | string
     package?: StringFilter<"Alumni"> | string
     student?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }
 
   export type AlumniOrderByWithRelationInput = {
     id?: SortOrder
+    studentId?: SortOrder
     placedBy?: SortOrder
     pastOrg?: SortOrder
     currentOrg?: SortOrder
@@ -8662,18 +8813,20 @@ export namespace Prisma {
 
   export type AlumniWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    studentId?: string
     AND?: AlumniWhereInput | AlumniWhereInput[]
     OR?: AlumniWhereInput[]
     NOT?: AlumniWhereInput | AlumniWhereInput[]
     placedBy?: StringFilter<"Alumni"> | string
     pastOrg?: StringNullableListFilter<"Alumni">
-    currentOrg?: StringNullableListFilter<"Alumni">
+    currentOrg?: StringFilter<"Alumni"> | string
     package?: StringFilter<"Alumni"> | string
     student?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
-  }, "id">
+  }, "id" | "studentId">
 
   export type AlumniOrderByWithAggregationInput = {
     id?: SortOrder
+    studentId?: SortOrder
     placedBy?: SortOrder
     pastOrg?: SortOrder
     currentOrg?: SortOrder
@@ -8688,9 +8841,10 @@ export namespace Prisma {
     OR?: AlumniScalarWhereWithAggregatesInput[]
     NOT?: AlumniScalarWhereWithAggregatesInput | AlumniScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Alumni"> | string
+    studentId?: StringWithAggregatesFilter<"Alumni"> | string
     placedBy?: StringWithAggregatesFilter<"Alumni"> | string
     pastOrg?: StringNullableListFilter<"Alumni">
-    currentOrg?: StringNullableListFilter<"Alumni">
+    currentOrg?: StringWithAggregatesFilter<"Alumni"> | string
     package?: StringWithAggregatesFilter<"Alumni"> | string
   }
 
@@ -8837,6 +8991,7 @@ export namespace Prisma {
   }
 
   export type cgpaCreateInput = {
+    id?: string
     sem1?: number | null
     sem2?: number | null
     sem3?: number | null
@@ -8849,7 +9004,8 @@ export namespace Prisma {
   }
 
   export type cgpaUncheckedCreateInput = {
-    id: string
+    id?: string
+    studentId: string
     sem1?: number | null
     sem2?: number | null
     sem3?: number | null
@@ -8861,6 +9017,7 @@ export namespace Prisma {
   }
 
   export type cgpaUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
     sem1?: NullableFloatFieldUpdateOperationsInput | number | null
     sem2?: NullableFloatFieldUpdateOperationsInput | number | null
     sem3?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -8874,6 +9031,7 @@ export namespace Prisma {
 
   export type cgpaUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
     sem1?: NullableFloatFieldUpdateOperationsInput | number | null
     sem2?: NullableFloatFieldUpdateOperationsInput | number | null
     sem3?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -8885,7 +9043,8 @@ export namespace Prisma {
   }
 
   export type cgpaCreateManyInput = {
-    id: string
+    id?: string
+    studentId: string
     sem1?: number | null
     sem2?: number | null
     sem3?: number | null
@@ -8897,6 +9056,7 @@ export namespace Prisma {
   }
 
   export type cgpaUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
     sem1?: NullableFloatFieldUpdateOperationsInput | number | null
     sem2?: NullableFloatFieldUpdateOperationsInput | number | null
     sem3?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -8909,6 +9069,7 @@ export namespace Prisma {
 
   export type cgpaUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
     sem1?: NullableFloatFieldUpdateOperationsInput | number | null
     sem2?: NullableFloatFieldUpdateOperationsInput | number | null
     sem3?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -8920,112 +9081,154 @@ export namespace Prisma {
   }
 
   export type InternshipCreateInput = {
+    id?: string
     title?: string | null
     companyName?: string | null
+    roleDescription: string
     duration?: string | null
-    studentId?: string | null
+    startDate?: Date | string | null
+    endDate?: Date | string | null
+    certificateUrl?: string | null
+    isVerified?: boolean
     student?: UserCreateNestedOneWithoutInternshipsInput
   }
 
   export type InternshipUncheckedCreateInput = {
     id?: string
+    studentId: string
     title?: string | null
     companyName?: string | null
+    roleDescription: string
     duration?: string | null
-    studentId?: string | null
+    startDate?: Date | string | null
+    endDate?: Date | string | null
+    certificateUrl?: string | null
+    isVerified?: boolean
   }
 
   export type InternshipUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
     title?: NullableStringFieldUpdateOperationsInput | string | null
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    roleDescription?: StringFieldUpdateOperationsInput | string
     duration?: NullableStringFieldUpdateOperationsInput | string | null
-    studentId?: NullableStringFieldUpdateOperationsInput | string | null
+    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    certificateUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
     student?: UserUpdateOneWithoutInternshipsNestedInput
   }
 
   export type InternshipUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
     title?: NullableStringFieldUpdateOperationsInput | string | null
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    roleDescription?: StringFieldUpdateOperationsInput | string
     duration?: NullableStringFieldUpdateOperationsInput | string | null
-    studentId?: NullableStringFieldUpdateOperationsInput | string | null
+    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    certificateUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type InternshipCreateManyInput = {
     id?: string
+    studentId: string
     title?: string | null
     companyName?: string | null
+    roleDescription: string
     duration?: string | null
-    studentId?: string | null
+    startDate?: Date | string | null
+    endDate?: Date | string | null
+    certificateUrl?: string | null
+    isVerified?: boolean
   }
 
   export type InternshipUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
     title?: NullableStringFieldUpdateOperationsInput | string | null
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    roleDescription?: StringFieldUpdateOperationsInput | string
     duration?: NullableStringFieldUpdateOperationsInput | string | null
-    studentId?: NullableStringFieldUpdateOperationsInput | string | null
+    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    certificateUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type InternshipUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
     title?: NullableStringFieldUpdateOperationsInput | string | null
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    roleDescription?: StringFieldUpdateOperationsInput | string
     duration?: NullableStringFieldUpdateOperationsInput | string | null
-    studentId?: NullableStringFieldUpdateOperationsInput | string | null
+    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    certificateUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type AchievementCreateInput = {
-    title?: string | null
+    id?: string
+    title: string
     details?: string | null
-    time?: Date | string | null
-    studentId: string
+    certificateUrl: string
+    AchievementTime?: string | null
     student?: UserCreateNestedOneWithoutAchievementsInput
   }
 
   export type AchievementUncheckedCreateInput = {
     id?: string
-    title?: string | null
+    title: string
     details?: string | null
-    time?: Date | string | null
+    certificateUrl: string
+    AchievementTime?: string | null
     studentId: string
   }
 
   export type AchievementUpdateInput = {
-    title?: NullableStringFieldUpdateOperationsInput | string | null
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
     details?: NullableStringFieldUpdateOperationsInput | string | null
-    time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    studentId?: StringFieldUpdateOperationsInput | string
+    certificateUrl?: StringFieldUpdateOperationsInput | string
+    AchievementTime?: NullableStringFieldUpdateOperationsInput | string | null
     student?: UserUpdateOneWithoutAchievementsNestedInput
   }
 
   export type AchievementUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    title?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: StringFieldUpdateOperationsInput | string
     details?: NullableStringFieldUpdateOperationsInput | string | null
-    time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    certificateUrl?: StringFieldUpdateOperationsInput | string
+    AchievementTime?: NullableStringFieldUpdateOperationsInput | string | null
     studentId?: StringFieldUpdateOperationsInput | string
   }
 
   export type AchievementCreateManyInput = {
     id?: string
-    title?: string | null
+    title: string
     details?: string | null
-    time?: Date | string | null
+    certificateUrl: string
+    AchievementTime?: string | null
     studentId: string
   }
 
   export type AchievementUpdateManyMutationInput = {
-    title?: NullableStringFieldUpdateOperationsInput | string | null
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
     details?: NullableStringFieldUpdateOperationsInput | string | null
-    time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    studentId?: StringFieldUpdateOperationsInput | string
+    certificateUrl?: StringFieldUpdateOperationsInput | string
+    AchievementTime?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type AchievementUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
-    title?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: StringFieldUpdateOperationsInput | string
     details?: NullableStringFieldUpdateOperationsInput | string | null
-    time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    certificateUrl?: StringFieldUpdateOperationsInput | string
+    AchievementTime?: NullableStringFieldUpdateOperationsInput | string | null
     studentId?: StringFieldUpdateOperationsInput | string
   }
 
@@ -9093,57 +9296,64 @@ export namespace Prisma {
   }
 
   export type AlumniCreateInput = {
+    id?: string
     placedBy: string
     pastOrg?: AlumniCreatepastOrgInput | string[]
-    currentOrg?: AlumniCreatecurrentOrgInput | string[]
+    currentOrg: string
     package: string
     student?: UserCreateNestedOneWithoutAlumniInput
   }
 
   export type AlumniUncheckedCreateInput = {
     id?: string
+    studentId: string
     placedBy: string
     pastOrg?: AlumniCreatepastOrgInput | string[]
-    currentOrg?: AlumniCreatecurrentOrgInput | string[]
+    currentOrg: string
     package: string
   }
 
   export type AlumniUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
     placedBy?: StringFieldUpdateOperationsInput | string
     pastOrg?: AlumniUpdatepastOrgInput | string[]
-    currentOrg?: AlumniUpdatecurrentOrgInput | string[]
+    currentOrg?: StringFieldUpdateOperationsInput | string
     package?: StringFieldUpdateOperationsInput | string
     student?: UserUpdateOneWithoutAlumniNestedInput
   }
 
   export type AlumniUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
     placedBy?: StringFieldUpdateOperationsInput | string
     pastOrg?: AlumniUpdatepastOrgInput | string[]
-    currentOrg?: AlumniUpdatecurrentOrgInput | string[]
+    currentOrg?: StringFieldUpdateOperationsInput | string
     package?: StringFieldUpdateOperationsInput | string
   }
 
   export type AlumniCreateManyInput = {
     id?: string
+    studentId: string
     placedBy: string
     pastOrg?: AlumniCreatepastOrgInput | string[]
-    currentOrg?: AlumniCreatecurrentOrgInput | string[]
+    currentOrg: string
     package: string
   }
 
   export type AlumniUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
     placedBy?: StringFieldUpdateOperationsInput | string
     pastOrg?: AlumniUpdatepastOrgInput | string[]
-    currentOrg?: AlumniUpdatecurrentOrgInput | string[]
+    currentOrg?: StringFieldUpdateOperationsInput | string
     package?: StringFieldUpdateOperationsInput | string
   }
 
   export type AlumniUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
     placedBy?: StringFieldUpdateOperationsInput | string
     pastOrg?: AlumniUpdatepastOrgInput | string[]
-    currentOrg?: AlumniUpdatecurrentOrgInput | string[]
+    currentOrg?: StringFieldUpdateOperationsInput | string
     package?: StringFieldUpdateOperationsInput | string
   }
 
@@ -9386,6 +9596,7 @@ export namespace Prisma {
 
   export type cgpaCountOrderByAggregateInput = {
     id?: SortOrder
+    studentId?: SortOrder
     sem1?: SortOrder
     sem2?: SortOrder
     sem3?: SortOrder
@@ -9409,6 +9620,7 @@ export namespace Prisma {
 
   export type cgpaMaxOrderByAggregateInput = {
     id?: SortOrder
+    studentId?: SortOrder
     sem1?: SortOrder
     sem2?: SortOrder
     sem3?: SortOrder
@@ -9421,6 +9633,7 @@ export namespace Prisma {
 
   export type cgpaMinOrderByAggregateInput = {
     id?: SortOrder
+    studentId?: SortOrder
     sem1?: SortOrder
     sem2?: SortOrder
     sem3?: SortOrder
@@ -9458,30 +9671,6 @@ export namespace Prisma {
     _max?: NestedFloatNullableFilter<$PrismaModel>
   }
 
-  export type InternshipCountOrderByAggregateInput = {
-    id?: SortOrder
-    title?: SortOrder
-    companyName?: SortOrder
-    duration?: SortOrder
-    studentId?: SortOrder
-  }
-
-  export type InternshipMaxOrderByAggregateInput = {
-    id?: SortOrder
-    title?: SortOrder
-    companyName?: SortOrder
-    duration?: SortOrder
-    studentId?: SortOrder
-  }
-
-  export type InternshipMinOrderByAggregateInput = {
-    id?: SortOrder
-    title?: SortOrder
-    companyName?: SortOrder
-    duration?: SortOrder
-    studentId?: SortOrder
-  }
-
   export type DateTimeNullableFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
@@ -9493,28 +9682,43 @@ export namespace Prisma {
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
-  export type AchievementCountOrderByAggregateInput = {
+  export type InternshipCountOrderByAggregateInput = {
     id?: SortOrder
-    title?: SortOrder
-    details?: SortOrder
-    time?: SortOrder
     studentId?: SortOrder
+    title?: SortOrder
+    companyName?: SortOrder
+    roleDescription?: SortOrder
+    duration?: SortOrder
+    startDate?: SortOrder
+    endDate?: SortOrder
+    certificateUrl?: SortOrder
+    isVerified?: SortOrder
   }
 
-  export type AchievementMaxOrderByAggregateInput = {
+  export type InternshipMaxOrderByAggregateInput = {
     id?: SortOrder
-    title?: SortOrder
-    details?: SortOrder
-    time?: SortOrder
     studentId?: SortOrder
+    title?: SortOrder
+    companyName?: SortOrder
+    roleDescription?: SortOrder
+    duration?: SortOrder
+    startDate?: SortOrder
+    endDate?: SortOrder
+    certificateUrl?: SortOrder
+    isVerified?: SortOrder
   }
 
-  export type AchievementMinOrderByAggregateInput = {
+  export type InternshipMinOrderByAggregateInput = {
     id?: SortOrder
-    title?: SortOrder
-    details?: SortOrder
-    time?: SortOrder
     studentId?: SortOrder
+    title?: SortOrder
+    companyName?: SortOrder
+    roleDescription?: SortOrder
+    duration?: SortOrder
+    startDate?: SortOrder
+    endDate?: SortOrder
+    certificateUrl?: SortOrder
+    isVerified?: SortOrder
   }
 
   export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -9529,6 +9733,33 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedDateTimeNullableFilter<$PrismaModel>
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type AchievementCountOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    details?: SortOrder
+    certificateUrl?: SortOrder
+    AchievementTime?: SortOrder
+    studentId?: SortOrder
+  }
+
+  export type AchievementMaxOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    details?: SortOrder
+    certificateUrl?: SortOrder
+    AchievementTime?: SortOrder
+    studentId?: SortOrder
+  }
+
+  export type AchievementMinOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    details?: SortOrder
+    certificateUrl?: SortOrder
+    AchievementTime?: SortOrder
+    studentId?: SortOrder
   }
 
   export type AdminCountOrderByAggregateInput = {
@@ -9560,6 +9791,7 @@ export namespace Prisma {
 
   export type AlumniCountOrderByAggregateInput = {
     id?: SortOrder
+    studentId?: SortOrder
     placedBy?: SortOrder
     pastOrg?: SortOrder
     currentOrg?: SortOrder
@@ -9568,13 +9800,17 @@ export namespace Prisma {
 
   export type AlumniMaxOrderByAggregateInput = {
     id?: SortOrder
+    studentId?: SortOrder
     placedBy?: SortOrder
+    currentOrg?: SortOrder
     package?: SortOrder
   }
 
   export type AlumniMinOrderByAggregateInput = {
     id?: SortOrder
+    studentId?: SortOrder
     placedBy?: SortOrder
+    currentOrg?: SortOrder
     package?: SortOrder
   }
 
@@ -9795,6 +10031,10 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
+  }
+
   export type UserUpdateOneWithoutInternshipsNestedInput = {
     create?: XOR<UserCreateWithoutInternshipsInput, UserUncheckedCreateWithoutInternshipsInput>
     connectOrCreate?: UserCreateOrConnectWithoutInternshipsInput
@@ -9811,10 +10051,6 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
-  export type NullableDateTimeFieldUpdateOperationsInput = {
-    set?: Date | string | null
-  }
-
   export type UserUpdateOneWithoutAchievementsNestedInput = {
     create?: XOR<UserCreateWithoutAchievementsInput, UserUncheckedCreateWithoutAchievementsInput>
     connectOrCreate?: UserCreateOrConnectWithoutAchievementsInput
@@ -9829,10 +10065,6 @@ export namespace Prisma {
     set: string[]
   }
 
-  export type AlumniCreatecurrentOrgInput = {
-    set: string[]
-  }
-
   export type UserCreateNestedOneWithoutAlumniInput = {
     create?: XOR<UserCreateWithoutAlumniInput, UserUncheckedCreateWithoutAlumniInput>
     connectOrCreate?: UserCreateOrConnectWithoutAlumniInput
@@ -9840,11 +10072,6 @@ export namespace Prisma {
   }
 
   export type AlumniUpdatepastOrgInput = {
-    set?: string[]
-    push?: string | string[]
-  }
-
-  export type AlumniUpdatecurrentOrgInput = {
     set?: string[]
     push?: string | string[]
   }
@@ -10051,6 +10278,7 @@ export namespace Prisma {
   }
 
   export type cgpaCreateWithoutStudentInput = {
+    id?: string
     sem1?: number | null
     sem2?: number | null
     sem3?: number | null
@@ -10062,6 +10290,7 @@ export namespace Prisma {
   }
 
   export type cgpaUncheckedCreateWithoutStudentInput = {
+    id?: string
     sem1?: number | null
     sem2?: number | null
     sem3?: number | null
@@ -10083,17 +10312,19 @@ export namespace Prisma {
   }
 
   export type AchievementCreateWithoutStudentInput = {
-    title?: string | null
+    id?: string
+    title: string
     details?: string | null
-    time?: Date | string | null
-    studentId: string
+    certificateUrl: string
+    AchievementTime?: string | null
   }
 
   export type AchievementUncheckedCreateWithoutStudentInput = {
-    title?: string | null
+    id?: string
+    title: string
     details?: string | null
-    time?: Date | string | null
-    studentId: string
+    certificateUrl: string
+    AchievementTime?: string | null
   }
 
   export type AchievementCreateOrConnectWithoutStudentInput = {
@@ -10107,16 +10338,18 @@ export namespace Prisma {
   }
 
   export type AlumniCreateWithoutStudentInput = {
+    id?: string
     placedBy: string
     pastOrg?: AlumniCreatepastOrgInput | string[]
-    currentOrg?: AlumniCreatecurrentOrgInput | string[]
+    currentOrg: string
     package: string
   }
 
   export type AlumniUncheckedCreateWithoutStudentInput = {
+    id?: string
     placedBy: string
     pastOrg?: AlumniCreatepastOrgInput | string[]
-    currentOrg?: AlumniCreatecurrentOrgInput | string[]
+    currentOrg: string
     package: string
   }
 
@@ -10126,17 +10359,27 @@ export namespace Prisma {
   }
 
   export type InternshipCreateWithoutStudentInput = {
+    id?: string
     title?: string | null
     companyName?: string | null
+    roleDescription: string
     duration?: string | null
-    studentId?: string | null
+    startDate?: Date | string | null
+    endDate?: Date | string | null
+    certificateUrl?: string | null
+    isVerified?: boolean
   }
 
   export type InternshipUncheckedCreateWithoutStudentInput = {
+    id?: string
     title?: string | null
     companyName?: string | null
+    roleDescription: string
     duration?: string | null
-    studentId?: string | null
+    startDate?: Date | string | null
+    endDate?: Date | string | null
+    certificateUrl?: string | null
+    isVerified?: boolean
   }
 
   export type InternshipCreateOrConnectWithoutStudentInput = {
@@ -10170,6 +10413,7 @@ export namespace Prisma {
     OR?: cgpaScalarWhereInput[]
     NOT?: cgpaScalarWhereInput | cgpaScalarWhereInput[]
     id?: StringFilter<"cgpa"> | string
+    studentId?: StringFilter<"cgpa"> | string
     sem1?: FloatNullableFilter<"cgpa"> | number | null
     sem2?: FloatNullableFilter<"cgpa"> | number | null
     sem3?: FloatNullableFilter<"cgpa"> | number | null
@@ -10201,9 +10445,10 @@ export namespace Prisma {
     OR?: AchievementScalarWhereInput[]
     NOT?: AchievementScalarWhereInput | AchievementScalarWhereInput[]
     id?: StringFilter<"Achievement"> | string
-    title?: StringNullableFilter<"Achievement"> | string | null
+    title?: StringFilter<"Achievement"> | string
     details?: StringNullableFilter<"Achievement"> | string | null
-    time?: DateTimeNullableFilter<"Achievement"> | Date | string | null
+    certificateUrl?: StringFilter<"Achievement"> | string
+    AchievementTime?: StringNullableFilter<"Achievement"> | string | null
     studentId?: StringFilter<"Achievement"> | string
   }
 
@@ -10219,16 +10464,18 @@ export namespace Prisma {
   }
 
   export type AlumniUpdateWithoutStudentInput = {
+    id?: StringFieldUpdateOperationsInput | string
     placedBy?: StringFieldUpdateOperationsInput | string
     pastOrg?: AlumniUpdatepastOrgInput | string[]
-    currentOrg?: AlumniUpdatecurrentOrgInput | string[]
+    currentOrg?: StringFieldUpdateOperationsInput | string
     package?: StringFieldUpdateOperationsInput | string
   }
 
   export type AlumniUncheckedUpdateWithoutStudentInput = {
+    id?: StringFieldUpdateOperationsInput | string
     placedBy?: StringFieldUpdateOperationsInput | string
     pastOrg?: AlumniUpdatepastOrgInput | string[]
-    currentOrg?: AlumniUpdatecurrentOrgInput | string[]
+    currentOrg?: StringFieldUpdateOperationsInput | string
     package?: StringFieldUpdateOperationsInput | string
   }
 
@@ -10253,10 +10500,15 @@ export namespace Prisma {
     OR?: InternshipScalarWhereInput[]
     NOT?: InternshipScalarWhereInput | InternshipScalarWhereInput[]
     id?: StringFilter<"Internship"> | string
+    studentId?: StringFilter<"Internship"> | string
     title?: StringNullableFilter<"Internship"> | string | null
     companyName?: StringNullableFilter<"Internship"> | string | null
+    roleDescription?: StringFilter<"Internship"> | string
     duration?: StringNullableFilter<"Internship"> | string | null
-    studentId?: StringNullableFilter<"Internship"> | string | null
+    startDate?: DateTimeNullableFilter<"Internship"> | Date | string | null
+    endDate?: DateTimeNullableFilter<"Internship"> | Date | string | null
+    certificateUrl?: StringNullableFilter<"Internship"> | string | null
+    isVerified?: BoolFilter<"Internship"> | boolean
   }
 
   export type UserCreateWithoutCgpaInput = {
@@ -10660,6 +10912,7 @@ export namespace Prisma {
   }
 
   export type cgpaCreateManyStudentInput = {
+    id?: string
     sem1?: number | null
     sem2?: number | null
     sem3?: number | null
@@ -10671,20 +10924,27 @@ export namespace Prisma {
   }
 
   export type AchievementCreateManyStudentInput = {
-    title?: string | null
+    id?: string
+    title: string
     details?: string | null
-    time?: Date | string | null
-    studentId: string
+    certificateUrl: string
+    AchievementTime?: string | null
   }
 
   export type InternshipCreateManyStudentInput = {
+    id?: string
     title?: string | null
     companyName?: string | null
+    roleDescription: string
     duration?: string | null
-    studentId?: string | null
+    startDate?: Date | string | null
+    endDate?: Date | string | null
+    certificateUrl?: string | null
+    isVerified?: boolean
   }
 
   export type cgpaUpdateWithoutStudentInput = {
+    id?: StringFieldUpdateOperationsInput | string
     sem1?: NullableFloatFieldUpdateOperationsInput | number | null
     sem2?: NullableFloatFieldUpdateOperationsInput | number | null
     sem3?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -10696,6 +10956,7 @@ export namespace Prisma {
   }
 
   export type cgpaUncheckedUpdateWithoutStudentInput = {
+    id?: StringFieldUpdateOperationsInput | string
     sem1?: NullableFloatFieldUpdateOperationsInput | number | null
     sem2?: NullableFloatFieldUpdateOperationsInput | number | null
     sem3?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -10707,6 +10968,7 @@ export namespace Prisma {
   }
 
   export type cgpaUncheckedUpdateManyWithoutStudentInput = {
+    id?: StringFieldUpdateOperationsInput | string
     sem1?: NullableFloatFieldUpdateOperationsInput | number | null
     sem2?: NullableFloatFieldUpdateOperationsInput | number | null
     sem3?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -10718,45 +10980,63 @@ export namespace Prisma {
   }
 
   export type AchievementUpdateWithoutStudentInput = {
-    title?: NullableStringFieldUpdateOperationsInput | string | null
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
     details?: NullableStringFieldUpdateOperationsInput | string | null
-    time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    studentId?: StringFieldUpdateOperationsInput | string
+    certificateUrl?: StringFieldUpdateOperationsInput | string
+    AchievementTime?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type AchievementUncheckedUpdateWithoutStudentInput = {
-    title?: NullableStringFieldUpdateOperationsInput | string | null
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
     details?: NullableStringFieldUpdateOperationsInput | string | null
-    time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    studentId?: StringFieldUpdateOperationsInput | string
+    certificateUrl?: StringFieldUpdateOperationsInput | string
+    AchievementTime?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type AchievementUncheckedUpdateManyWithoutStudentInput = {
-    title?: NullableStringFieldUpdateOperationsInput | string | null
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
     details?: NullableStringFieldUpdateOperationsInput | string | null
-    time?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    studentId?: StringFieldUpdateOperationsInput | string
+    certificateUrl?: StringFieldUpdateOperationsInput | string
+    AchievementTime?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type InternshipUpdateWithoutStudentInput = {
+    id?: StringFieldUpdateOperationsInput | string
     title?: NullableStringFieldUpdateOperationsInput | string | null
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    roleDescription?: StringFieldUpdateOperationsInput | string
     duration?: NullableStringFieldUpdateOperationsInput | string | null
-    studentId?: NullableStringFieldUpdateOperationsInput | string | null
+    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    certificateUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type InternshipUncheckedUpdateWithoutStudentInput = {
+    id?: StringFieldUpdateOperationsInput | string
     title?: NullableStringFieldUpdateOperationsInput | string | null
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    roleDescription?: StringFieldUpdateOperationsInput | string
     duration?: NullableStringFieldUpdateOperationsInput | string | null
-    studentId?: NullableStringFieldUpdateOperationsInput | string | null
+    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    certificateUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type InternshipUncheckedUpdateManyWithoutStudentInput = {
+    id?: StringFieldUpdateOperationsInput | string
     title?: NullableStringFieldUpdateOperationsInput | string | null
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    roleDescription?: StringFieldUpdateOperationsInput | string
     duration?: NullableStringFieldUpdateOperationsInput | string | null
-    studentId?: NullableStringFieldUpdateOperationsInput | string | null
+    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    certificateUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
   }
 
 

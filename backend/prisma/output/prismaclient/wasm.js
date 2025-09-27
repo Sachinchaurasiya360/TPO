@@ -140,6 +140,7 @@ exports.Prisma.UserScalarFieldEnum = {
 
 exports.Prisma.CgpaScalarFieldEnum = {
   id: 'id',
+  studentId: 'studentId',
   sem1: 'sem1',
   sem2: 'sem2',
   sem3: 'sem3',
@@ -152,17 +153,23 @@ exports.Prisma.CgpaScalarFieldEnum = {
 
 exports.Prisma.InternshipScalarFieldEnum = {
   id: 'id',
+  studentId: 'studentId',
   title: 'title',
   companyName: 'companyName',
+  roleDescription: 'roleDescription',
   duration: 'duration',
-  studentId: 'studentId'
+  startDate: 'startDate',
+  endDate: 'endDate',
+  certificateUrl: 'certificateUrl',
+  isVerified: 'isVerified'
 };
 
 exports.Prisma.AchievementScalarFieldEnum = {
   id: 'id',
   title: 'title',
   details: 'details',
-  time: 'time',
+  certificateUrl: 'certificateUrl',
+  AchievementTime: 'AchievementTime',
   studentId: 'studentId'
 };
 
@@ -177,6 +184,7 @@ exports.Prisma.AdminScalarFieldEnum = {
 
 exports.Prisma.AlumniScalarFieldEnum = {
   id: 'id',
+  studentId: 'studentId',
   placedBy: 'placedBy',
   pastOrg: 'pastOrg',
   currentOrg: 'currentOrg',
@@ -198,12 +206,10 @@ exports.Prisma.NullsOrder = {
   last: 'last'
 };
 exports.UserAcademicYear = exports.$Enums.UserAcademicYear = {
-  Y2022_26: 'Y2022_26',
-  Y2023_27: 'Y2023_27',
-  Y2024_28: 'Y2024_28',
-  Y2025_29: 'Y2025_29',
-  Y2026_30: 'Y2026_30',
-  Y2027_31: 'Y2027_31'
+  FIRST_YEAR: 'FIRST_YEAR',
+  SECOND_YEAR: 'SECOND_YEAR',
+  THIRD_YEAR: 'THIRD_YEAR',
+  FOURTH_YEAR: 'FOURTH_YEAR'
 };
 
 exports.Prisma.ModelName = {

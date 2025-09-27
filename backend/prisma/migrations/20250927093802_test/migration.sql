@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "public"."UserAcademicYear" AS ENUM ('Y2022_26', 'Y2023_27', 'Y2024_28', 'Y2025_29', 'Y2026_30', 'Y2027_31');
+CREATE TYPE "public"."UserAcademicYear" AS ENUM ('FIRST_YEAR', 'SECOND_YEAR', 'THIRD_YEAR', 'FOURTH_YEAR');
 
 -- CreateTable
 CREATE TABLE "public"."User" (
@@ -9,7 +9,6 @@ CREATE TABLE "public"."User" (
     "contactNo" TEXT,
     "emailId" TEXT NOT NULL,
     "password" TEXT NOT NULL,
-    "cgpa" DOUBLE PRECISION,
     "studentId" TEXT NOT NULL,
     "department" TEXT,
     "academicYear" "public"."UserAcademicYear",
@@ -24,12 +23,31 @@ CREATE TABLE "public"."User" (
 );
 
 -- CreateTable
+CREATE TABLE "public"."cgpa" (
+    "id" TEXT NOT NULL,
+    "studentId" TEXT NOT NULL,
+    "sem1" DOUBLE PRECISION,
+    "sem2" DOUBLE PRECISION,
+    "sem3" DOUBLE PRECISION,
+    "sem4" DOUBLE PRECISION,
+    "sem5" DOUBLE PRECISION,
+    "sem6" DOUBLE PRECISION,
+    "sem7" DOUBLE PRECISION,
+    "sem8" DOUBLE PRECISION
+);
+
+-- CreateTable
 CREATE TABLE "public"."Internship" (
     "id" TEXT NOT NULL,
+    "studentId" TEXT NOT NULL,
     "title" TEXT,
     "companyName" TEXT,
+    "roleDescription" TEXT NOT NULL,
     "duration" TEXT,
-    "studentId" TEXT,
+    "startDate" TIMESTAMP(3),
+    "endDate" TIMESTAMP(3),
+    "certificateUrl" TEXT,
+    "isVerified" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "Internship_pkey" PRIMARY KEY ("id")
 );
@@ -37,10 +55,9 @@ CREATE TABLE "public"."Internship" (
 -- CreateTable
 CREATE TABLE "public"."Achievement" (
     "id" TEXT NOT NULL,
-    "title" TEXT,
+    "studentId" TEXT NOT NULL,
     "details" TEXT,
     "time" TIMESTAMP(3),
-    "studentId" TEXT NOT NULL,
 
     CONSTRAINT "Achievement_pkey" PRIMARY KEY ("id")
 );
@@ -60,9 +77,10 @@ CREATE TABLE "public"."Admin" (
 -- CreateTable
 CREATE TABLE "public"."Alumni" (
     "id" TEXT NOT NULL,
+    "studentId" TEXT NOT NULL,
     "placedBy" TEXT NOT NULL,
     "pastOrg" TEXT[],
-    "currentOrg" TEXT[],
+    "currentOrg" TEXT NOT NULL,
     "package" TEXT NOT NULL,
 
     CONSTRAINT "Alumni_pkey" PRIMARY KEY ("id")
@@ -72,13 +90,22 @@ CREATE TABLE "public"."Alumni" (
 CREATE UNIQUE INDEX "User_emailId_key" ON "public"."User"("emailId");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "cgpa_id_key" ON "public"."cgpa"("id");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Admin_emailId_key" ON "public"."Admin"("emailId");
 
--- AddForeignKey
-ALTER TABLE "public"."Internship" ADD CONSTRAINT "Internship_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES "public"."User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+-- CreateIndex
+CREATE UNIQUE INDEX "Alumni_studentId_key" ON "public"."Alumni"("studentId");
 
 -- AddForeignKey
-ALTER TABLE "public"."Achievement" ADD CONSTRAINT "Achievement_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES "public"."User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."cgpa" ADD CONSTRAINT "cgpa_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES "public"."User"("emailId") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."Alumni" ADD CONSTRAINT "Alumni_id_fkey" FOREIGN KEY ("id") REFERENCES "public"."User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."Internship" ADD CONSTRAINT "Internship_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES "public"."User"("emailId") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."Achievement" ADD CONSTRAINT "Achievement_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES "public"."User"("emailId") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."Alumni" ADD CONSTRAINT "Alumni_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES "public"."User"("emailId") ON DELETE RESTRICT ON UPDATE CASCADE;

@@ -1,12 +1,10 @@
-import express, { Response, Request } from "express";
-import { PrismaClient } from "../../prisma/prismaclient";
+import { Response, Request } from "express";
+import { PrismaClient } from "../../prisma/output/prismaclient";
 import { signupTypes, loginTypes } from "../../utils/types/zodSchema";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import pino from "pino";
-
+import { sendEmail } from "../../utils/email/sendEmail";
 const prisma = new PrismaClient();
-const router = express.Router();
 
 export const signin = async (req: Request, res: Response) => {
   try {
@@ -35,7 +33,7 @@ export const signin = async (req: Request, res: Response) => {
     }
 
     const token = jwt.sign(
-      { fullName: getdetails.fullName, emailId: emailId },
+      { fullName: getdetails.fullName, emailId: emailId  },
       process.env.JWTSECRET as string,
       { expiresIn: "12h" }
     );
@@ -45,11 +43,11 @@ export const signin = async (req: Request, res: Response) => {
       sameSite: "strict",
       httpOnly: true,
     });
+    
     return res.status(200).json({
       success: true,
       message: "Login successful",
       user: {
-        id: getdetails.id,
         fullName: getdetails.fullName,
         emailId: getdetails.emailId,
       },
@@ -101,7 +99,37 @@ export const signup = async (req: Request, res: Response) => {
     console.error(err);
     return res.status(500).json({
       success: false,
+      message: "Internal server error",
+    });
+  }
+};
 
+export const forgotpassword = async (req: Request, res: Response) => {
+  try {
+    const { emailId } = req.body;
+    const isUserExist = await prisma.user.findUnique({
+      where: { emailId },
+    });
+    if (!isUserExist) {
+      return res.status(401).json({
+        message: "Email doesn't exist",
+      });
+    }
+    const sendingEmail = await sendEmail(
+      isUserExist.emailId,
+      "subject",
+      "body"
+    );
+  } catch (error) {}
+};
+
+export const WhoAmI = async (req: Request, res: Response) => {
+  try {
+    const { emailId } = req.body;
+    
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
       message: "Internal server error",
     });
   }

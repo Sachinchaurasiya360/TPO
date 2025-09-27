@@ -66,13 +66,13 @@ model Internship {
 }
 
 model Achievement {
-  id              String    @id @default(uuid())
+  id              String  @id @default(uuid())
   title           String
   details         String?
   certificateUrl  String
   AchievementTime String?
   studentId       String
-  student User? @relation(fields: [studentId], references: [id])
+  student         User?   @relation(fields: [studentId], references: [id])
 }
 
 model Admin {
