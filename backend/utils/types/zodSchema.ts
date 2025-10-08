@@ -5,7 +5,7 @@ export const signupTypes = z.object({
   emailId: z.string().email(),
   studentId: z.string().min(5),
   department: z.string().min(5),
-  password: z.string(),
+  password: z.string().min(6, "Password Must be more then 6 char"),
 });
 export const loginTypes = z.object({
   emailId: z.string(),

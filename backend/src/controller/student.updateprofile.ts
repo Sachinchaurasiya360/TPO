@@ -34,7 +34,6 @@ export const updateprofile = async (req: Request, res: Response) => {
     });
   }
 };
-
 export const updateinternship = async (req: Request, res: Response) => {
   try {
     const internship = internshipTypes.safeParse(req.body);
@@ -70,7 +69,6 @@ export const updateinternship = async (req: Request, res: Response) => {
     });
   }
 };
-
 export const updateAchievement = async (req: Request, res: Response) => {
   try {
     const Achievement = AchievementTypes.safeParse(req.body);
