@@ -19,6 +19,7 @@ app.get("/", (req: Request, res: Response) => {
 
 app.use("/api/v1/auth", auth);
 app.use("/api/v1/student", student);
+// app.use("/api/v1/member", member);
 
 app.listen(Port, () => {
   console.log(`App is running on port ${Port}`);

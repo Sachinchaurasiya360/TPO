@@ -128,6 +128,8 @@ exports.Prisma.UserScalarFieldEnum = {
   emailId: 'emailId',
   password: 'password',
   studentId: 'studentId',
+  sscPercentage: 'sscPercentage',
+  hscPercentage: 'hscPercentage',
   department: 'department',
   academicYear: 'academicYear',
   skills: 'skills',
@@ -140,7 +142,7 @@ exports.Prisma.UserScalarFieldEnum = {
 
 exports.Prisma.CgpaScalarFieldEnum = {
   id: 'id',
-  studentId: 'studentId',
+  UserId: 'UserId',
   sem1: 'sem1',
   sem2: 'sem2',
   sem3: 'sem3',
@@ -153,7 +155,7 @@ exports.Prisma.CgpaScalarFieldEnum = {
 
 exports.Prisma.InternshipScalarFieldEnum = {
   id: 'id',
-  studentId: 'studentId',
+  userId: 'userId',
   title: 'title',
   companyName: 'companyName',
   roleDescription: 'roleDescription',
@@ -169,26 +171,45 @@ exports.Prisma.AchievementScalarFieldEnum = {
   title: 'title',
   details: 'details',
   certificateUrl: 'certificateUrl',
-  AchievementTime: 'AchievementTime',
-  studentId: 'studentId'
+  achievementTime: 'achievementTime',
+  userId: 'userId'
 };
 
 exports.Prisma.AdminScalarFieldEnum = {
   id: 'id',
-  firstName: 'firstName',
-  lastName: 'lastName',
+  fullName: 'fullName',
   contactNo: 'contactNo',
   emailId: 'emailId',
-  password: 'password'
+  password: 'password',
+  createdAt: 'createdAt',
+  role: 'role'
 };
 
 exports.Prisma.AlumniScalarFieldEnum = {
   id: 'id',
-  studentId: 'studentId',
+  userId: 'userId',
   placedBy: 'placedBy',
-  pastOrg: 'pastOrg',
   currentOrg: 'currentOrg',
   package: 'package'
+};
+
+exports.Prisma.PastorgScalarFieldEnum = {
+  id: 'id',
+  companyName: 'companyName',
+  joiningDate: 'joiningDate',
+  leavingDate: 'leavingDate',
+  role: 'role',
+  alumniId: 'alumniId'
+};
+
+exports.Prisma.HigherStudiesScalarFieldEnum = {
+  id: 'id',
+  collegeName: 'collegeName',
+  joiningDate: 'joiningDate',
+  leavingDate: 'leavingDate',
+  location: 'location',
+  branch: 'branch',
+  alumniId: 'alumniId'
 };
 
 exports.Prisma.SortOrder = {
@@ -212,13 +233,25 @@ exports.UserAcademicYear = exports.$Enums.UserAcademicYear = {
   FOURTH_YEAR: 'FOURTH_YEAR'
 };
 
+exports.Role = exports.$Enums.Role = {
+  STUDENT: 'STUDENT',
+  ALUMNI: 'ALUMNI',
+  FACULTY: 'FACULTY',
+  AMBASSADOR: 'AMBASSADOR',
+  SUPERADMIN: 'SUPERADMIN',
+  HOD: 'HOD',
+  PROFESSOR: 'PROFESSOR'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
-  cgpa: 'cgpa',
+  Cgpa: 'Cgpa',
   Internship: 'Internship',
   Achievement: 'Achievement',
   Admin: 'Admin',
-  Alumni: 'Alumni'
+  Alumni: 'Alumni',
+  Pastorg: 'Pastorg',
+  HigherStudies: 'HigherStudies'
 };
 
 /**

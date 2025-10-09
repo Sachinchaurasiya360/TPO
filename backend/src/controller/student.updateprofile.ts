@@ -6,14 +6,13 @@ import {
   CgpaTypes,
 } from "../../utils/types/zodSchema";
 import { PrismaClient } from "../../prisma/output/prismaclient";
-import { any, success } from "zod";
 const prisma = new PrismaClient();
 
 export const updateprofile = async (req: Request, res: Response) => {
   try {
     const result = updateProfileTypes.safeParse(req.body);
     if (!result.success) {
-      return res.status(200).json({
+      return res.status(400).json({
         message: "Invalid Input",
         error: result.error.flatten().fieldErrors,
       });
@@ -45,7 +44,7 @@ export const updateinternship = async (req: Request, res: Response) => {
     }
     const { id, ...data } = internship.data;
     const updatingInternship = await prisma.internship.upsert({
-      where: { id: id ?? "" },
+      where: { id: id ?? ""  },
       update: {
         ...data,
         student: { connect: { emailId: (req as any).user.emailId } },
@@ -107,7 +106,7 @@ export const UpdateCgpa = async (req: Request, res: Response) => {
   try {
     const Cgpa = CgpaTypes.safeParse(req.body);
     if (!Cgpa.success) {
-      return res.status(200).json({
+      return res.status(400).json({
         message: "Invalid Input",
       });
     }
@@ -133,3 +132,4 @@ export const UpdateCgpa = async (req: Request, res: Response) => {
     });
   }
 };
+

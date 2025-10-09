@@ -16,14 +16,16 @@ enum UserAcademicYear {
 }
 
 model User {
-  id            String            @id @default(uuid())
+  id            Int               @id @default(autoincrement())
   fullName      String
   legalName     String?
   contactNo     String?
   emailId       String            @unique
   password      String
-  cgpa          cgpa[]
-  studentId     String
+  cgpa          Cgpa?
+  studentId     String?
+  sscPercentage Float?
+  hscPercentage Float?
   department    String?
   academicYear  UserAcademicYear?
   skills        String[]
@@ -35,25 +37,28 @@ model User {
   achievements  Achievement[]
   alumni        Alumni?
   internships   Internship[]
+
+  @@index([emailId])
+  @@index([studentId])
 }
 
-model cgpa {
-  id        String @unique @default(uuid())
-  studentId String
-  student   User?  @relation(fields: [studentId], references: [id])
-  sem1      Float?
-  sem2      Float?
-  sem3      Float?
-  sem4      Float?
-  sem5      Float?
-  sem6      Float?
-  sem7      Float?
-  sem8      Float?
+model Cgpa {
+  id      String @unique @default(uuid())
+  UserId  Int    @unique
+  student User?  @relation(fields: [UserId], references: [id], onDelete: Cascade)
+  sem1    Float?
+  sem2    Float?
+  sem3    Float?
+  sem4    Float?
+  sem5    Float?
+  sem6    Float?
+  sem7    Float?
+  sem8    Float?
 }
 
 model Internship {
   id              String    @id @default(uuid())
-  studentId       String
+  userId          Int
   title           String?
   companyName     String?
   roleDescription String
@@ -62,7 +67,7 @@ model Internship {
   endDate         DateTime?
   certificateUrl  String?
   isVerified      Boolean   @default(false)
-  student         User?     @relation(fields: [studentId], references: [id])
+  student         User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Achievement {
@@ -70,26 +75,61 @@ model Achievement {
   title           String
   details         String?
   certificateUrl  String
-  AchievementTime String?
-  studentId       String
-  student         User?   @relation(fields: [studentId], references: [id])
+  achievementTime String?
+  userId          Int
+  student         User?   @relation(fields: [userId], references: [id])
 }
 
 model Admin {
-  id        String @id @default(uuid())
-  firstName String
-  lastName  String
+  id        Int      @id @default(autoincrement())
+  fullName  String
   contactNo String
-  emailId   String @unique
+  emailId   String   @unique
   password  String
+  createdAt DateTime @default(now())
+  role      Role
+
+  @@index([emailId])
+}
+
+enum Role {
+  STUDENT
+  ALUMNI
+  FACULTY
+  AMBASSADOR
+  SUPERADMIN
+  HOD
+  PROFESSOR
 }
 
 model Alumni {
-  id         String   @id @default(uuid())
-  studentId  String   @unique
-  placedBy   String
-  pastOrg    String[]
-  currentOrg String
-  package    String
-  student    User?    @relation(fields: [studentId], references: [id])
+  id              Int            @id @default(autoincrement())
+  userId          Int            @unique
+  placedBy        String
+  pastOrg         Pastorg[]
+  currentOrg      String
+  package         String
+  student         User           @relation(fields: [userId], references: [id])
+  isHigherStudies HigherStudies?
+}
+
+model Pastorg {
+  id          Int       @id @default(autoincrement())
+  companyName String
+  joiningDate DateTime
+  leavingDate DateTime?
+  role        String
+  alumni      Alumni    @relation(fields: [alumniId], references: [id])
+  alumniId    Int
+}
+
+model HigherStudies {
+  id          Int       @id @default(autoincrement())
+  collegeName String
+  joiningDate DateTime
+  leavingDate DateTime?
+  location    String
+  branch      String
+  alumniId    Int       @unique
+  alumni      Alumni    @relation(fields: [alumniId], references: [id], onDelete: Cascade)
 }

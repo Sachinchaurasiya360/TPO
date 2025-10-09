@@ -1,4 +1,4 @@
-import htmlContent from "../../public/index.html?raw";
+import htmlContent from "./../index.html?raw";
 
 export default function StaticPage() {
   return <div dangerouslySetInnerHTML={{ __html: htmlContent }} />;
