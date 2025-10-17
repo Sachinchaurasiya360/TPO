@@ -1,11 +1,11 @@
 import { string, z } from "zod";
-import { UserAcademicYear,Role } from "../../prisma/output/prismaclient";
+import { UserAcademicYear,Role, Department } from "../../prisma/output/prismaclient";
 
 export const signupTypes = z.object({
   fullName: z.string().min(2, "Minimum length should be 2"),
   emailId: z.string().email(),
   studentId: z.string().min(5),
-  department: z.string().min(5),
+  department: z.nativeEnum(Department),
   password: z.string().min(6, "Password Must be more then 6 char"),
 });
 export const adminSignupTypes = z.object({

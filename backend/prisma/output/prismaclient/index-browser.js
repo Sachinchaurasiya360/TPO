@@ -20,12 +20,12 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.15.0
- * Query Engine version: 85179d7826409ee107a6ba334b5e305ae3fba9fb
+ * Prisma Client JS version: 6.17.1
+ * Query Engine version: 272a37d34178c2894197e17273bf937f25acdeac
  */
 Prisma.prismaVersion = {
-  client: "6.15.0",
-  engine: "85179d7826409ee107a6ba334b5e305ae3fba9fb"
+  client: "6.17.1",
+  engine: "272a37d34178c2894197e17273bf937f25acdeac"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -127,6 +127,7 @@ exports.Prisma.UserScalarFieldEnum = {
   contactNo: 'contactNo',
   emailId: 'emailId',
   password: 'password',
+  parentsContactNo: 'parentsContactNo',
   studentId: 'studentId',
   sscPercentage: 'sscPercentage',
   hscPercentage: 'hscPercentage',
@@ -226,6 +227,15 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
+exports.Department = exports.$Enums.Department = {
+  CSE: 'CSE',
+  COMPUTER: 'COMPUTER',
+  ELECTRICAL: 'ELECTRICAL',
+  MECHANICAL: 'MECHANICAL',
+  EXTC: 'EXTC',
+  CIVIL: 'CIVIL'
+};
+
 exports.UserAcademicYear = exports.$Enums.UserAcademicYear = {
   FIRST_YEAR: 'FIRST_YEAR',
   SECOND_YEAR: 'SECOND_YEAR',

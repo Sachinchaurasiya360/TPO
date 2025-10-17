@@ -5,13 +5,28 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 
 const {
+  PrismaClientKnownRequestError,
+  PrismaClientUnknownRequestError,
+  PrismaClientRustPanicError,
+  PrismaClientInitializationError,
+  PrismaClientValidationError,
+  getPrismaClient,
+  sqltag,
+  empty,
+  join,
+  raw,
+  skip,
   Decimal,
+  Debug,
   objectEnumValues,
   makeStrictEnum,
+  Extensions,
+  warnOnce,
+  defineDmmfProperty,
   Public,
   getRuntime,
-  skip
-} = require('./runtime/index-browser.js')
+  createParam,
+} = require('./runtime/wasm-engine-edge.js')
 
 
 const Prisma = {}
@@ -20,79 +35,35 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.15.0
- * Query Engine version: 85179d7826409ee107a6ba334b5e305ae3fba9fb
+ * Prisma Client JS version: 6.17.1
+ * Query Engine version: 272a37d34178c2894197e17273bf937f25acdeac
  */
 Prisma.prismaVersion = {
-  client: "6.15.0",
-  engine: "85179d7826409ee107a6ba334b5e305ae3fba9fb"
+  client: "6.17.1",
+  engine: "272a37d34178c2894197e17273bf937f25acdeac"
 }
 
-Prisma.PrismaClientKnownRequestError = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`PrismaClientKnownRequestError is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)};
-Prisma.PrismaClientUnknownRequestError = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`PrismaClientUnknownRequestError is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
-Prisma.PrismaClientRustPanicError = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`PrismaClientRustPanicError is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
-Prisma.PrismaClientInitializationError = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`PrismaClientInitializationError is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
-Prisma.PrismaClientValidationError = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`PrismaClientValidationError is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
+Prisma.PrismaClientKnownRequestError = PrismaClientKnownRequestError;
+Prisma.PrismaClientUnknownRequestError = PrismaClientUnknownRequestError
+Prisma.PrismaClientRustPanicError = PrismaClientRustPanicError
+Prisma.PrismaClientInitializationError = PrismaClientInitializationError
+Prisma.PrismaClientValidationError = PrismaClientValidationError
 Prisma.Decimal = Decimal
 
 /**
  * Re-export of sql-template-tag
  */
-Prisma.sql = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`sqltag is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
-Prisma.empty = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`empty is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
-Prisma.join = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`join is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
-Prisma.raw = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`raw is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
+Prisma.sql = sqltag
+Prisma.empty = empty
+Prisma.join = join
+Prisma.raw = raw
 Prisma.validator = Public.validator
 
 /**
 * Extensions
 */
-Prisma.getExtensionContext = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`Extensions.getExtensionContext is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
-Prisma.defineExtension = () => {
-  const runtimeName = getRuntime().prettyName;
-  throw new Error(`Extensions.defineExtension is unable to run in this browser environment, or has been bundled for the browser (running in ${runtimeName}).
-In case this error is unexpected for you, please report it in https://pris.ly/prisma-prisma-bug-report`,
-)}
+Prisma.getExtensionContext = Extensions.getExtensionContext
+Prisma.defineExtension = Extensions.defineExtension
 
 /**
  * Shorthand utilities for JSON filtering
@@ -109,10 +80,11 @@ Prisma.NullTypes = {
 
 
 
+
+
 /**
  * Enums
  */
-
 exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   ReadUncommitted: 'ReadUncommitted',
   ReadCommitted: 'ReadCommitted',
@@ -127,6 +99,7 @@ exports.Prisma.UserScalarFieldEnum = {
   contactNo: 'contactNo',
   emailId: 'emailId',
   password: 'password',
+  parentsContactNo: 'parentsContactNo',
   studentId: 'studentId',
   sscPercentage: 'sscPercentage',
   hscPercentage: 'hscPercentage',
@@ -233,6 +206,15 @@ exports.UserAcademicYear = exports.$Enums.UserAcademicYear = {
   FOURTH_YEAR: 'FOURTH_YEAR'
 };
 
+exports.Department = exports.$Enums.Department = {
+  CSE: 'CSE',
+  COMPUTER: 'COMPUTER',
+  ELECTRICAL: 'ELECTRICAL',
+  MECHANICAL: 'MECHANICAL',
+  EXTC: 'EXTC',
+  CIVIL: 'CIVIL'
+};
+
 exports.Role = exports.$Enums.Role = {
   STUDENT: 'STUDENT',
   ALUMNI: 'ALUMNI',
@@ -253,34 +235,82 @@ exports.Prisma.ModelName = {
   Pastorg: 'Pastorg',
   HigherStudies: 'HigherStudies'
 };
-
 /**
- * This is a stub Prisma Client that will error at runtime if called.
+ * Create the Client
  */
-class PrismaClient {
-  constructor() {
-    return new Proxy(this, {
-      get(target, prop) {
-        let message
-        const runtime = getRuntime()
-        if (runtime.isEdge) {
-          message = `PrismaClient is not configured to run in ${runtime.prettyName}. In order to run Prisma Client on edge runtime, either:
-- Use Prisma Accelerate: https://pris.ly/d/accelerate
-- Use Driver Adapters: https://pris.ly/d/driver-adapters
-`;
-        } else {
-          message = 'PrismaClient is unable to run in this browser environment, or has been bundled for the browser (running in `' + runtime.prettyName + '`).'
-        }
-
-        message += `
-If this is unexpected, please open an issue: https://pris.ly/prisma-prisma-bug-report`
-
-        throw new Error(message)
+const config = {
+  "generator": {
+    "name": "client",
+    "provider": {
+      "fromEnvVar": null,
+      "value": "prisma-client-js"
+    },
+    "output": {
+      "value": "C:\\Codes\\TPO_Website\\backend\\prisma\\output\\prismaclient",
+      "fromEnvVar": null
+    },
+    "config": {
+      "engineType": "library"
+    },
+    "binaryTargets": [
+      {
+        "fromEnvVar": null,
+        "value": "windows",
+        "native": true
       }
-    })
+    ],
+    "previewFeatures": [],
+    "sourceFilePath": "C:\\Codes\\TPO_Website\\backend\\prisma\\schema.prisma",
+    "isCustomOutput": true
+  },
+  "relativeEnvPaths": {
+    "rootEnvPath": null
+  },
+  "relativePath": "../..",
+  "clientVersion": "6.17.1",
+  "engineVersion": "272a37d34178c2894197e17273bf937f25acdeac",
+  "datasourceNames": [
+    "db"
+  ],
+  "activeProvider": "postgresql",
+  "postinstall": false,
+  "inlineDatasources": {
+    "db": {
+      "url": {
+        "fromEnvVar": "DATABASE_URL",
+        "value": null
+      }
+    }
+  },
+  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"./output/prismaclient\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nenum UserAcademicYear {\n  FIRST_YEAR\n  SECOND_YEAR\n  THIRD_YEAR\n  FOURTH_YEAR\n}\n\nenum Department {\n  CSE\n  COMPUTER\n  ELECTRICAL\n  MECHANICAL\n  EXTC\n  CIVIL\n}\n\nmodel User {\n  id               Int               @id @default(autoincrement())\n  fullName         String\n  legalName        String?\n  contactNo        String?\n  emailId          String            @unique\n  password         String\n  cgpa             Cgpa?\n  parentsContactNo Int?\n  studentId        String?\n  sscPercentage    Float?\n  hscPercentage    Float?\n  department       Department\n  academicYear     UserAcademicYear?\n  skills           String[]\n  profilePic       String?\n  resumeUrl        String?\n  isVerified       Boolean           @default(false)\n  createdAt        DateTime          @default(now())\n  socialProfile    String?\n  achievements     Achievement[]\n  alumni           Alumni?\n  internships      Internship[]\n\n  @@index([department])\n  @@index([fullName])\n}\n\nmodel Cgpa {\n  id      String @unique @default(uuid())\n  UserId  Int    @unique\n  student User?  @relation(fields: [UserId], references: [id], onDelete: Cascade)\n  sem1    Float?\n  sem2    Float?\n  sem3    Float?\n  sem4    Float?\n  sem5    Float?\n  sem6    Float?\n  sem7    Float?\n  sem8    Float?\n}\n\nmodel Internship {\n  id              String    @id @default(uuid())\n  userId          Int\n  title           String?\n  companyName     String?\n  roleDescription String\n  duration        String?\n  startDate       DateTime?\n  endDate         DateTime?\n  certificateUrl  String?\n  isVerified      Boolean   @default(false)\n  student         User?     @relation(fields: [userId], references: [id], onDelete: Cascade)\n}\n\nmodel Achievement {\n  id              String  @id @default(uuid())\n  title           String\n  details         String?\n  certificateUrl  String\n  achievementTime String?\n  userId          Int\n  student         User?   @relation(fields: [userId], references: [id])\n}\n\nmodel Admin {\n  id        Int      @id @default(autoincrement())\n  fullName  String\n  contactNo String\n  emailId   String   @unique\n  password  String\n  createdAt DateTime @default(now())\n  role      Role\n\n  @@index([emailId])\n}\n\nenum Role {\n  STUDENT\n  ALUMNI\n  FACULTY\n  AMBASSADOR\n  SUPERADMIN\n  HOD\n  PROFESSOR\n}\n\nmodel Alumni {\n  id              Int            @id @default(autoincrement())\n  userId          Int            @unique\n  placedBy        String\n  pastOrg         Pastorg[]\n  currentOrg      String\n  package         String\n  student         User           @relation(fields: [userId], references: [id])\n  isHigherStudies HigherStudies?\n}\n\nmodel Pastorg {\n  id          Int       @id @default(autoincrement())\n  companyName String\n  joiningDate DateTime\n  leavingDate DateTime?\n  role        String\n  alumni      Alumni    @relation(fields: [alumniId], references: [id], onDelete: Cascade)\n  alumniId    Int\n}\n\nmodel HigherStudies {\n  id          Int       @id @default(autoincrement())\n  collegeName String\n  joiningDate DateTime\n  leavingDate DateTime?\n  location    String\n  branch      String\n  alumniId    Int       @unique\n  alumni      Alumni    @relation(fields: [alumniId], references: [id], onDelete: Cascade)\n}\n",
+  "inlineSchemaHash": "371339d443b343f04f91ee2ae77cd4c4d487191eeb4210d6a84e6a68a58149c5",
+  "copyEngine": true
+}
+config.dirname = '/'
+
+config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"fullName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"legalName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"contactNo\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"emailId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"cgpa\",\"kind\":\"object\",\"type\":\"Cgpa\",\"relationName\":\"CgpaToUser\"},{\"name\":\"parentsContactNo\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"studentId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"sscPercentage\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"hscPercentage\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"department\",\"kind\":\"enum\",\"type\":\"Department\"},{\"name\":\"academicYear\",\"kind\":\"enum\",\"type\":\"UserAcademicYear\"},{\"name\":\"skills\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"profilePic\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"resumeUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isVerified\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"socialProfile\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"achievements\",\"kind\":\"object\",\"type\":\"Achievement\",\"relationName\":\"AchievementToUser\"},{\"name\":\"alumni\",\"kind\":\"object\",\"type\":\"Alumni\",\"relationName\":\"AlumniToUser\"},{\"name\":\"internships\",\"kind\":\"object\",\"type\":\"Internship\",\"relationName\":\"InternshipToUser\"}],\"dbName\":null},\"Cgpa\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"UserId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"student\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"CgpaToUser\"},{\"name\":\"sem1\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"sem2\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"sem3\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"sem4\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"sem5\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"sem6\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"sem7\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"sem8\",\"kind\":\"scalar\",\"type\":\"Float\"}],\"dbName\":null},\"Internship\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"title\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"companyName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"roleDescription\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"duration\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"startDate\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"endDate\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"certificateUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isVerified\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"student\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"InternshipToUser\"}],\"dbName\":null},\"Achievement\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"title\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"details\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"certificateUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"achievementTime\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"student\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"AchievementToUser\"}],\"dbName\":null},\"Admin\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"fullName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"contactNo\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"emailId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"Role\"}],\"dbName\":null},\"Alumni\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"placedBy\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"pastOrg\",\"kind\":\"object\",\"type\":\"Pastorg\",\"relationName\":\"AlumniToPastorg\"},{\"name\":\"currentOrg\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"package\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"student\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"AlumniToUser\"},{\"name\":\"isHigherStudies\",\"kind\":\"object\",\"type\":\"HigherStudies\",\"relationName\":\"AlumniToHigherStudies\"}],\"dbName\":null},\"Pastorg\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"companyName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"joiningDate\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"leavingDate\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"role\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"alumni\",\"kind\":\"object\",\"type\":\"Alumni\",\"relationName\":\"AlumniToPastorg\"},{\"name\":\"alumniId\",\"kind\":\"scalar\",\"type\":\"Int\"}],\"dbName\":null},\"HigherStudies\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"collegeName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"joiningDate\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"leavingDate\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"location\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"branch\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"alumniId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"alumni\",\"kind\":\"object\",\"type\":\"Alumni\",\"relationName\":\"AlumniToHigherStudies\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
+defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
+config.engineWasm = {
+  getRuntime: async () => require('./query_engine_bg.js'),
+  getQueryEngineWasmModule: async () => {
+    const loader = (await import('#wasm-engine-loader')).default
+    const engine = (await loader).default
+    return engine
   }
 }
+config.compilerWasm = undefined
 
+config.injectableEdgeEnv = () => ({
+  parsed: {
+    DATABASE_URL: typeof globalThis !== 'undefined' && globalThis['DATABASE_URL'] || typeof process !== 'undefined' && process.env && process.env.DATABASE_URL || undefined
+  }
+})
+
+if (typeof globalThis !== 'undefined' && globalThis['DEBUG'] || typeof process !== 'undefined' && process.env && process.env.DEBUG || undefined) {
+  Debug.enable(typeof globalThis !== 'undefined' && globalThis['DEBUG'] || typeof process !== 'undefined' && process.env && process.env.DEBUG || undefined)
+}
+
+const PrismaClient = getPrismaClient(config)
 exports.PrismaClient = PrismaClient
-
 Object.assign(exports, Prisma)
+

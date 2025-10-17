@@ -32,6 +32,7 @@ model User {
   emailId       String            @unique
   password      String
   cgpa          Cgpa?
+  parentsContactNo Int?
   studentId     String?
   sscPercentage Float?
   hscPercentage Float?
@@ -47,8 +48,8 @@ model User {
   alumni        Alumni?
   internships   Internship[]
 
-  @@index([emailId])
-  @@index([studentId])
+  @@index([department])
+  @@index([fullName])
 }
 
 model Cgpa {
@@ -128,7 +129,7 @@ model Pastorg {
   joiningDate DateTime
   leavingDate DateTime?
   role        String
-  alumni      Alumni    @relation(fields: [alumniId], references: [id])
+  alumni      Alumni    @relation(fields: [alumniId], references: [id],onDelete: Cascade)
   alumniId    Int
 }
 

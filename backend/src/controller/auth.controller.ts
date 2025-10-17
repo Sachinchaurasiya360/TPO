@@ -1,11 +1,11 @@
 import { Response, Request } from "express";
-import { PrismaClient } from "../../prisma/output/prismaclient";
+import { Department, PrismaClient } from "../../prisma/output/prismaclient";
 import { signupTypes, loginTypes } from "../../utils/types/zodSchema";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { sendEmail } from "../../utils/email/sendEmail";
 import { adminSignupTypes } from "../../utils/types/zodSchema";
-import { email, success } from "zod";
+import { signupBody, signupSubject } from "../../utils/email/subjectAndBody";
 
 const prisma = new PrismaClient();
 
@@ -72,7 +72,7 @@ export const signup = async (req: Request, res: Response) => {
         error: result.error.flatten(),
       });
     }
-    const { fullName, emailId, studentId, department, password } = result.data;
+    const { fullName, emailId, department, password } = result.data;
     const isUserExist = await prisma.user.findUnique({
       where: { emailId },
     });
@@ -94,10 +94,9 @@ export const signup = async (req: Request, res: Response) => {
         id: true,
       },
     });
-    sendEmail("sachinchaurasiya69@gmail.com", "hello world", "what are you doing");
-
+    sendEmail(emailId, signupSubject, signupBody);
     return res.status(201).json({
-      message: "Account Created, Please go to Login Page",
+      message: "Account Created, Please wait for verification",
     });
   } catch (err) {
     console.error(err);
@@ -124,7 +123,11 @@ export const forgotpassword = async (req: Request, res: Response) => {
       "subject",
       "body"
     );
-  } catch (error) {}
+  } catch (error) {
+    return res.status(500).json({
+      message:"Internal server error"
+    })
+  }
 };
 
 export const WhoAmI = async (req: Request, res: Response) => {
@@ -229,7 +232,7 @@ export const AdminLogin = async (req: Request, res: Response) => {
       user: {
         FullName: isEmailExist.fullName,
         emailId: isEmailExist.emailId,
-        role:isEmailExist.role
+        role: isEmailExist.role,
       },
     });
   } catch (error) {
@@ -239,4 +242,3 @@ export const AdminLogin = async (req: Request, res: Response) => {
     });
   }
 };
-
