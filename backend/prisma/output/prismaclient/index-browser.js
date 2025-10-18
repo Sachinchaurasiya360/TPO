@@ -138,7 +138,8 @@ exports.Prisma.UserScalarFieldEnum = {
   resumeUrl: 'resumeUrl',
   isVerified: 'isVerified',
   createdAt: 'createdAt',
-  socialProfile: 'socialProfile'
+  socialProfile: 'socialProfile',
+  isAlumni: 'isAlumni'
 };
 
 exports.Prisma.CgpaScalarFieldEnum = {

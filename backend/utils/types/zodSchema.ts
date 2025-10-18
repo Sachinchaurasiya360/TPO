@@ -12,7 +12,7 @@ export const adminSignupTypes = z.object({
   fullName: z.string(),
   contactNo: z.string(),
   role:z.nativeEnum(Role),
-  emailId: z.string(),
+  emailId: z.string().email(),
   password: z.string(),
 });
 

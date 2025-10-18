@@ -1663,6 +1663,7 @@ export namespace Prisma {
     isVerified: boolean | null
     createdAt: Date | null
     socialProfile: string | null
+    isAlumni: boolean | null
   }
 
   export type UserMaxAggregateOutputType = {
@@ -1683,6 +1684,7 @@ export namespace Prisma {
     isVerified: boolean | null
     createdAt: Date | null
     socialProfile: string | null
+    isAlumni: boolean | null
   }
 
   export type UserCountAggregateOutputType = {
@@ -1704,6 +1706,7 @@ export namespace Prisma {
     isVerified: number
     createdAt: number
     socialProfile: number
+    isAlumni: number
     _all: number
   }
 
@@ -1740,6 +1743,7 @@ export namespace Prisma {
     isVerified?: true
     createdAt?: true
     socialProfile?: true
+    isAlumni?: true
   }
 
   export type UserMaxAggregateInputType = {
@@ -1760,6 +1764,7 @@ export namespace Prisma {
     isVerified?: true
     createdAt?: true
     socialProfile?: true
+    isAlumni?: true
   }
 
   export type UserCountAggregateInputType = {
@@ -1781,6 +1786,7 @@ export namespace Prisma {
     isVerified?: true
     createdAt?: true
     socialProfile?: true
+    isAlumni?: true
     _all?: true
   }
 
@@ -1889,6 +1895,7 @@ export namespace Prisma {
     isVerified: boolean
     createdAt: Date
     socialProfile: string | null
+    isAlumni: boolean
     _count: UserCountAggregateOutputType | null
     _avg: UserAvgAggregateOutputType | null
     _sum: UserSumAggregateOutputType | null
@@ -1929,6 +1936,7 @@ export namespace Prisma {
     isVerified?: boolean
     createdAt?: boolean
     socialProfile?: boolean
+    isAlumni?: boolean
     cgpa?: boolean | User$cgpaArgs<ExtArgs>
     achievements?: boolean | User$achievementsArgs<ExtArgs>
     alumni?: boolean | User$alumniArgs<ExtArgs>
@@ -1955,6 +1963,7 @@ export namespace Prisma {
     isVerified?: boolean
     createdAt?: boolean
     socialProfile?: boolean
+    isAlumni?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -1976,6 +1985,7 @@ export namespace Prisma {
     isVerified?: boolean
     createdAt?: boolean
     socialProfile?: boolean
+    isAlumni?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectScalar = {
@@ -1997,9 +2007,10 @@ export namespace Prisma {
     isVerified?: boolean
     createdAt?: boolean
     socialProfile?: boolean
+    isAlumni?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "fullName" | "legalName" | "contactNo" | "emailId" | "password" | "parentsContactNo" | "studentId" | "sscPercentage" | "hscPercentage" | "department" | "academicYear" | "skills" | "profilePic" | "resumeUrl" | "isVerified" | "createdAt" | "socialProfile", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "fullName" | "legalName" | "contactNo" | "emailId" | "password" | "parentsContactNo" | "studentId" | "sscPercentage" | "hscPercentage" | "department" | "academicYear" | "skills" | "profilePic" | "resumeUrl" | "isVerified" | "createdAt" | "socialProfile" | "isAlumni", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     cgpa?: boolean | User$cgpaArgs<ExtArgs>
     achievements?: boolean | User$achievementsArgs<ExtArgs>
@@ -2037,6 +2048,7 @@ export namespace Prisma {
       isVerified: boolean
       createdAt: Date
       socialProfile: string | null
+      isAlumni: boolean
     }, ExtArgs["result"]["user"]>
     composites: {}
   }
@@ -2482,6 +2494,7 @@ export namespace Prisma {
     readonly isVerified: FieldRef<"User", 'Boolean'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly socialProfile: FieldRef<"User", 'String'>
+    readonly isAlumni: FieldRef<"User", 'Boolean'>
   }
     
 
@@ -10949,7 +10962,8 @@ export namespace Prisma {
     resumeUrl: 'resumeUrl',
     isVerified: 'isVerified',
     createdAt: 'createdAt',
-    socialProfile: 'socialProfile'
+    socialProfile: 'socialProfile',
+    isAlumni: 'isAlumni'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -11207,6 +11221,7 @@ export namespace Prisma {
     isVerified?: BoolFilter<"User"> | boolean
     createdAt?: DateTimeFilter<"User"> | Date | string
     socialProfile?: StringNullableFilter<"User"> | string | null
+    isAlumni?: BoolFilter<"User"> | boolean
     cgpa?: XOR<CgpaNullableScalarRelationFilter, CgpaWhereInput> | null
     achievements?: AchievementListRelationFilter
     alumni?: XOR<AlumniNullableScalarRelationFilter, AlumniWhereInput> | null
@@ -11232,6 +11247,7 @@ export namespace Prisma {
     isVerified?: SortOrder
     createdAt?: SortOrder
     socialProfile?: SortOrderInput | SortOrder
+    isAlumni?: SortOrder
     cgpa?: CgpaOrderByWithRelationInput
     achievements?: AchievementOrderByRelationAggregateInput
     alumni?: AlumniOrderByWithRelationInput
@@ -11260,6 +11276,7 @@ export namespace Prisma {
     isVerified?: BoolFilter<"User"> | boolean
     createdAt?: DateTimeFilter<"User"> | Date | string
     socialProfile?: StringNullableFilter<"User"> | string | null
+    isAlumni?: BoolFilter<"User"> | boolean
     cgpa?: XOR<CgpaNullableScalarRelationFilter, CgpaWhereInput> | null
     achievements?: AchievementListRelationFilter
     alumni?: XOR<AlumniNullableScalarRelationFilter, AlumniWhereInput> | null
@@ -11285,6 +11302,7 @@ export namespace Prisma {
     isVerified?: SortOrder
     createdAt?: SortOrder
     socialProfile?: SortOrderInput | SortOrder
+    isAlumni?: SortOrder
     _count?: UserCountOrderByAggregateInput
     _avg?: UserAvgOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
@@ -11314,6 +11332,7 @@ export namespace Prisma {
     isVerified?: BoolWithAggregatesFilter<"User"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     socialProfile?: StringNullableWithAggregatesFilter<"User"> | string | null
+    isAlumni?: BoolWithAggregatesFilter<"User"> | boolean
   }
 
   export type CgpaWhereInput = {
@@ -11816,6 +11835,7 @@ export namespace Prisma {
     isVerified?: boolean
     createdAt?: Date | string
     socialProfile?: string | null
+    isAlumni?: boolean
     cgpa?: CgpaCreateNestedOneWithoutStudentInput
     achievements?: AchievementCreateNestedManyWithoutStudentInput
     alumni?: AlumniCreateNestedOneWithoutStudentInput
@@ -11841,6 +11861,7 @@ export namespace Prisma {
     isVerified?: boolean
     createdAt?: Date | string
     socialProfile?: string | null
+    isAlumni?: boolean
     cgpa?: CgpaUncheckedCreateNestedOneWithoutStudentInput
     achievements?: AchievementUncheckedCreateNestedManyWithoutStudentInput
     alumni?: AlumniUncheckedCreateNestedOneWithoutStudentInput
@@ -11865,6 +11886,7 @@ export namespace Prisma {
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     socialProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    isAlumni?: BoolFieldUpdateOperationsInput | boolean
     cgpa?: CgpaUpdateOneWithoutStudentNestedInput
     achievements?: AchievementUpdateManyWithoutStudentNestedInput
     alumni?: AlumniUpdateOneWithoutStudentNestedInput
@@ -11890,6 +11912,7 @@ export namespace Prisma {
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     socialProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    isAlumni?: BoolFieldUpdateOperationsInput | boolean
     cgpa?: CgpaUncheckedUpdateOneWithoutStudentNestedInput
     achievements?: AchievementUncheckedUpdateManyWithoutStudentNestedInput
     alumni?: AlumniUncheckedUpdateOneWithoutStudentNestedInput
@@ -11915,6 +11938,7 @@ export namespace Prisma {
     isVerified?: boolean
     createdAt?: Date | string
     socialProfile?: string | null
+    isAlumni?: boolean
   }
 
   export type UserUpdateManyMutationInput = {
@@ -11935,6 +11959,7 @@ export namespace Prisma {
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     socialProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    isAlumni?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type UserUncheckedUpdateManyInput = {
@@ -11956,6 +11981,7 @@ export namespace Prisma {
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     socialProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    isAlumni?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type CgpaCreateInput = {
@@ -12607,6 +12633,7 @@ export namespace Prisma {
     isVerified?: SortOrder
     createdAt?: SortOrder
     socialProfile?: SortOrder
+    isAlumni?: SortOrder
   }
 
   export type UserAvgOrderByAggregateInput = {
@@ -12634,6 +12661,7 @@ export namespace Prisma {
     isVerified?: SortOrder
     createdAt?: SortOrder
     socialProfile?: SortOrder
+    isAlumni?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
@@ -12654,6 +12682,7 @@ export namespace Prisma {
     isVerified?: SortOrder
     createdAt?: SortOrder
     socialProfile?: SortOrder
+    isAlumni?: SortOrder
   }
 
   export type UserSumOrderByAggregateInput = {
@@ -14052,6 +14081,7 @@ export namespace Prisma {
     isVerified?: boolean
     createdAt?: Date | string
     socialProfile?: string | null
+    isAlumni?: boolean
     achievements?: AchievementCreateNestedManyWithoutStudentInput
     alumni?: AlumniCreateNestedOneWithoutStudentInput
     internships?: InternshipCreateNestedManyWithoutStudentInput
@@ -14076,6 +14106,7 @@ export namespace Prisma {
     isVerified?: boolean
     createdAt?: Date | string
     socialProfile?: string | null
+    isAlumni?: boolean
     achievements?: AchievementUncheckedCreateNestedManyWithoutStudentInput
     alumni?: AlumniUncheckedCreateNestedOneWithoutStudentInput
     internships?: InternshipUncheckedCreateNestedManyWithoutStudentInput
@@ -14115,6 +14146,7 @@ export namespace Prisma {
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     socialProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    isAlumni?: BoolFieldUpdateOperationsInput | boolean
     achievements?: AchievementUpdateManyWithoutStudentNestedInput
     alumni?: AlumniUpdateOneWithoutStudentNestedInput
     internships?: InternshipUpdateManyWithoutStudentNestedInput
@@ -14139,6 +14171,7 @@ export namespace Prisma {
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     socialProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    isAlumni?: BoolFieldUpdateOperationsInput | boolean
     achievements?: AchievementUncheckedUpdateManyWithoutStudentNestedInput
     alumni?: AlumniUncheckedUpdateOneWithoutStudentNestedInput
     internships?: InternshipUncheckedUpdateManyWithoutStudentNestedInput
@@ -14162,6 +14195,7 @@ export namespace Prisma {
     isVerified?: boolean
     createdAt?: Date | string
     socialProfile?: string | null
+    isAlumni?: boolean
     cgpa?: CgpaCreateNestedOneWithoutStudentInput
     achievements?: AchievementCreateNestedManyWithoutStudentInput
     alumni?: AlumniCreateNestedOneWithoutStudentInput
@@ -14186,6 +14220,7 @@ export namespace Prisma {
     isVerified?: boolean
     createdAt?: Date | string
     socialProfile?: string | null
+    isAlumni?: boolean
     cgpa?: CgpaUncheckedCreateNestedOneWithoutStudentInput
     achievements?: AchievementUncheckedCreateNestedManyWithoutStudentInput
     alumni?: AlumniUncheckedCreateNestedOneWithoutStudentInput
@@ -14225,6 +14260,7 @@ export namespace Prisma {
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     socialProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    isAlumni?: BoolFieldUpdateOperationsInput | boolean
     cgpa?: CgpaUpdateOneWithoutStudentNestedInput
     achievements?: AchievementUpdateManyWithoutStudentNestedInput
     alumni?: AlumniUpdateOneWithoutStudentNestedInput
@@ -14249,6 +14285,7 @@ export namespace Prisma {
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     socialProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    isAlumni?: BoolFieldUpdateOperationsInput | boolean
     cgpa?: CgpaUncheckedUpdateOneWithoutStudentNestedInput
     achievements?: AchievementUncheckedUpdateManyWithoutStudentNestedInput
     alumni?: AlumniUncheckedUpdateOneWithoutStudentNestedInput
@@ -14272,6 +14309,7 @@ export namespace Prisma {
     isVerified?: boolean
     createdAt?: Date | string
     socialProfile?: string | null
+    isAlumni?: boolean
     cgpa?: CgpaCreateNestedOneWithoutStudentInput
     alumni?: AlumniCreateNestedOneWithoutStudentInput
     internships?: InternshipCreateNestedManyWithoutStudentInput
@@ -14296,6 +14334,7 @@ export namespace Prisma {
     isVerified?: boolean
     createdAt?: Date | string
     socialProfile?: string | null
+    isAlumni?: boolean
     cgpa?: CgpaUncheckedCreateNestedOneWithoutStudentInput
     alumni?: AlumniUncheckedCreateNestedOneWithoutStudentInput
     internships?: InternshipUncheckedCreateNestedManyWithoutStudentInput
@@ -14335,6 +14374,7 @@ export namespace Prisma {
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     socialProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    isAlumni?: BoolFieldUpdateOperationsInput | boolean
     cgpa?: CgpaUpdateOneWithoutStudentNestedInput
     alumni?: AlumniUpdateOneWithoutStudentNestedInput
     internships?: InternshipUpdateManyWithoutStudentNestedInput
@@ -14359,6 +14399,7 @@ export namespace Prisma {
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     socialProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    isAlumni?: BoolFieldUpdateOperationsInput | boolean
     cgpa?: CgpaUncheckedUpdateOneWithoutStudentNestedInput
     alumni?: AlumniUncheckedUpdateOneWithoutStudentNestedInput
     internships?: InternshipUncheckedUpdateManyWithoutStudentNestedInput
@@ -14407,6 +14448,7 @@ export namespace Prisma {
     isVerified?: boolean
     createdAt?: Date | string
     socialProfile?: string | null
+    isAlumni?: boolean
     cgpa?: CgpaCreateNestedOneWithoutStudentInput
     achievements?: AchievementCreateNestedManyWithoutStudentInput
     internships?: InternshipCreateNestedManyWithoutStudentInput
@@ -14431,6 +14473,7 @@ export namespace Prisma {
     isVerified?: boolean
     createdAt?: Date | string
     socialProfile?: string | null
+    isAlumni?: boolean
     cgpa?: CgpaUncheckedCreateNestedOneWithoutStudentInput
     achievements?: AchievementUncheckedCreateNestedManyWithoutStudentInput
     internships?: InternshipUncheckedCreateNestedManyWithoutStudentInput
@@ -14520,6 +14563,7 @@ export namespace Prisma {
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     socialProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    isAlumni?: BoolFieldUpdateOperationsInput | boolean
     cgpa?: CgpaUpdateOneWithoutStudentNestedInput
     achievements?: AchievementUpdateManyWithoutStudentNestedInput
     internships?: InternshipUpdateManyWithoutStudentNestedInput
@@ -14544,6 +14588,7 @@ export namespace Prisma {
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     socialProfile?: NullableStringFieldUpdateOperationsInput | string | null
+    isAlumni?: BoolFieldUpdateOperationsInput | boolean
     cgpa?: CgpaUncheckedUpdateOneWithoutStudentNestedInput
     achievements?: AchievementUncheckedUpdateManyWithoutStudentNestedInput
     internships?: InternshipUncheckedUpdateManyWithoutStudentNestedInput

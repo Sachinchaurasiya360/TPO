@@ -10,7 +10,6 @@ TPO_Website/
 │   ├── prisma/           # Prisma ORM for database operations
 │   └── src/              # Source code
 ├── frontend/
-│   ├── admin/            # Admin portal (React + TypeScript)
 │   └── student/          # Student portal (React + TypeScript)
 ├── package.json          # Root level dependencies and scripts
 └── README.md             # Project documentation

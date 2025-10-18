@@ -1,17 +1,22 @@
 import { Request, Response } from "express";
-import { PrismaClient } from "../../prisma/output/prismaclient";
+import { Department, PrismaClient } from "../../prisma/output/prismaclient";
 import logger from "../../utils/logger/logger";
 import { sendEmail } from "../../utils/email/sendEmail";
-import { verificationBody,verificationSubject } from "../../utils/email/subjectAndBody";
+import {
+  adminAccountCreationbody,
+  adminAccountCreationsubject,
+  verificationBody,
+  verificationSubject,
+} from "../../utils/email/subjectAndBody";
+import { success } from "zod";
+import { adminSignupTypes } from "../../utils/types/zodSchema";
 const prisma = new PrismaClient();
 
 export const getOneUserDetails = async (req: Request, res: Response) => {
   try {
-    const studentId = req.params.id;
-    logger.info(getOneUserDetails);
-    const studentIdInt = Number(studentId);
+    const studentId = Number(req.params.id);
     const getUserDetails = await prisma.user.findUnique({
-      where: { id: studentIdInt }, //implement to not get the password from backend using select
+      where: { id: studentId }, //implement to not get the password from backend using select
     });
 
     if (!getUserDetails) {
@@ -76,8 +81,8 @@ export const approvedUnApprovedStudent = async (
         isVerified: true,
       },
     });
-    const email=approvingStudent.emailId;
-    sendEmail(email,verificationSubject,verificationBody)
+    const email = approvingStudent.emailId;
+    sendEmail(email, verificationSubject, verificationBody);
     return res.status(200).json({
       message: "user verification successful now they can login",
     });
@@ -90,21 +95,95 @@ export const approvedUnApprovedStudent = async (
 
 export const getDepartmentWiseStudent = async (req: Request, res: Response) => {
   try {
-  } catch (error) {}
+    const departmentName = req.params.department as Department;
+    const pageNo = Number(req.query.pageNo) || 1;
+    const limit = Number(req.query.limit) || 20;
+    const skip = (pageNo - 1) * limit;
+    if (!departmentName) {
+      return res.status(400).json({
+        message: "Department name is required",
+      });
+    }
+    const getStudentForDeparment = await prisma.user.findMany({
+      where: { department: departmentName, isAlumni: false },
+      select: {
+        fullName: true,
+        profilePic: true,
+        contactNo: true,
+        emailId: true,
+        resumeUrl: true,
+      },
+      skip,
+      take: limit,
+      orderBy: { fullName: "asc" },
+    });
+    const totalStudent = await prisma.user.count({
+      where: { department: departmentName, isAlumni: false },
+    });
+    const totalPage = Math.ceil(totalStudent / limit);
+    return res.status(200).json({
+      message: "Total student",
+      meta: {
+        currentPage: pageNo,
+        totalPage,
+        totalStudent,
+        limit,
+      },
+      data: getStudentForDeparment,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Internal server error",
+      success: false,
+    });
+  }
 };
 
-export const getStudentByMultipleFilter = async (
-  req: Request,
-  res: Response
-) => {
-  try {
-  } catch (error) {}
-};
 export const addMembers = async (req: Request, res: Response) => {
   try {
-  } catch (error) {}
+    const result = adminSignupTypes.safeParse(req.body);
+    if (!result.success) {
+      return res.status(400).json({
+        message: "Invalid Input",
+        error: result.error.flatten().fieldErrors,
+      });
+    }
+    const { fullName, contactNo, emailId, password, role } = result.data;
+    const isEmailExist = await prisma.admin.findUnique({
+      where: { emailId },
+    });
+    if (isEmailExist) {
+      return res.status(400).json({
+        message: "This email is already registred",
+      });
+    }
+    const createAdmin = await prisma.admin.create({
+      data: { fullName, contactNo, emailId, password, role },
+    });
+    const emailbody = adminAccountCreationbody(fullName, password);
+    sendEmail(emailId, adminAccountCreationsubject, emailbody);
+    return res.status(200).json({
+      message: "Admin Added",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Internal Server Error",
+    });
+  }
 };
+
 export const removeMembers = async (req: Request, res: Response) => {
   try {
-  } catch (error) {}
+    const adminId = Number(req.body.id);
+    const deleteingAdmin = await prisma.admin.delete({
+      where: { id: adminId },
+    });
+    return res.status(200).json({
+      message: "User removed ",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Internal server error",
+    });
+  }
 };

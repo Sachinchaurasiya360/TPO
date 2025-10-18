@@ -46,6 +46,7 @@ model User {
   socialProfile    String?
   achievements     Achievement[]
   alumni           Alumni?
+  isAlumni         Boolean           @default(false)
   internships      Internship[]
 
   @@index([department])

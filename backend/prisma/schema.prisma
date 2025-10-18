@@ -32,6 +32,7 @@ model User {
   emailId       String            @unique
   password      String
   cgpa          Cgpa?
+  TotalCgpa Float
   parentsContactNo Int?
   studentId     String?
   sscPercentage Float?
@@ -46,6 +47,7 @@ model User {
   socialProfile String?
   achievements  Achievement[]
   alumni        Alumni?
+  isAlumni Boolean @default(false)
   internships   Internship[]
 
   @@index([department])
@@ -143,3 +145,4 @@ model HigherStudies {
   alumniId    Int       @unique
   alumni      Alumni    @relation(fields: [alumniId], references: [id], onDelete: Cascade)
 }
+
