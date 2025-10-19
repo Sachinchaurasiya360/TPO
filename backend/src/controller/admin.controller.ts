@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { Department, PrismaClient } from "../../prisma/output/prismaclient";
-import logger from "../../utils/logger/logger";
 import { sendEmail } from "../../utils/email/sendEmail";
 import {
   adminAccountCreationbody,
@@ -8,7 +7,6 @@ import {
   verificationBody,
   verificationSubject,
 } from "../../utils/email/subjectAndBody";
-import { success } from "zod";
 import { adminSignupTypes } from "../../utils/types/zodSchema";
 const prisma = new PrismaClient();
 
@@ -16,7 +14,28 @@ export const getOneUserDetails = async (req: Request, res: Response) => {
   try {
     const studentId = Number(req.params.id);
     const getUserDetails = await prisma.user.findUnique({
-      where: { id: studentId }, //implement to not get the password from backend using select
+      where: { id: studentId },
+      select: {
+        id: true,
+        fullName: true,
+        legalName: true,
+        contactNo: true,
+        emailId: true,
+        parentsContactNo: true,
+        studentId: true,
+        sscPercentage: true,
+        hscPercentage: true,
+        department: true,
+        academicYear: true,
+        skills: true,
+        profilePic: true,
+        resumeUrl: true,
+        socialProfile: true,
+        cgpa: true,
+        achievements: true,
+        internships: true,
+        password: false,
+      }, 
     });
 
     if (!getUserDetails) {
@@ -161,7 +180,7 @@ export const addMembers = async (req: Request, res: Response) => {
       data: { fullName, contactNo, emailId, password, role },
     });
     const emailbody = adminAccountCreationbody(fullName, password);
-    sendEmail(emailId, adminAccountCreationsubject, emailbody);
+    await sendEmail(emailId, adminAccountCreationsubject, emailbody);
     return res.status(200).json({
       message: "Admin Added",
     });
@@ -180,6 +199,20 @@ export const removeMembers = async (req: Request, res: Response) => {
     });
     return res.status(200).json({
       message: "User removed ",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
+
+export const currentMembers = async (req: Request, res: Response) => {
+  try {
+    const getCurrentMembers = await prisma.admin.findMany({});
+    return res.status(200).json({
+      message: "Current Member",
+      data: getCurrentMembers,
     });
   } catch (error) {
     return res.status(500).json({

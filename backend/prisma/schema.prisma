@@ -32,7 +32,7 @@ model User {
   emailId       String            @unique
   password      String
   cgpa          Cgpa?
-  TotalCgpa Float
+  TotalCgpa Float?
   parentsContactNo Int?
   studentId     String?
   sscPercentage Float?

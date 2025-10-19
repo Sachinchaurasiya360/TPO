@@ -4,7 +4,8 @@ import {
   approvedUnApprovedStudent,
   addMembers,
   removeMembers,
-} from "../controller/Admin.controller";
+  currentMembers,
+} from "../controller/Admin.controller.js";
 import express from "express";
 const router = express.Router();
 
@@ -13,5 +14,6 @@ router.get("/getunapprovedstudent", getUnApprovedStudent);
 router.patch("/approvedUnApprovedStudent", approvedUnApprovedStudent);
 router.post("/addMembers", addMembers);
 router.delete("/removeMembers", removeMembers);
+router.get("/getCurrentMembers", currentMembers);
 
 export default router;
