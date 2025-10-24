@@ -1,5 +1,5 @@
 import { Response, Request } from "express";
-import { Department, PrismaClient } from "../../prisma/output/prismaclient";
+import { PrismaClient } from "../../prisma/output/prismaclient";
 import { signupTypes, loginTypes } from "../../utils/types/zodSchema";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
@@ -19,24 +19,38 @@ export const signin = async (req: Request, res: Response) => {
       });
     }
     const { emailId, password } = result.data;
+
     const getdetails = await prisma.user.findUnique({
       where: { emailId },
     });
-
     if (!getdetails) {
       return res.status(404).json({
         message: "Email does not exist",
       });
     }
+    const isUserVerified = await prisma.user.findUnique({
+      where: { emailId, isVerified: false },
+    });
+    if (isUserVerified) {
+      return res.status(401).json({
+        message:
+          "Your account has been not verifed yet.Please wait for some time",
+      });
+    }
+
     const comparePassword = await bcrypt.compare(password, getdetails.password);
     if (!comparePassword) {
       return res.status(401).json({
         message: "You have entered wrong password",
       });
     }
-
+    getdetails;
     const token = jwt.sign(
-      { fullName: getdetails.fullName, emailId: emailId },
+      {
+        fullName: getdetails.fullName,
+        emailId: emailId,
+        Role: getdetails.role,
+      },
       process.env.JWTSECRET as string,
       { expiresIn: "12h" }
     );
@@ -53,6 +67,7 @@ export const signin = async (req: Request, res: Response) => {
       user: {
         fullName: getdetails.fullName,
         emailId: getdetails.emailId,
+        Role: getdetails.role,
       },
     });
   } catch (err) {
@@ -65,6 +80,7 @@ export const signin = async (req: Request, res: Response) => {
 
 export const signup = async (req: Request, res: Response) => {
   try {
+    console.log(req.body);
     const result = signupTypes.safeParse(req.body);
     if (!result.success) {
       return res.status(400).json({
@@ -76,7 +92,6 @@ export const signup = async (req: Request, res: Response) => {
     const isUserExist = await prisma.user.findUnique({
       where: { emailId },
     });
-
     if (isUserExist) {
       return res.status(409).json({
         message: "User already exists with this email",
@@ -89,13 +104,14 @@ export const signup = async (req: Request, res: Response) => {
         emailId,
         department,
         password: hashedPassword,
+        role: "STUDENT",
       },
       select: {
         id: true,
       },
     });
     sendEmail(emailId, signupSubject, signupBody);
-    return res.status(201).json({
+    return res.status(200).json({
       message: "Account Created, Please wait for verification",
     });
   } catch (err) {
@@ -125,8 +141,8 @@ export const forgotpassword = async (req: Request, res: Response) => {
     );
   } catch (error) {
     return res.status(500).json({
-      message:"Internal server error"
-    })
+      message: "Internal server error",
+    });
   }
 };
 

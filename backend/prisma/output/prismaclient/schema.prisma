@@ -32,6 +32,7 @@ model User {
   emailId          String            @unique
   password         String
   cgpa             Cgpa?
+  TotalCgpa        Float?
   parentsContactNo Int?
   studentId        String?
   sscPercentage    Float?
@@ -48,6 +49,7 @@ model User {
   alumni           Alumni?
   isAlumni         Boolean           @default(false)
   internships      Internship[]
+  role             Role              @default(STUDENT)
 
   @@index([department])
   @@index([fullName])

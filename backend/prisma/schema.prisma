@@ -25,30 +25,31 @@ enum Department {
 }
 
 model User {
-  id            Int               @id @default(autoincrement())
-  fullName      String
-  legalName     String?
-  contactNo     String?
-  emailId       String            @unique
-  password      String
-  cgpa          Cgpa?
-  TotalCgpa Float?
+  id               Int               @id @default(autoincrement())
+  fullName         String
+  legalName        String?
+  contactNo        String?
+  emailId          String            @unique
+  password         String
+  cgpa             Cgpa?
+  TotalCgpa        Float?
   parentsContactNo Int?
-  studentId     String?
-  sscPercentage Float?
-  hscPercentage Float?
-  department    Department
-  academicYear  UserAcademicYear?
-  skills        String[]
-  profilePic    String?
-  resumeUrl     String?
-  isVerified    Boolean           @default(false)
-  createdAt     DateTime          @default(now())
-  socialProfile String?
-  achievements  Achievement[]
-  alumni        Alumni?
-  isAlumni Boolean @default(false)
-  internships   Internship[]
+  studentId        String?
+  sscPercentage    Float?
+  hscPercentage    Float?
+  department       Department
+  academicYear     UserAcademicYear?
+  skills           String[]
+  profilePic       String?
+  resumeUrl        String?
+  isVerified       Boolean           @default(false)
+  createdAt        DateTime          @default(now())
+  socialProfile    String?
+  achievements     Achievement[]
+  alumni           Alumni?
+  isAlumni         Boolean           @default(false)
+  internships      Internship[]
+  role             Role              @default(STUDENT)
 
   @@index([department])
   @@index([fullName])
@@ -131,7 +132,7 @@ model Pastorg {
   joiningDate DateTime
   leavingDate DateTime?
   role        String
-  alumni      Alumni    @relation(fields: [alumniId], references: [id],onDelete: Cascade)
+  alumni      Alumni    @relation(fields: [alumniId], references: [id], onDelete: Cascade)
   alumniId    Int
 }
 
@@ -145,4 +146,3 @@ model HigherStudies {
   alumniId    Int       @unique
   alumni      Alumni    @relation(fields: [alumniId], references: [id], onDelete: Cascade)
 }
-

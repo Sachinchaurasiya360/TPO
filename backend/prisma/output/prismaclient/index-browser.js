@@ -127,6 +127,7 @@ exports.Prisma.UserScalarFieldEnum = {
   contactNo: 'contactNo',
   emailId: 'emailId',
   password: 'password',
+  TotalCgpa: 'TotalCgpa',
   parentsContactNo: 'parentsContactNo',
   studentId: 'studentId',
   sscPercentage: 'sscPercentage',
@@ -139,7 +140,8 @@ exports.Prisma.UserScalarFieldEnum = {
   isVerified: 'isVerified',
   createdAt: 'createdAt',
   socialProfile: 'socialProfile',
-  isAlumni: 'isAlumni'
+  isAlumni: 'isAlumni',
+  role: 'role'
 };
 
 exports.Prisma.CgpaScalarFieldEnum = {

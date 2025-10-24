@@ -101,7 +101,7 @@ export const approvedUnApprovedStudent = async (
       },
     });
     const email = approvingStudent.emailId;
-    sendEmail(email, verificationSubject, verificationBody);
+    // sendEmail(email, verificationSubject, verificationBody);
     return res.status(200).json({
       message: "user verification successful now they can login",
     });

@@ -4,10 +4,13 @@ import auth from "./routes/auth";
 import student from "./routes/student";
 import admin from "./routes/admin"
 import cookieParser from "cookie-parser";
+import cors from "cors"
 
 dotenv.config();
 const app = express();
-app.use(cookieParser()); // 👈 important
+app.use(cors());
+
+app.use(cookieParser());
 app.use(express.json());
 const Port = process.env.port;
 
