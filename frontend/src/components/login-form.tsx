@@ -69,7 +69,7 @@ export function LoginForm({
             Login to your account
           </CardTitle>
           <CardDescription className=" flex justify-center ">
-            Welcom to Vishwaniketan CMS
+            Welcome to Vishwaniketan CMS
           </CardDescription>
         </CardHeader>
         <CardContent>

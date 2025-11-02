@@ -137,7 +137,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
                 required
               />
               {fieldErrors.password && (
-                <p className="text-sm text-red-500">{fieldErrors.password}</p>
+                <p className="text-sm text-red-500">{fieldErrors.password.join(', ')}</p>
               )}
             </Field>
 
