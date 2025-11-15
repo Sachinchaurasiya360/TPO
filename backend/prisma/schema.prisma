@@ -1,6 +1,8 @@
 generator client {
   provider = "prisma-client-js"
   output   = "./output/prismaclient"
+  binaryTargets = ["native", "windows", "rhel-openssl-3.0.x"]
+
 }
 
 datasource db {
@@ -192,12 +194,14 @@ enum Status {
   PUBLISHED
 }
 
-model Notification {
-  id        Int      @default(autoincrement())
-  UserId    Int
-  title     String
-  message   String
-  isRead    Boolean  @default(false)
-  createdAt DateTime @default(now())
-  user      User     @relation(fields: [id], references: [id])
-}
+// model Notification {
+//   id        Int      @default(autoincrement()) @id
+//   UserId    Int
+//   title     String
+//   message   String
+//   isRead    Boolean  @default(false)
+//   createdAt DateTime @default(now())
+//   user      User     @relation(fields: [id], references: [id])
+// }
+
+//add opposite relation in users
