@@ -5,7 +5,7 @@ import {
   addMembers,
   removeMembers,
   currentMembers,
-} from "../controller/Admin.controller";
+} from "../controller/AdminController";
 import express from "express";
 const router = express.Router();
 
