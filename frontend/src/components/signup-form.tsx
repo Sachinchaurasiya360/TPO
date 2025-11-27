@@ -97,8 +97,9 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
 
       <CardHeader>
         <CardTitle className="flex items-center text-2xl justify-center">
-          Create an account
+          Welcome in Vishwaniketan  
         </CardTitle>
+        <h1 className=" flex justify-center">Create your account</h1>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit}>

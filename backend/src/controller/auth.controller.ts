@@ -73,7 +73,7 @@ export const signin = async (req: Request, res: Response) => {
   } catch (err) {
     console.error(err);
     return res.status(500).json({
-      message: "Internal server errro",
+      message: "Internal server error",
     });
   }
 };

@@ -10,7 +10,6 @@ import {
   Building2,
   GraduationCap,
   Target,
-  Sparkles,
   Calendar,
   FileText,
   BookOpen,
@@ -141,9 +140,10 @@ export default function LandingPage() {
         <div className="container mx-auto px-4">
           <div className="flex h-16 items-center justify-between">
             <div className="flex items-center gap-2">
-              <GraduationCap className="h-6 w-6" />
               <span className="text-xl font-bold text-neutral-900">
-                TPO Cell
+                <img src="/logo.png" alt="Vimeet log" 
+                className="h-18"
+                />
               </span>
             </div>
             <div className="flex items-center gap-4">
@@ -172,7 +172,7 @@ export default function LandingPage() {
               Training & Placement Cell
             </h1>
             <p className="mb-8 text-xl text-neutral-600 md:text-2xl">
-              Vishwaniketan College of Management & Science
+              Vishwaniketan's Institute of Management Entrepreneurship and Engineering Technology
             </p>
             <p className="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-neutral-500">
               Your gateway to career success. We bridge the gap between academic
@@ -472,9 +472,9 @@ export default function LandingPage() {
                 Contact
               </h3>
               <ul className="space-y-2 text-neutral-600">
-                <li>Vishwaniketan College</li>
-                <li>placement@vishwaniketan.edu.in</li>
-                <li>+91 XXX XXX XXXX</li>
+                <li>Vishwaniketan iMEET</li>
+                <li>tpo@vishwaniketan.edu.in</li>
+                <li>+91 7070416209</li>
               </ul>
             </div>
           </div>

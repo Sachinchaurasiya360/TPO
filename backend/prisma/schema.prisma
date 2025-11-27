@@ -1,8 +1,7 @@
 generator client {
-  provider = "prisma-client-js"
-  output   = "./output/prismaclient"
+  provider      = "prisma-client-js"
+  output        = "./output/prismaclient"
   binaryTargets = ["native", "windows", "rhel-openssl-3.0.x"]
-
 }
 
 datasource db {
@@ -205,3 +204,8 @@ enum Status {
 // }
 
 //add opposite relation in users
+model upcomingEvents {
+  id    Int    @id @unique
+  title String
+  type  String
+}
