@@ -19,7 +19,7 @@ export function Sidebar() {
   ];
 
   return (
-    <div className="h-full  w-36 bg-gray-100">
+    <div className="h-screen  w-36 bg-gray-100">
       <div className="pl-2 ">
         {sidebar.map((itemInSidebar) => (
           <div

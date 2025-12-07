@@ -99,26 +99,7 @@ export function StudentDashboard() {
                         disabled
                       />
                     </Field>
-                    <Field>
-                      <FieldLabel htmlFor="SSC Percentage">
-                        SSC Percentage
-                      </FieldLabel>
-                      <Input
-                        id="SSC Percentage"
-                        type="text"
-                        placeholder="92%"
-                      />
-                    </Field>
-                    <Field>
-                      <FieldLabel htmlFor="HSC Percentage">
-                        HSC Percentage
-                      </FieldLabel>
-                      <Input
-                        id="HSC Percentage"
-                        type="text"
-                        placeholder="85%"
-                      />
-                    </Field>
+
                     <Field>
                       <FieldLabel htmlFor="Department">Department</FieldLabel>
                       <Input id="Department" type="text" disabled />
@@ -141,7 +122,7 @@ export function StudentDashboard() {
                         placeholder="https://drive.com/yourresumeurl"
                       />
                     </Field>
-                    <Button className="mt-8" onClick={handleSubmit}>
+                    <Button className="mt-8 max-w-20" onClick={handleSubmit}>
                       Submit
                     </Button>
                   </FieldGroup>
