@@ -76,8 +76,8 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        const serverResponse = error?.response?.data;
-        toast.error(serverResponse?.message);
+        const serverResponse = error?.response?.data?.message;
+        toast.error(serverResponse);
         if (serverResponse?.error?.fieldErrors) {
           setFieldErrors(serverResponse?.error?.fieldErrors);
         } else {

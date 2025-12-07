@@ -32,12 +32,10 @@ model User {
   contactNo        String?
   emailId          String            @unique
   password         String
-  cgpa             Cgpa?
-  TotalCgpa        Float?            @default(0)
+  cgpa             Marks?
+  avgCgpa        Float?            @default(0)
   parentsContactNo Int?
   studentId        String?
-  sscPercentage    Float?
-  hscPercentage    Float?
   department       Department
   academicYear     UserAcademicYear?
   userSession      String?
@@ -57,24 +55,26 @@ model User {
   @@index([fullName])
 }
 
-model Cgpa {
-  id      String @unique @default(uuid())
-  UserId  Int    @unique
-  student User?  @relation(fields: [UserId], references: [id], onDelete: Cascade)
-  sem1    Float?
-  sem2    Float?
-  sem3    Float?
-  sem4    Float?
-  sem5    Float?
-  sem6    Float?
-  sem7    Float?
-  sem8    Float?
+model Marks {
+  id            String @unique @default(uuid())
+  UserId        Int    @unique
+  student       User?  @relation(fields: [UserId], references: [id], onDelete: Cascade)
+  sscPercentage Float?
+  hscPercentage Float?
+  sem1          Float?
+  sem2          Float?
+  sem3          Float?
+  sem4          Float?
+  sem5          Float?
+  sem6          Float?
+  sem7          Float?
+  sem8          Float?
 }
 
 model Internship {
   id              String    @id @default(uuid())
   userId          Int
-  title           String?
+  role           String?
   companyName     String?
   roleDescription String
   duration        String?
@@ -88,7 +88,7 @@ model Internship {
 model Achievement {
   id              String  @id @default(uuid())
   title           String
-  details         String?
+  description         String?
   certificateUrl  String
   achievementTime String?
   userId          Int

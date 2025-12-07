@@ -4,6 +4,9 @@ import { Card } from "@/components/ui/card";
 import { CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { FieldGroup, Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+
+import { Sidebar } from "@/components/sidebar";
 export function StudentDashboard() {
   const navigate = useNavigate();
 
@@ -11,168 +14,142 @@ export function StudentDashboard() {
     localStorage.removeItem("token");
     navigate("/login");
   };
+
+  const handleSubmit = () => {
+    console.log("handle submit clicked");
+  };
   return (
     <div>
       <Navbar buttonName="Logout" onClick={handleLogOut} />
 
-      <div>
-        <h1>Hello user.name</h1>
-      </div>
-      <div className=" grid grid-cols-4 gap-5 m-4">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-2xl ">Upcoming Drive</CardTitle>
-          </CardHeader>
-          <CardDescription>
-            <h1>Total {4} Opportunity </h1>
-            Check eligiblity and apply before deadline
-          </CardDescription>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Upcoming Drive</CardTitle>
-          </CardHeader>
-          <CardDescription>
-            <h1>Total {4} Opportunity </h1>
-            Check eligiblity and apply before deadline
-          </CardDescription>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Upcoming Drive</CardTitle>
-          </CardHeader>
-          <CardDescription>
-            <h1>Total {4} Opportunity </h1>
-            Check eligiblity and apply before deadline
-          </CardDescription>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Upcoming Drive</CardTitle>
-          </CardHeader>
-          <CardDescription>
-            <h1>Total {4} Opportunity </h1>
-            Check eligiblity and apply before deadline
-          </CardDescription>
-        </Card>
-
-        <div>Update your basic Information</div>
+      <div className="flex h-screen">
         <div>
-          <form action="">
-            <FieldGroup>
-              <Field>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
-                <Input
-                  id="emailId"
-                  type="email"
-                  placeholder="yourname@vishwaniketan.edu.in"
-                  disabled
-                />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="fullName">fullName</FieldLabel>
-                <Input id="fullname" type="text" disabled />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="contactNo">ContactNo</FieldLabel>
-                <Input
-                  id="emailId"
-                  type="email"
-                  placeholder="yourname@vishwaniketan.edu.in"
-                />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="email">emailId</FieldLabel>
-                <Input
-                  id="emailId"
-                  type="email"
-                  placeholder="yourname@vishwaniketan.edu.in"
-                />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="email">Parents Contact No</FieldLabel>
-                <Input
-                  id="emailId"
-                  type="email"
-                  placeholder="yourname@vishwaniketan.edu.in"
-                />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="email">StudentId</FieldLabel>
-                <Input
-                  id="emailId"
-                  type="email"
-                  placeholder="yourname@vishwaniketan.edu.in"
-                  disabled
-                />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="email">SSC Percentage</FieldLabel>
-                <Input
-                  id="emailId"
-                  type="email"
-                  placeholder="yourname@vishwaniketan.edu.in"
-                />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="email">HSC Percentage</FieldLabel>
-                <Input
-                  id="emailId"
-                  type="email"
-                  placeholder="yourname@vishwaniketan.edu.in"
-                />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="email">Department</FieldLabel>
-                <Input
-                  id="emailId"
-                  type="email"
-                  placeholder="yourname@vishwaniketan.edu.in"
-                  disabled
-                />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="email">Academic Year</FieldLabel>
-                <Input
-                  id="emailId"
-                  type="email"
-                  placeholder="yourname@vishwaniketan.edu.in"
-                  disabled
-                />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="email">Skills</FieldLabel>
-                <Input
-                  id="emailId"
-                  type="email"
-                  placeholder="yourname@vishwaniketan.edu.in"
-                />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="email">Resume URL</FieldLabel>
-                <Input
-                  id="emailId"
-                  type="email"
-                  placeholder="yourname@vishwaniketan.edu.in"
-                  disabled
-                />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
-                <Input
-                  id="emailId"
-                  type="email"
-                  placeholder="yourname@vishwaniketan.edu.in"
-                  disabled
-                />
-              </Field>
-            </FieldGroup>
-          </form>
-
-          
+          <Sidebar />
         </div>
-
-        <div>Update Your Internship details</div>
+        <div className="  flex-1">
+          <div className=" grid grid-cols-2 gap-2.5 m-2">
+            <div>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Upcoming Drive</CardTitle>
+                </CardHeader>
+                <CardDescription>
+                  <h1>Total {4} Opportunity </h1>
+                  Check eligiblity and apply before deadline
+                </CardDescription>
+              </Card>
+            </div>
+            <div>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Profile Completion</CardTitle>
+                </CardHeader>
+                <CardDescription>
+                  <h1>Total 4 Opportunity </h1>
+                  Check eligiblity and apply before deadline
+                </CardDescription>
+              </Card>
+            </div>
+          </div>
+          <div>
+            <h1>Hello {"Sachin"}</h1>
+            <h2>Update your personal details</h2>
+          </div>
+          <div className="m-4">
+            <Card>
+              <div className="">
+                <form action="">
+                  <FieldGroup className="p-4 grid grid-cols-1 sm:grid-cols-1 gap-4 lg:grid-cols-2 ">
+                    <Field>
+                      <FieldLabel htmlFor="fullName">Full Name</FieldLabel>
+                      <Input id="fullname" type="text" disabled />
+                    </Field>
+                    <Field>
+                      <FieldLabel htmlFor="contactNo">Contact No</FieldLabel>
+                      <Input
+                        id="contactNo"
+                        type="text"
+                        placeholder="+91 7070416209"
+                      />
+                    </Field>
+                    <Field>
+                      <FieldLabel htmlFor="email">Email Id</FieldLabel>
+                      <Input
+                        id="emailId"
+                        type="email"
+                        placeholder="yourname@vishwaniketan.edu.in"
+                      />
+                    </Field>
+                    <Field>
+                      <FieldLabel htmlFor="contactno">
+                        Parents Contact No
+                      </FieldLabel>
+                      <Input
+                        id="contactno"
+                        type="text"
+                        placeholder="+91 7070416209"
+                      />
+                    </Field>
+                    <Field>
+                      <FieldLabel htmlFor="StudentId">Student Id</FieldLabel>
+                      <Input
+                        id="StudentId"
+                        type="text"
+                        placeholder="GCSE 1020252022"
+                        disabled
+                      />
+                    </Field>
+                    <Field>
+                      <FieldLabel htmlFor="SSC Percentage">
+                        SSC Percentage
+                      </FieldLabel>
+                      <Input
+                        id="SSC Percentage"
+                        type="text"
+                        placeholder="92%"
+                      />
+                    </Field>
+                    <Field>
+                      <FieldLabel htmlFor="HSC Percentage">
+                        HSC Percentage
+                      </FieldLabel>
+                      <Input
+                        id="HSC Percentage"
+                        type="text"
+                        placeholder="85%"
+                      />
+                    </Field>
+                    <Field>
+                      <FieldLabel htmlFor="Department">Department</FieldLabel>
+                      <Input id="Department" type="text" disabled />
+                    </Field>
+                    <Field>
+                      <FieldLabel htmlFor="Academic Year">
+                        Academic Year
+                      </FieldLabel>
+                      <Input id="Academic Year" type="text" disabled />
+                    </Field>
+                    <Field>
+                      <FieldLabel htmlFor="Skills">Skills</FieldLabel>
+                      <Input id="Skills" type="text" />
+                    </Field>
+                    <Field>
+                      <FieldLabel htmlFor="Resume URL">Resume URL</FieldLabel>
+                      <Input
+                        id="Resume URL"
+                        type="text"
+                        placeholder="https://drive.com/yourresumeurl"
+                      />
+                    </Field>
+                    <Button className="mt-8" onClick={handleSubmit}>
+                      Submit
+                    </Button>
+                  </FieldGroup>
+                </form>
+              </div>
+            </Card>
+          </div>
+        </div>
       </div>
     </div>
   );
