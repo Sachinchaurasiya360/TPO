@@ -1,30 +1,48 @@
 import express, { Request, Response } from "express";
 import dotenv from "dotenv";
-import auth from "./routes/auth";
-import student from "./routes/student";
-import admin from "./routes/admin"
 import cookieParser from "cookie-parser";
-import cors from "cors"
+import cors from "cors";
+import logger from "../utils/logger/logger";
+
+import authRoutes from "./routes/auth";
+import studentRoutes from "./routes/student";
+import facultyRoutes from "./routes/faculty";
+import adminRoutes from "./routes/admin";
+import alumniRoutes from "./routes/alumni";
+import publicRoutes from "./routes/public";
+import notificationRoutes from "./routes/notification";
 
 dotenv.config();
+
 const app = express();
-app.use(cors());
+const PORT = process.env.PORT || 3000;
 
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    credentials: true,
+  })
+);
 app.use(cookieParser());
-app.use(express.json());
-const Port = process.env.port;
+app.use(express.json({ limit: "10mb" }));
 
-app.get("/", (req: Request, res: Response) => {
-  res.json({
-    message: "Health checkup server is running",
-  });
+app.get("/", (_req: Request, res: Response) => {
+  res.json({ message: "TPO API is running", status: "ok" });
 });
 
-app.use("/api/v1/auth", auth);
-app.use("/api/v1/student", student);
-app.use("/api/v1/admin",admin)
-// app.use("/api/v1/member", member);
+app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/student", studentRoutes);
+app.use("/api/v1/faculty", facultyRoutes);
+app.use("/api/v1/admin", adminRoutes);
+app.use("/api/v1/alumni", alumniRoutes);
+app.use("/api/v1/public", publicRoutes);
+app.use("/api/v1/notifications", notificationRoutes);
 
-app.listen(Port, () => {
-  console.log(`App is running on port ${Port}`);
+app.use((err: Error, _req: Request, res: Response, _next: express.NextFunction) => {
+  logger.error({ err }, "Unhandled error");
+  res.status(500).json({ message: "Internal server error" });
+});
+
+app.listen(PORT, () => {
+  logger.info(`Server running on port ${PORT}`);
 });

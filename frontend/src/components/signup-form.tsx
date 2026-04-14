@@ -1,203 +1,296 @@
-import { Button } from "@/components/ui/button";
-import { ChevronDown } from "lucide-react";
-import axios from "axios";
-import { toast, Toaster } from "sonner";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState } from "react";
+import { toast } from "sonner";
+import { Link, useNavigate } from "react-router";
 import {
-  Field,
-  FieldDescription,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
+  ChevronDown,
+  Eye,
+  EyeOff,
+  Loader2,
+  UserPlus,
+  Mail,
+  Lock,
+  User,
+  IdCard,
+  Phone,
+  GraduationCap,
+  Building2,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { api, extractErrorMessage } from "@/lib/api";
 
-import { useState } from "react";
-const API_URL = import.meta.env.VITE_API_URL;
+const DEPARTMENTS = [
+  "CSE",
+  "COMPUTER",
+  "ELECTRICAL",
+  "EXTC",
+  "MECHANICAL",
+  "CIVIL",
+];
+const ACADEMIC_YEARS: { value: string; label: string }[] = [
+  { value: "FIRST_YEAR", label: "First Year" },
+  { value: "SECOND_YEAR", label: "Second Year" },
+  { value: "THIRD_YEAR", label: "Third Year" },
+  { value: "FOURTH_YEAR", label: "Fourth Year" },
+];
 
-export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
+const inputBase =
+  "w-full h-11 pl-10 pr-3 rounded-lg border border-neutral-200 bg-white text-sm text-neutral-900 placeholder-neutral-400 focus:outline-none focus:border-neutral-900 focus:ring-2 focus:ring-neutral-900/10 transition";
+
+export function SignupForm() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     fullName: "",
     emailId: "",
     password: "",
     studentId: "",
     department: "",
+    academicYear: "",
+    contactNo: "",
   });
 
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [fieldErrors, setFieldErrors] = useState<{
-    [key: string]: string[];
-  }>({});
-
-  const handleDepartmentChange = (dept: string) => {
-    setFormData({ ...formData, department: dept });
-  };
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
-    setFormData({ ...formData, [id]: value });
-    if (fieldErrors[id]) {
-      setFieldErrors({ ...fieldErrors, [id]: [] });
-    }
+    setFormData((f) => ({ ...f, [id]: value }));
+    if (fieldErrors[id]) setFieldErrors((fe) => ({ ...fe, [id]: [] }));
+  };
+
+  const handleSelect = (key: "department" | "academicYear", value: string) => {
+    setFormData((f) => ({ ...f, [key]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!formData.department || !formData.academicYear) {
+      toast.error("Please select department and academic year");
+      return;
+    }
     setLoading(true);
-    setError("");
     try {
-      const sendingDataToBackend = await axios.post(
-        `${API_URL}/api/v1/auth/signup`,
-        formData,
-        {
-          timeout: 8000,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-
-      if (sendingDataToBackend.status === 200) {
-        toast.success(
-          "Account Created, Please wait for verification from TPO "
-        );
-        setFormData({ ...formData, password: "", emailId: "", fullName: "" });
-        setLoading(false);
-      } else {
-        setError(
-          sendingDataToBackend?.data?.message ||
-            "Unexpected response from server"
-        );
-        setLoading(false);
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const serverResponse = error?.response?.data?.message;
-        toast.error(serverResponse);
-        if (serverResponse?.error?.fieldErrors) {
-          setFieldErrors(serverResponse?.error?.fieldErrors);
-        } else {
-          setError(serverResponse?.message);
-          toast.error(serverResponse?.message);
-        }
-      } else {
-        setError("Unexpected error occurred");
-      }
+      const { data } = await api.post("/auth/signup", formData);
+      toast.success(data.message || "Account created. Wait for approval.");
+      setTimeout(() => navigate("/login"), 1200);
+    } catch (error: any) {
+      const errs = error?.response?.data?.errors;
+      if (errs) setFieldErrors(errs);
+      toast.error(extractErrorMessage(error));
     } finally {
       setLoading(false);
     }
   };
+
+  const yearLabel = ACADEMIC_YEARS.find(
+    (y) => y.value === formData.academicYear
+  )?.label;
+
   return (
-    <Card {...props}>
-      <Toaster position="top-right" richColors duration={9000} />
+    <div className="w-full">
+      <div className="mb-8">
+        <h1 className="text-3xl font-semibold tracking-tight text-neutral-900">
+          Create your account
+        </h1>
+        <p className="mt-2 text-sm text-neutral-500">
+          Join the Vishwaniketan TPO portal in a few steps.
+        </p>
+      </div>
 
-      <CardHeader>
-        <CardTitle className="flex items-center text-2xl justify-center">
-          Welcome in Vishwaniketan  
-        </CardTitle>
-        <h1 className=" flex justify-center">Create your account</h1>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit}>
-          <FieldGroup>
-            <Field>
-              {error}
-              <FieldLabel htmlFor="fullName">Full Name</FieldLabel>
-              <Input
-                id="fullName"
-                type="text"
-                placeholder="John Chaurasiya"
-                required
-                value={formData.fullName}
-                onChange={handleChange}
-              />
-            </Field>
-            <Field>
-              <FieldLabel htmlFor="email">Email</FieldLabel>
-              <Input
-                id="emailId"
-                type="email"
-                placeholder="yourname@vishwaniketan.edu.in"
-                value={formData.emailId}
-                onChange={handleChange}
-                required
-              />
-            </Field>
-            <Field>
-              <FieldLabel htmlFor="password">Password</FieldLabel>
-              <Input
-                id="password"
-                type="password"
-                placeholder="************"
-                value={formData.password}
-                onChange={handleChange}
-                required
-              />
-              {fieldErrors.password && (
-                <p className="text-sm text-red-500">{fieldErrors.password.join(', ')}</p>
-              )}
-            </Field>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <FieldBlock label="Full Name" error={fieldErrors.fullName}>
+            <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
+            <input
+              id="fullName"
+              type="text"
+              placeholder="John Chaurasiya"
+              required
+              value={formData.fullName}
+              onChange={handleChange}
+              className={inputBase}
+            />
+          </FieldBlock>
 
-            <Field>
-              <FieldLabel htmlFor="studentId">Student Id</FieldLabel>
-              <Input
-                id="studentId"
-                type="text"
-                required
-                onChange={handleChange}
-                value={formData.studentId}
-                placeholder="GCSE1234567"
-              />
-              {fieldErrors.studentId && (
-                <p className="text-red-500 text-sm mt-1">
-                  {fieldErrors.studentId}
-                </p>
-              )}
-            </Field>
-            <Field>
-              <FieldLabel htmlFor="department">Department</FieldLabel>
-              <DropdownMenu>
-                <DropdownMenuTrigger className=" border-2 p-1 rounded-md flex justify-between">
-                  {formData.department || "Choose your department"}
-                  <ChevronDown />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="min-w-sm">
-                  {[
-                    "CSE",
-                    "COMPUTER",
-                    "ELECTRICAL",
-                    "EXTC",
-                    "MECHANICAL",
-                    "CIVIL",
-                  ].map((dept) => (
-                    <DropdownMenuItem
-                      key={dept}
-                      onClick={() => handleDepartmentChange(dept)}
-                    >
-                      {dept}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </Field>
-            <FieldGroup>
-              <Field>
-                <Button type="submit" disabled={loading}>
-                  {loading ? "Creating account..." : "Create Account"}
-                </Button>
+          <FieldBlock label="Student ID" error={fieldErrors.studentId}>
+            <IdCard className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
+            <input
+              id="studentId"
+              type="text"
+              required
+              onChange={handleChange}
+              value={formData.studentId}
+              placeholder="e.g. VI2023CSE001"
+              className={inputBase}
+            />
+          </FieldBlock>
+        </div>
 
-                <FieldDescription className="px-6 text-center">
-                  Already have an account? <a href="/login">Sign in</a>
-                </FieldDescription>
-              </Field>
-            </FieldGroup>
-          </FieldGroup>
-        </form>
-      </CardContent>
-    </Card>
+        <FieldBlock label="Email" error={fieldErrors.emailId}>
+          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
+          <input
+            id="emailId"
+            type="email"
+            placeholder="yourname@vishwaniketan.edu.in"
+            value={formData.emailId}
+            onChange={handleChange}
+            required
+            className={inputBase}
+          />
+        </FieldBlock>
+
+        <FieldBlock label="Password" error={fieldErrors.password}>
+          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
+          <input
+            id="password"
+            type={showPassword ? "text" : "password"}
+            placeholder="Minimum 8 characters"
+            value={formData.password}
+            onChange={handleChange}
+            required
+            className={`${inputBase} pr-10`}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword((s) => !s)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-700 transition"
+            tabIndex={-1}
+          >
+            {showPassword ? (
+              <EyeOff className="h-4 w-4" />
+            ) : (
+              <Eye className="h-4 w-4" />
+            )}
+          </button>
+        </FieldBlock>
+
+        <FieldBlock label="Contact Number" error={fieldErrors.contactNo}>
+          <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
+          <input
+            id="contactNo"
+            type="tel"
+            onChange={handleChange}
+            value={formData.contactNo}
+            placeholder="10-digit mobile number"
+            className={inputBase}
+          />
+        </FieldBlock>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-neutral-700 uppercase tracking-wide">
+              Department
+            </label>
+            <DropdownMenu>
+              <DropdownMenuTrigger className="w-full h-11 pl-10 pr-3 relative rounded-lg border border-neutral-200 bg-white text-sm text-left text-neutral-900 hover:border-neutral-400 focus:outline-none focus:border-neutral-900 focus:ring-2 focus:ring-neutral-900/10 transition flex items-center justify-between">
+                <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
+                <span
+                  className={
+                    formData.department ? "text-neutral-900" : "text-neutral-400"
+                  }
+                >
+                  {formData.department || "Select department"}
+                </span>
+                <ChevronDown className="h-4 w-4 text-neutral-500" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="min-w-[var(--radix-dropdown-menu-trigger-width)]">
+                {DEPARTMENTS.map((dept) => (
+                  <DropdownMenuItem
+                    key={dept}
+                    onClick={() => handleSelect("department", dept)}
+                  >
+                    {dept}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-neutral-700 uppercase tracking-wide">
+              Academic Year
+            </label>
+            <DropdownMenu>
+              <DropdownMenuTrigger className="w-full h-11 pl-10 pr-3 relative rounded-lg border border-neutral-200 bg-white text-sm text-left text-neutral-900 hover:border-neutral-400 focus:outline-none focus:border-neutral-900 focus:ring-2 focus:ring-neutral-900/10 transition flex items-center justify-between">
+                <GraduationCap className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
+                <span
+                  className={
+                    yearLabel ? "text-neutral-900" : "text-neutral-400"
+                  }
+                >
+                  {yearLabel || "Select year"}
+                </span>
+                <ChevronDown className="h-4 w-4 text-neutral-500" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="min-w-[var(--radix-dropdown-menu-trigger-width)]">
+                {ACADEMIC_YEARS.map((y) => (
+                  <DropdownMenuItem
+                    key={y.value}
+                    onClick={() => handleSelect("academicYear", y.value)}
+                  >
+                    {y.label}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full h-11 mt-2 inline-flex items-center justify-center gap-2 rounded-lg bg-neutral-900 text-white text-sm font-medium hover:bg-neutral-800 active:bg-neutral-950 disabled:opacity-60 disabled:cursor-not-allowed transition"
+        >
+          {loading ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Creating account...
+            </>
+          ) : (
+            <>
+              <UserPlus className="h-4 w-4" />
+              Create account
+            </>
+          )}
+        </button>
+
+        <p className="text-center text-sm text-neutral-500">
+          Already have an account?{" "}
+          <Link
+            to="/login"
+            className="font-medium text-neutral-900 hover:underline underline-offset-4"
+          >
+            Sign in
+          </Link>
+        </p>
+      </form>
+    </div>
+  );
+}
+
+function FieldBlock({
+  label,
+  error,
+  children,
+}: {
+  label: string;
+  error?: string[];
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="space-y-1.5">
+      <label className="text-xs font-medium text-neutral-700 uppercase tracking-wide">
+        {label}
+      </label>
+      <div className="relative">{children}</div>
+      {error && error.length > 0 && (
+        <p className="text-xs text-red-600">{error.join(", ")}</p>
+      )}
+    </div>
   );
 }

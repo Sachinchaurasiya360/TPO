@@ -1,11 +1,21 @@
 import express from "express";
-import { signin, signup,adminSignup } from "../controller/auth.controller";
-import { updateprofile } from "../controller/student.updateprofile";
+import {
+  signin,
+  signup,
+  logout,
+  me,
+  forgotPassword,
+  resetPassword,
+} from "../controller/auth.controller";
+import { isAuthenticated } from "../middleware/auth";
+
 const router = express.Router();
 
-router.post("/signin", signin);
 router.post("/signup", signup);
-router.post("/updateprofile",updateprofile)
-router.post("/adminsignup",adminSignup)
+router.post("/signin", signin);
+router.post("/logout", logout);
+router.post("/forgot-password", forgotPassword);
+router.post("/reset-password", resetPassword);
+router.get("/me", isAuthenticated, me);
 
 export default router;
