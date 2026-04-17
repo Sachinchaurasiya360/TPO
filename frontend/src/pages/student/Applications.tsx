@@ -1,9 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { toast } from "sonner";
-import { Navbar } from "@/components/shared/navbar";
-import { Sidebar } from "@/components/shared/sidebar";
-import { Card, CardContent } from "@/components/ui/card";
-import { useLogout } from "@/lib/useLogout";
+import { Briefcase, Calendar, MapPin, IndianRupee, Loader2 } from "lucide-react";
+import { StudentLayout } from "@/components/shared/StudentLayout";
 import { extractErrorMessage } from "@/lib/api";
 import {
   studentListMyApplications,
@@ -12,25 +10,17 @@ import {
   type ApplicationStatus,
 } from "@/lib/jobsApi";
 
-const statusColor = (s: ApplicationStatus) => {
-  switch (s) {
-    case "APPLIED":
-      return "bg-blue-100 text-blue-800";
-    case "SHORTLISTED":
-      return "bg-amber-100 text-amber-800";
-    case "INTERVIEW":
-      return "bg-purple-100 text-purple-800";
-    case "SELECTED":
-      return "bg-emerald-100 text-emerald-800";
-    case "REJECTED":
-      return "bg-red-100 text-red-800";
-  }
+const STATUS_STYLES: Record<ApplicationStatus, string> = {
+  APPLIED: "bg-blue-50 text-blue-700 ring-blue-200",
+  SHORTLISTED: "bg-amber-50 text-amber-700 ring-amber-200",
+  INTERVIEW: "bg-purple-50 text-purple-700 ring-purple-200",
+  SELECTED: "bg-green-50 text-green-700 ring-green-200",
+  REJECTED: "bg-red-50 text-red-700 ring-red-200",
 };
 
 type AppWithJob = JobApplication & { job: Job };
 
 export function StudentApplications() {
-  const handleLogout = useLogout();
   const [items, setItems] = useState<AppWithJob[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -50,60 +40,76 @@ export function StudentApplications() {
   }, [load]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar buttonName="Logout" onClick={handleLogout} />
-      <div className="flex">
-        <Sidebar />
-        <div className="flex-1 p-6 max-w-5xl">
-          <h1 className="text-2xl font-bold mb-4">My Applications</h1>
-
-          {loading ? (
-            <div className="text-sm text-muted-foreground">Loading…</div>
-          ) : items.length === 0 ? (
-            <Card>
-              <CardContent className="p-6 text-sm text-muted-foreground">
-                You haven't applied to any jobs yet.
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="grid gap-3">
-              {items.map((a) => (
-                <Card key={a.id}>
-                  <CardContent className="p-4 flex items-center gap-4">
-                    {a.job.companyLogo ? (
-                      <img
-                        src={a.job.companyLogo}
-                        alt=""
-                        className="w-12 h-12 rounded object-cover"
-                      />
-                    ) : (
-                      <div className="w-12 h-12 rounded bg-gray-200 flex items-center justify-center text-gray-500 text-sm font-medium">
-                        {a.job.companyName.slice(0, 2).toUpperCase()}
-                      </div>
-                    )}
-                    <div className="flex-1">
-                      <div className="font-semibold">{a.job.jobTitle}</div>
-                      <div className="text-sm text-muted-foreground">
-                        {a.job.companyName} · {a.job.location} · {a.job.package}
-                      </div>
-                      <div className="text-xs text-muted-foreground mt-1">
-                        Applied on {new Date(a.appliedAt).toLocaleDateString()}
-                      </div>
-                    </div>
-                    <span
-                      className={`text-xs px-3 py-1 rounded-full ${statusColor(
-                        a.status
-                      )}`}
-                    >
-                      {a.status}
-                    </span>
-                  </CardContent>
-                </Card>
-              ))}
+    <StudentLayout
+      title="My applications"
+      subtitle="Track the status of every job you've applied to."
+    >
+      <div className="mx-auto max-w-5xl">
+        {loading ? (
+          <div className="flex items-center justify-center py-24">
+            <Loader2 className="h-6 w-6 animate-spin text-neutral-400" />
+          </div>
+        ) : items.length === 0 ? (
+          <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-neutral-300 bg-white px-6 py-20 text-center">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-neutral-100">
+              <Briefcase className="h-5 w-5 text-neutral-500" />
             </div>
-          )}
-        </div>
+            <h3 className="mt-4 text-lg font-semibold text-neutral-900">
+              No applications yet
+            </h3>
+            <p className="mt-1 text-sm text-neutral-500">
+              Head over to Jobs to find opportunities you're eligible for.
+            </p>
+          </div>
+        ) : (
+          <div className="grid gap-3">
+            {items.map((a) => (
+              <article
+                key={a.id}
+                className="rounded-2xl border border-neutral-200 bg-white p-5 transition hover:border-neutral-300"
+              >
+                <div className="flex flex-wrap items-start gap-4">
+                  <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-neutral-900 text-sm font-semibold text-white">
+                    {a.job.companyName.slice(0, 2).toUpperCase()}
+                  </div>
+
+                  <div className="min-w-0 flex-1">
+                    <h3 className="truncate text-base font-semibold text-neutral-900">
+                      {a.job.jobTitle}
+                    </h3>
+                    <p className="text-sm text-neutral-500">
+                      {a.job.companyName}
+                    </p>
+
+                    <dl className="mt-3 flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-neutral-600">
+                      <span className="inline-flex items-center gap-1">
+                        <MapPin className="h-3.5 w-3.5 text-neutral-400" />
+                        {a.job.location}
+                      </span>
+                      <span className="inline-flex items-center gap-1">
+                        <IndianRupee className="h-3.5 w-3.5 text-neutral-400" />
+                        {a.job.package}
+                      </span>
+                      <span className="inline-flex items-center gap-1">
+                        <Calendar className="h-3.5 w-3.5 text-neutral-400" />
+                        Applied {new Date(a.appliedAt).toLocaleDateString()}
+                      </span>
+                    </dl>
+                  </div>
+
+                  <span
+                    className={`flex-shrink-0 rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide ring-1 ${
+                      STATUS_STYLES[a.status]
+                    }`}
+                  >
+                    {a.status}
+                  </span>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
       </div>
-    </div>
+    </StudentLayout>
   );
 }

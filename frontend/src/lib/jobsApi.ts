@@ -14,7 +14,6 @@ export type ApplicationStatus =
 export interface Job {
   id: string;
   companyName: string;
-  companyLogo: string | null;
   jobTitle: string;
   description: string;
   package: string;
@@ -54,7 +53,6 @@ export interface JobFilters {
 
 export interface CreateJobPayload {
   companyName: string;
-  companyLogo?: string;
   jobTitle: string;
   description: string;
   package: string;
@@ -143,19 +141,6 @@ export const adminSetJobStatus = async (
   return data.job;
 };
 
-export const adminUploadCompanyLogo = async (
-  file: File,
-  jobId?: string
-): Promise<{ url: string }> => {
-  const form = new FormData();
-  form.append("file", file);
-  if (jobId) form.append("jobId", jobId);
-  const { data } = await api.post<{ url: string }>("/admin/jobs/logo", form, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
-  return data;
-};
-
 export const adminListApplications = async (
   jobId: string,
   status?: ApplicationStatus
@@ -186,6 +171,8 @@ export interface StudentJob extends Job {
     status: ApplicationStatus;
     appliedAt: string;
   } | null;
+  eligible: boolean;
+  ineligibleReasons: Array<"department" | "year" | "cgpa">;
 }
 
 export interface StudentJobDetail {

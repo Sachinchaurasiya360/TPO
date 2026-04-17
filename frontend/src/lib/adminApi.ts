@@ -70,6 +70,19 @@ export interface StudentListFilters {
   search?: string;
 }
 
+export interface StudentProject {
+  id: string;
+  title: string;
+  description: string | null;
+  techStack: string[];
+  projectUrl: string | null;
+  repoUrl: string | null;
+  startDate: string | null;
+  endDate: string | null;
+  isVerified: boolean;
+  createdAt: string;
+}
+
 export interface StudentDetailResponse {
   user: StudentListItem & {
     parentsContactNo: string | null;
@@ -79,6 +92,7 @@ export interface StudentDetailResponse {
   marks: Record<string, unknown> | null;
   internships: Array<Record<string, unknown>>;
   achievements: Array<Record<string, unknown>>;
+  projects: StudentProject[];
   pendingVerifications: Array<Record<string, unknown>>;
 }
 
@@ -92,6 +106,10 @@ export interface FacultyListItem {
   isVerified: boolean;
   isActive: boolean;
   createdAt: string;
+}
+
+export interface FacultyDetailResponse {
+  faculty: FacultyListItem;
 }
 
 export interface CreateFacultyPayload {
@@ -136,6 +154,13 @@ export const rejectRegistration = async (
 export const listFaculty = async (): Promise<FacultyListItem[]> => {
   const { data } = await api.get<{ items: FacultyListItem[] }>("/admin/faculty");
   return data.items;
+};
+
+export const getFacultyDetail = async (
+  id: number
+): Promise<FacultyDetailResponse> => {
+  const { data } = await api.get<FacultyDetailResponse>(`/admin/faculty/${id}`);
+  return data;
 };
 
 export const createFaculty = async (

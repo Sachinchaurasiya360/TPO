@@ -6,7 +6,6 @@ import { Prisma } from "../../prisma/output/prismaclient";
 const PUBLIC_JOB_SELECT = {
   id: true,
   companyName: true,
-  companyLogo: true,
   jobTitle: true,
   description: true,
   package: true,
@@ -25,26 +24,6 @@ const PUBLIC_JOB_SELECT = {
   createdAt: true,
 };
 
-const buildEligibilityWhere = (user: {
-  department: string | null | undefined;
-  academicYear: string | null | undefined;
-  avgCgpa: number | null | undefined;
-}): Prisma.JobWhereInput => {
-  const where: Prisma.JobWhereInput = {
-    status: "OPEN",
-    deadline: { gte: new Date() },
-  };
-  if (user.department) {
-    where.eligibleDepartments = { has: user.department as any };
-  }
-  if (user.academicYear) {
-    where.eligibleYears = { has: user.academicYear as any };
-  }
-  const cgpa = user.avgCgpa ?? 0;
-  where.OR = [{ minCgpa: null }, { minCgpa: { lte: cgpa } }];
-  return where;
-};
-
 export const listEligibleJobs = async (req: Request, res: Response) => {
   try {
     const me = await prisma.user.findUnique({
@@ -53,11 +32,9 @@ export const listEligibleJobs = async (req: Request, res: Response) => {
     });
     if (!me) return res.status(404).json({ message: "User not found" });
 
-    const where = buildEligibilityWhere(me);
-
     const [items, applications] = await Promise.all([
       prisma.job.findMany({
-        where,
+        where: { status: "OPEN", deadline: { gte: new Date() } },
         orderBy: { deadline: "asc" },
         select: {
           ...PUBLIC_JOB_SELECT,
@@ -71,10 +48,24 @@ export const listEligibleJobs = async (req: Request, res: Response) => {
     ]);
 
     const appMap = new Map(applications.map((a) => [a.jobId, a]));
-    const enriched = items.map((j) => ({
-      ...j,
-      myApplication: appMap.get(j.id) || null,
-    }));
+    const cgpa = me.avgCgpa ?? 0;
+    const enriched = items.map((j) => {
+      const deptOk =
+        !me.department || j.eligibleDepartments.includes(me.department as any);
+      const yearOk =
+        !me.academicYear || j.eligibleYears.includes(me.academicYear as any);
+      const cgpaOk = j.minCgpa === null || cgpa >= j.minCgpa;
+      const reasons: string[] = [];
+      if (!deptOk) reasons.push("department");
+      if (!yearOk) reasons.push("year");
+      if (!cgpaOk) reasons.push("cgpa");
+      return {
+        ...j,
+        myApplication: appMap.get(j.id) || null,
+        eligible: deptOk && yearOk && cgpaOk,
+        ineligibleReasons: reasons,
+      };
+    });
 
     return res.status(200).json({ items: enriched });
   } catch (error) {
@@ -216,7 +207,6 @@ export const listMyApplications = async (req: Request, res: Response) => {
           select: {
             id: true,
             companyName: true,
-            companyLogo: true,
             jobTitle: true,
             package: true,
             location: true,

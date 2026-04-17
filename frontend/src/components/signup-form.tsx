@@ -22,8 +22,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { api, extractErrorMessage } from "@/lib/api";
+import { DEPARTMENT_LABELS, type Department } from "@/lib/studentApi";
 
-const DEPARTMENTS = [
+const DEPARTMENTS: Department[] = [
   "CSE",
   "COMPUTER",
   "ELECTRICAL",
@@ -194,7 +195,9 @@ export function SignupForm() {
                     formData.department ? "text-neutral-900" : "text-neutral-400"
                   }
                 >
-                  {formData.department || "Select department"}
+                  {formData.department
+                    ? DEPARTMENT_LABELS[formData.department as Department]
+                    : "Select department"}
                 </span>
                 <ChevronDown className="h-4 w-4 text-neutral-500" />
               </DropdownMenuTrigger>
@@ -204,7 +207,7 @@ export function SignupForm() {
                     key={dept}
                     onClick={() => handleSelect("department", dept)}
                   >
-                    {dept}
+                    {DEPARTMENT_LABELS[dept]}
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>

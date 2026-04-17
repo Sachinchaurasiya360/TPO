@@ -179,6 +179,7 @@ model User {
   marks                 Marks?
   internships           Internship[]
   achievements          Achievement[]
+  projects              Project[]
   applications          JobApplication[]
 
   // Relations - alumni
@@ -302,6 +303,28 @@ model Achievement {
   isVerified      Boolean   @default(false)
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
+
+  @@index([userId])
+}
+
+// ==================== PROJECT ====================
+
+model Project {
+  id          String    @id @default(uuid())
+  userId      Int
+  student     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  title       String
+  description String?
+  techStack   String[]
+  projectUrl  String?
+  repoUrl     String?
+  startDate   DateTime?
+  endDate     DateTime?
+
+  isVerified  Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   @@index([userId])
 }

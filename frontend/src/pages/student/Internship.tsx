@@ -1,12 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Navbar } from "@/components/shared/navbar";
-import { Sidebar } from "@/components/shared/sidebar";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { FieldGroup, Field, FieldLabel } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { useLogout } from "@/lib/useLogout";
+import {
+  Briefcase,
+  Plus,
+  Pencil,
+  Trash2,
+  Upload,
+  Loader2,
+  CheckCircle2,
+  Clock,
+  FileText,
+  X,
+} from "lucide-react";
+import { StudentLayout } from "@/components/shared/StudentLayout";
 import { extractErrorMessage } from "@/lib/api";
 import { validateFileSize } from "@/lib/fileUpload";
 import {
@@ -68,7 +74,6 @@ const formatDate = (iso: string | null): string => {
 };
 
 export function Internship() {
-  const handleLogOut = useLogout();
   const [items, setItems] = useState<Internship[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -186,246 +191,323 @@ export function Internship() {
   };
 
   return (
-    <div>
-      <Navbar buttonName="Logout" onClick={handleLogOut} />
-      <div className="flex">
-        <Sidebar />
-        <div className="flex-1 p-4">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h1 className="text-2xl font-semibold">Internships</h1>
-              <p className="text-sm text-muted-foreground">
-                Add your internship history. Faculty will verify each entry. Certificates
-                must be PDF, max 2MB.
-              </p>
-            </div>
-            {!isAdding && <Button onClick={startAdd}>+ Add internship</Button>}
-          </div>
-
-          {isAdding && (
-            <Card className="mb-4 border-blue-300">
-              <CardHeader>
-                <CardTitle>
+    <StudentLayout
+      title="Internships"
+      subtitle="Faculty verifies each entry. Certificates must be PDF, max 2MB."
+      actions={
+        !isAdding ? (
+          <button
+            type="button"
+            onClick={startAdd}
+            className="inline-flex items-center gap-1.5 rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-800"
+          >
+            <Plus className="h-4 w-4" />
+            Add internship
+          </button>
+        ) : null
+      }
+    >
+      <div className="mx-auto max-w-5xl space-y-4">
+        {isAdding && (
+          <section className="rounded-2xl border border-neutral-200 bg-white">
+            <header className="flex items-start justify-between gap-4 border-b border-neutral-200 px-6 py-4">
+              <div className="min-w-0">
+                <h3 className="text-base font-semibold text-neutral-900">
                   {editingId ? "Edit internship" : "Add internship"}
-                </CardTitle>
-                <CardDescription>
+                </h3>
+                <p className="mt-0.5 text-xs text-neutral-500">
                   Editing a verified internship resets it to pending.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleSubmit}>
-                  <FieldGroup className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    <Field>
-                      <FieldLabel htmlFor="companyName">Company *</FieldLabel>
-                      <Input
-                        id="companyName"
-                        value={form.companyName}
-                        onChange={(e) => set("companyName", e.target.value)}
-                        placeholder="Google"
-                        required
-                      />
-                    </Field>
-                    <Field>
-                      <FieldLabel htmlFor="role">Role *</FieldLabel>
-                      <Input
-                        id="role"
-                        value={form.role}
-                        onChange={(e) => set("role", e.target.value)}
-                        placeholder="SDE Intern"
-                        required
-                      />
-                    </Field>
-                    <Field className="lg:col-span-2">
-                      <FieldLabel htmlFor="roleDescription">Work description</FieldLabel>
-                      <Input
-                        id="roleDescription"
-                        value={form.roleDescription}
-                        onChange={(e) => set("roleDescription", e.target.value)}
-                        placeholder="Built internal tools using React and Node.js"
-                      />
-                    </Field>
-                    <Field>
-                      <FieldLabel htmlFor="duration">Duration</FieldLabel>
-                      <Input
-                        id="duration"
-                        value={form.duration}
-                        onChange={(e) => set("duration", e.target.value)}
-                        placeholder="3 months"
-                      />
-                    </Field>
-                    <Field>
-                      <FieldLabel htmlFor="startDate">Start date *</FieldLabel>
-                      <Input
-                        id="startDate"
-                        type="date"
-                        value={form.startDate}
-                        onChange={(e) => set("startDate", e.target.value)}
-                        required
-                      />
-                    </Field>
-                    <Field>
-                      <FieldLabel htmlFor="endDate">End date</FieldLabel>
-                      <Input
-                        id="endDate"
-                        type="date"
-                        value={form.endDate}
-                        onChange={(e) => set("endDate", e.target.value)}
-                      />
-                    </Field>
-                    <Field>
-                      <FieldLabel htmlFor="hrName">HR / manager name</FieldLabel>
-                      <Input
-                        id="hrName"
-                        value={form.hrName}
-                        onChange={(e) => set("hrName", e.target.value)}
-                      />
-                    </Field>
-                    <Field>
-                      <FieldLabel htmlFor="hrEmail">HR email</FieldLabel>
-                      <Input
-                        id="hrEmail"
-                        type="email"
-                        value={form.hrEmail}
-                        onChange={(e) => set("hrEmail", e.target.value)}
-                        placeholder="hr@company.com"
-                      />
-                    </Field>
-                    <Field>
-                      <FieldLabel htmlFor="hrPhone">HR phone</FieldLabel>
-                      <Input
-                        id="hrPhone"
-                        value={form.hrPhone}
-                        onChange={(e) => set("hrPhone", e.target.value)}
-                      />
-                    </Field>
-                    <Field className="lg:col-span-2">
-                      <FieldLabel>Offer / experience certificate (PDF, max 2MB)</FieldLabel>
-                      <div className="flex items-center gap-3">
-                        {form.certificateUrl ? (
-                          <a
-                            href={form.certificateUrl}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="text-xs text-blue-600 underline"
-                          >
-                            View uploaded file
-                          </a>
-                        ) : (
-                          <span className="text-xs text-muted-foreground">
-                            No file uploaded
-                          </span>
-                        )}
-                        <input
-                          ref={fileInputRef}
-                          type="file"
-                          accept="application/pdf"
-                          className="hidden"
-                          onChange={onCertChange}
-                        />
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          disabled={uploadingCert}
-                          onClick={() => fileInputRef.current?.click()}
-                        >
-                          {uploadingCert
-                            ? "Uploading…"
-                            : form.certificateUrl
-                              ? "Replace"
-                              : "Upload"}
-                        </Button>
-                      </div>
-                    </Field>
-                  </FieldGroup>
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={cancelForm}
+                className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-md text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </header>
 
-                  <div className="flex justify-end gap-2 mt-4">
-                    <Button type="button" variant="outline" onClick={cancelForm}>
-                      Cancel
-                    </Button>
-                    <Button type="submit" disabled={saving}>
-                      {saving ? "Saving…" : editingId ? "Save changes" : "Add"}
-                    </Button>
-                  </div>
-                </form>
-              </CardContent>
-            </Card>
-          )}
+            <form onSubmit={handleSubmit} className="px-6 py-5">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <TextField
+                  id="companyName"
+                  label="Company *"
+                  value={form.companyName}
+                  onChange={(v) => set("companyName", v)}
+                  placeholder="Google"
+                  required
+                />
+                <TextField
+                  id="role"
+                  label="Role *"
+                  value={form.role}
+                  onChange={(v) => set("role", v)}
+                  placeholder="SDE Intern"
+                  required
+                />
+                <div className="sm:col-span-2">
+                  <TextField
+                    id="roleDescription"
+                    label="Work description"
+                    value={form.roleDescription}
+                    onChange={(v) => set("roleDescription", v)}
+                    placeholder="Built internal tools using React and Node.js"
+                  />
+                </div>
+                <TextField
+                  id="duration"
+                  label="Duration"
+                  value={form.duration}
+                  onChange={(v) => set("duration", v)}
+                  placeholder="3 months"
+                />
+                <TextField
+                  id="startDate"
+                  label="Start date *"
+                  type="date"
+                  value={form.startDate}
+                  onChange={(v) => set("startDate", v)}
+                  required
+                />
+                <TextField
+                  id="endDate"
+                  label="End date"
+                  type="date"
+                  value={form.endDate}
+                  onChange={(v) => set("endDate", v)}
+                />
+                <TextField
+                  id="hrName"
+                  label="HR / manager name"
+                  value={form.hrName}
+                  onChange={(v) => set("hrName", v)}
+                />
+                <TextField
+                  id="hrEmail"
+                  label="HR email"
+                  type="email"
+                  value={form.hrEmail}
+                  onChange={(v) => set("hrEmail", v)}
+                  placeholder="hr@company.com"
+                />
+                <TextField
+                  id="hrPhone"
+                  label="HR phone"
+                  value={form.hrPhone}
+                  onChange={(v) => set("hrPhone", v)}
+                />
+              </div>
 
-          {loading ? (
-            <div className="p-6 text-muted-foreground">Loading internships…</div>
-          ) : items.length === 0 && !isAdding ? (
-            <Card>
-              <CardContent className="p-8 text-center text-muted-foreground">
-                No internships yet. Click "+ Add internship" to create your first one.
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="grid grid-cols-1 gap-3">
-              {items.map((i) => (
-                <Card key={i.id}>
-                  <CardContent className="p-4 flex items-start justify-between gap-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <h3 className="font-semibold">{i.role}</h3>
-                        <span className="text-sm text-muted-foreground">
-                          @ {i.companyName}
-                        </span>
-                        <VerificationBadge isVerified={i.isVerified} />
-                      </div>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {formatDate(i.startDate)} → {formatDate(i.endDate)}
-                        {i.duration ? ` · ${i.duration}` : ""}
-                      </p>
-                      {i.roleDescription && (
-                        <p className="text-sm mt-2">{i.roleDescription}</p>
-                      )}
-                      {(i.hrName || i.hrEmail || i.hrPhone) && (
-                        <p className="text-xs text-muted-foreground mt-2">
-                          HR: {[i.hrName, i.hrEmail, i.hrPhone].filter(Boolean).join(" · ")}
-                        </p>
-                      )}
-                      {i.certificateUrl && (
-                        <a
-                          href={i.certificateUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-xs text-blue-600 underline mt-2 inline-block"
-                        >
-                          View certificate
-                        </a>
-                      )}
-                    </div>
-                    <div className="flex gap-2 shrink-0">
-                      <Button variant="outline" size="sm" onClick={() => startEdit(i)}>
-                        Edit
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleDelete(i.id)}
-                      >
-                        Delete
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+              <div className="mt-5 rounded-lg border border-neutral-200 bg-neutral-50 p-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-neutral-500">
+                  Offer / experience certificate
+                </p>
+                <p className="mt-0.5 text-xs text-neutral-500">
+                  PDF, max 2MB.
+                </p>
+                <div className="mt-3 flex flex-wrap items-center gap-3">
+                  {form.certificateUrl ? (
+                    <a
+                      href={form.certificateUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1.5 text-xs font-medium text-neutral-900 underline"
+                    >
+                      <FileText className="h-3.5 w-3.5" />
+                      View uploaded file
+                    </a>
+                  ) : (
+                    <span className="text-xs text-neutral-500">
+                      No file uploaded
+                    </span>
+                  )}
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="application/pdf"
+                    className="hidden"
+                    onChange={onCertChange}
+                  />
+                  <button
+                    type="button"
+                    disabled={uploadingCert}
+                    onClick={() => fileInputRef.current?.click()}
+                    className="inline-flex items-center gap-1.5 rounded-md border border-neutral-200 bg-white px-3 py-1.5 text-xs font-medium text-neutral-900 transition hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {uploadingCert ? (
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    ) : (
+                      <Upload className="h-3.5 w-3.5" />
+                    )}
+                    {uploadingCert
+                      ? "Uploading…"
+                      : form.certificateUrl
+                        ? "Replace"
+                        : "Upload"}
+                  </button>
+                </div>
+              </div>
+
+              <div className="mt-5 flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={cancelForm}
+                  className="rounded-md border border-neutral-200 bg-white px-4 py-2 text-sm font-medium text-neutral-900 transition hover:bg-neutral-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="inline-flex items-center gap-2 rounded-md bg-neutral-900 px-5 py-2 text-sm font-medium text-white transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {saving && <Loader2 className="h-4 w-4 animate-spin" />}
+                  {saving ? "Saving…" : editingId ? "Save changes" : "Add"}
+                </button>
+              </div>
+            </form>
+          </section>
+        )}
+
+        {loading ? (
+          <div className="flex items-center justify-center py-24">
+            <Loader2 className="h-6 w-6 animate-spin text-neutral-400" />
+          </div>
+        ) : items.length === 0 && !isAdding ? (
+          <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-neutral-300 bg-white px-6 py-20 text-center">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-neutral-100">
+              <Briefcase className="h-5 w-5 text-neutral-500" />
             </div>
-          )}
-        </div>
+            <h3 className="mt-4 text-lg font-semibold text-neutral-900">
+              No internships yet
+            </h3>
+            <p className="mt-1 text-sm text-neutral-500">
+              Click "Add internship" to create your first entry.
+            </p>
+          </div>
+        ) : (
+          <div className="grid gap-3">
+            {items.map((i) => (
+              <article
+                key={i.id}
+                className="rounded-2xl border border-neutral-200 bg-white p-5 transition hover:border-neutral-300"
+              >
+                <div className="flex flex-wrap items-start justify-between gap-4">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h3 className="text-base font-semibold text-neutral-900">
+                        {i.role}
+                      </h3>
+                      <span className="text-sm text-neutral-500">
+                        @ {i.companyName}
+                      </span>
+                      <VerificationBadge isVerified={i.isVerified} />
+                    </div>
+                    <p className="mt-1 text-sm text-neutral-500">
+                      {formatDate(i.startDate)} → {formatDate(i.endDate)}
+                      {i.duration ? ` · ${i.duration}` : ""}
+                    </p>
+                    {i.roleDescription && (
+                      <p className="mt-2 text-sm text-neutral-700">
+                        {i.roleDescription}
+                      </p>
+                    )}
+                    {(i.hrName || i.hrEmail || i.hrPhone) && (
+                      <p className="mt-2 text-xs text-neutral-500">
+                        HR:{" "}
+                        {[i.hrName, i.hrEmail, i.hrPhone]
+                          .filter(Boolean)
+                          .join(" · ")}
+                      </p>
+                    )}
+                    {i.certificateUrl && (
+                      <a
+                        href={i.certificateUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-neutral-900 underline"
+                      >
+                        <FileText className="h-3.5 w-3.5" />
+                        View certificate
+                      </a>
+                    )}
+                  </div>
+                  <div className="flex flex-shrink-0 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => startEdit(i)}
+                      className="inline-flex items-center gap-1 rounded-md border border-neutral-200 bg-white px-3 py-1.5 text-xs font-medium text-neutral-900 transition hover:bg-neutral-50"
+                    >
+                      <Pencil className="h-3.5 w-3.5" />
+                      Edit
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(i.id)}
+                      className="inline-flex items-center gap-1 rounded-md border border-neutral-200 bg-white px-3 py-1.5 text-xs font-medium text-red-600 transition hover:bg-red-50"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
       </div>
+    </StudentLayout>
+  );
+}
+
+function TextField({
+  id,
+  label,
+  value,
+  onChange,
+  placeholder,
+  type = "text",
+  required,
+}: {
+  id: string;
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+  type?: string;
+  required?: boolean;
+}) {
+  return (
+    <div>
+      <label
+        htmlFor={id}
+        className="block text-xs font-medium text-neutral-700"
+      >
+        {label}
+      </label>
+      <input
+        id={id}
+        type={type}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        required={required}
+        className="mt-1 h-10 w-full rounded-md border border-neutral-200 bg-white px-3 text-sm text-neutral-900 placeholder-neutral-400 transition focus:border-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900/10"
+      />
     </div>
   );
 }
 
 function VerificationBadge({ isVerified }: { isVerified: boolean }) {
   return isVerified ? (
-    <span className="text-[10px] font-semibold uppercase tracking-wide text-green-800 bg-green-100 border border-green-300 px-1.5 py-0.5 rounded">
+    <span className="inline-flex items-center gap-1 rounded-full bg-green-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-green-700 ring-1 ring-green-200">
+      <CheckCircle2 className="h-3 w-3" />
       Verified
     </span>
   ) : (
-    <span className="text-[10px] font-semibold uppercase tracking-wide text-yellow-800 bg-yellow-100 border border-yellow-300 px-1.5 py-0.5 rounded">
+    <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-700 ring-1 ring-amber-200">
+      <Clock className="h-3 w-3" />
       Pending
     </span>
   );

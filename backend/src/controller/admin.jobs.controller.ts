@@ -12,13 +12,11 @@ import {
   applicationStatusSchema,
   listApplicationsSchema,
 } from "../../utils/types/zodSchema";
-import { uploadBuffer, deleteByPublicId, extractPublicIdFromUrl } from "../lib/cloudinary";
 import { Prisma } from "../../prisma/output/prismaclient";
 
 const JOB_SELECT = {
   id: true,
   companyName: true,
-  companyLogo: true,
   jobTitle: true,
   description: true,
   package: true,
@@ -231,43 +229,6 @@ export const setJobStatus = async (req: Request, res: Response) => {
   } catch (error) {
     logger.error({ error }, "setJobStatus failed");
     return res.status(500).json({ message: "Internal server error" });
-  }
-};
-
-// ==================== COMPANY LOGO UPLOAD ====================
-
-export const uploadCompanyLogo = async (req: Request, res: Response) => {
-  if (!req.file) {
-    return res.status(400).json({ message: "No file uploaded" });
-  }
-
-  try {
-    const result = await uploadBuffer(req.file.buffer, {
-      folder: "tpo/company-logos",
-      resourceType: "image",
-    });
-
-    // If jobId provided, attach and delete old logo
-    const jobId = (req.body?.jobId as string | undefined) || undefined;
-    if (jobId) {
-      const job = await prisma.job.findUnique({
-        where: { id: jobId },
-        select: { companyLogo: true },
-      });
-      if (job?.companyLogo) {
-        const pid = extractPublicIdFromUrl(job.companyLogo);
-        if (pid) deleteByPublicId(pid, "image").catch(() => {});
-      }
-      await prisma.job.update({
-        where: { id: jobId },
-        data: { companyLogo: result.secure_url },
-      });
-    }
-
-    return res.status(200).json({ url: result.secure_url });
-  } catch (error) {
-    logger.error({ error }, "uploadCompanyLogo failed");
-    return res.status(500).json({ message: "Upload failed" });
   }
 };
 

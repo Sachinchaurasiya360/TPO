@@ -13,7 +13,6 @@ import {
   BookOpen,
   Rocket,
   Quote,
-  CheckCircle2,
   MapPin,
   Mail,
   Phone,
@@ -28,6 +27,21 @@ export default function LandingPage() {
   const navigate = useNavigate();
   const [upcomingEvents, setUpcomingEvents] = useState<EventItem[]>([]);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState<EventItem | null>(null);
+
+  useEffect(() => {
+    if (!selectedEvent) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setSelectedEvent(null);
+    };
+    document.addEventListener("keydown", onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [selectedEvent]);
 
   useEffect(() => {
     publicListUpcomingEvents()
@@ -69,19 +83,19 @@ export default function LandingPage() {
     },
   ];
 
-  const recruiters = [
-    "TCS",
-    "Infosys",
-    "Wipro",
-    "Accenture",
-    "Cognizant",
-    "IBM",
-    "Tech Mahindra",
-    "Capgemini",
-    "HCL",
-    "L&T Infotech",
-    "Persistent",
-    "Zensar",
+  const recruiters: { name: string; slug?: string }[] = [
+    { name: "TCS", slug: "tcs" },
+    { name: "Infosys", slug: "infosys" },
+    { name: "Wipro", slug: "wipro" },
+    { name: "Accenture", slug: "accenture" },
+    { name: "Cognizant", slug: "cognizant" },
+    { name: "IBM", slug: "ibm" },
+    { name: "Tech Mahindra", slug: "techmahindra" },
+    { name: "Capgemini", slug: "capgemini" },
+    { name: "HCL", slug: "hcltech" },
+    { name: "L&T Infotech" },
+    { name: "Persistent" },
+    { name: "Zensar" },
   ];
 
   const process = [
@@ -120,30 +134,73 @@ export default function LandingPage() {
       name: "Rahul Sharma",
       role: "Software Engineer",
       company: "TCS",
-      text: "The placement cell's mock interviews and resume reviews gave me the edge I needed. Cracked my first interview on day one of placements.",
+      branch: "Computer Engg.",
+      year: "2025",
+      package: "7.2 LPA",
+      text: "The mock interviews and resume reviews gave me the edge I needed. I walked into my first-ever on-campus interview feeling fully prepared — and walked out with an offer on day one of placements. The TPO team genuinely invests in every student.",
       initials: "RS",
+      featured: true,
     },
     {
       name: "Priya Desai",
       role: "Data Analyst",
       company: "Infosys",
-      text: "From aptitude prep to final offer, the TPO team had my back. The portal made it effortless to track applications and stay on top of deadlines.",
+      branch: "IT",
+      year: "2025",
+      package: "6.5 LPA",
+      text: "From aptitude prep to final offer — the portal made every step effortless.",
       initials: "PD",
     },
     {
       name: "Amit Patel",
       role: "Business Analyst",
       company: "Accenture",
-      text: "The alumni connects and industry sessions opened up paths I hadn't even considered. Can't recommend the TPO cell enough.",
+      branch: "Mechanical",
+      year: "2024",
+      package: "8.0 LPA",
+      text: "Alumni sessions opened up paths I hadn't even considered.",
       initials: "AP",
     },
-  ];
-
-  const highlights = [
-    "Verified student profiles",
-    "One-click applications",
-    "Real-time notifications",
-    "Department-scoped eligibility",
+    {
+      name: "Sneha Kulkarni",
+      role: "SDE Intern → FTE",
+      company: "Capgemini",
+      branch: "Computer Engg.",
+      year: "2025",
+      package: "9.5 LPA",
+      text: "Converted my summer internship to a full-time role. The placement cell helped me prep thoroughly for both rounds.",
+      initials: "SK",
+    },
+    {
+      name: "Arjun Mehta",
+      role: "Associate Engineer",
+      company: "Wipro",
+      branch: "E&TC",
+      year: "2024",
+      package: "5.5 LPA",
+      text: "Real-time notifications meant I never missed a deadline.",
+      initials: "AM",
+    },
+    {
+      name: "Neha Joshi",
+      role: "Product Analyst",
+      company: "Cognizant",
+      branch: "IT",
+      year: "2025",
+      package: "7.0 LPA",
+      text: "Department-scoped listings saved me hours of filtering through irrelevant openings.",
+      initials: "NJ",
+    },
+    {
+      name: "Vikram Rao",
+      role: "Software Engineer",
+      company: "HCL",
+      branch: "Computer Engg.",
+      year: "2024",
+      package: "6.8 LPA",
+      text: "The verification flow built real credibility with recruiters — interviewers could see my profile was legit.",
+      initials: "VR",
+    },
   ];
 
   const scrollTo = (id: string) => {
@@ -272,22 +329,6 @@ export default function LandingPage() {
 
         <div className="relative container mx-auto px-4 pt-20 pb-20 md:pt-28 md:pb-24">
           <div className="mx-auto max-w-4xl text-center">
-            {/* Announcement pill */}
-            <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-neutral-200 bg-white px-3 py-1 text-xs font-medium text-neutral-700 shadow-sm">
-              <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-500">
-                <span className="absolute h-1.5 w-1.5 animate-ping rounded-full bg-emerald-500 opacity-75" />
-              </span>
-              <span>Placement Season 2026 is now live</span>
-              <span className="text-neutral-300">·</span>
-              <button
-                onClick={() => navigate("/signup")}
-                className="flex items-center gap-0.5 font-semibold text-neutral-900 hover:underline"
-              >
-                Register
-                <ArrowRight className="h-3 w-3" />
-              </button>
-            </div>
-
             {/* Headline */}
             <h1 className="mb-6 text-5xl font-bold leading-[1.02] tracking-tight text-neutral-900 md:text-7xl lg:text-[88px]">
               Your career,
@@ -340,15 +381,6 @@ export default function LandingPage() {
               </Button>
             </div>
 
-            {/* Trust row */}
-            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-neutral-500">
-              {highlights.map((h) => (
-                <div key={h} className="flex items-center gap-1.5">
-                  <CheckCircle2 className="h-4 w-4 text-neutral-900" strokeWidth={2.5} />
-                  <span>{h}</span>
-                </div>
-              ))}
-            </div>
           </div>
 
           {/* Stats row — bordered, monochrome */}
@@ -389,12 +421,28 @@ export default function LandingPage() {
             <div className="flex gap-4 animate-marquee">
               {[...recruiters, ...recruiters].map((c, i) => (
                 <div
-                  key={`${c}-${i}`}
+                  key={`${c.name}-${i}`}
                   className="flex min-w-[180px] items-center justify-center rounded-xl border border-neutral-200 bg-white px-6 py-5 shadow-sm"
                 >
-                  <span className="whitespace-nowrap text-base font-semibold text-neutral-700">
-                    {c}
-                  </span>
+                  {c.slug ? (
+                    <img
+                      src={`https://cdn.simpleicons.org/${c.slug}/111827`}
+                      alt={c.name}
+                      loading="lazy"
+                      className="h-8 max-w-[120px] object-contain"
+                      onError={(e) => {
+                        const img = e.currentTarget;
+                        const parent = img.parentElement;
+                        if (parent) {
+                          parent.innerHTML = `<span class="whitespace-nowrap text-base font-semibold text-neutral-700">${c.name}</span>`;
+                        }
+                      }}
+                    />
+                  ) : (
+                    <span className="whitespace-nowrap text-base font-semibold text-neutral-700">
+                      {c.name}
+                    </span>
+                  )}
                 </div>
               ))}
             </div>
@@ -487,43 +535,121 @@ export default function LandingPage() {
 
       {/* ==================== TESTIMONIALS ==================== */}
       <section className="relative overflow-hidden bg-neutral-950 py-24 text-white md:py-28">
-        <div className="relative container mx-auto px-4">
-          <div className="mb-16 text-center">
-            <div className="mb-4 inline-block rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-neutral-300">
-              Success stories
-            </div>
-            <h2 className="mb-4 text-4xl font-bold tracking-tight md:text-5xl">
-              Placed. Growing. Inspiring others.
-            </h2>
-            <p className="mx-auto max-w-2xl text-lg text-neutral-400">
-              Real words from Vishwaniketan students who built their careers
-              through this portal.
-            </p>
-          </div>
+        {/* Soft glow accents */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -top-40 left-1/4 h-96 w-96 rounded-full bg-white/5 blur-3xl"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -bottom-40 right-1/4 h-96 w-96 rounded-full bg-white/5 blur-3xl"
+        />
 
-          <div className="grid gap-6 md:grid-cols-3">
-            {testimonials.map((t) => (
-              <div
-                key={t.name}
-                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] p-8 transition-all hover:border-white/25 hover:bg-white/[0.06]"
-              >
-                <Quote className="mb-5 h-8 w-8 text-neutral-400" />
-                <p className="mb-8 text-base leading-relaxed text-neutral-200">
-                  "{t.text}"
-                </p>
-                <div className="flex items-center gap-3 border-t border-white/10 pt-5">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-sm font-bold text-neutral-900">
-                    {t.initials}
-                  </div>
-                  <div>
-                    <p className="font-semibold text-white">{t.name}</p>
-                    <p className="text-sm text-neutral-400">
-                      {t.role} · <span className="text-neutral-200">{t.company}</span>
-                    </p>
-                  </div>
+        <div className="relative container mx-auto px-4">
+          <div className="mb-14 flex flex-col items-start justify-between gap-6 md:mb-20 md:flex-row md:items-end">
+            <div className="max-w-2xl">
+              <div className="mb-4 inline-block rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-neutral-300">
+                Success stories
+              </div>
+              <h2 className="mb-4 text-4xl font-bold tracking-tight md:text-5xl">
+                Placed. Growing.
+                <br />
+                <span className="text-neutral-400">Inspiring others.</span>
+              </h2>
+              <p className="text-lg text-neutral-400">
+                Real words from Vishwaniketan students who built their careers
+                through this portal.
+              </p>
+            </div>
+            <div className="flex items-center gap-8 rounded-2xl border border-white/10 bg-white/[0.03] px-6 py-4">
+              <div>
+                <div className="text-3xl font-bold">98%</div>
+                <div className="text-xs uppercase tracking-wider text-neutral-400">
+                  Satisfaction
                 </div>
               </div>
-            ))}
+              <div className="h-10 w-px bg-white/10" />
+              <div>
+                <div className="text-3xl font-bold">1200+</div>
+                <div className="text-xs uppercase tracking-wider text-neutral-400">
+                  Alumni placed
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Bento grid */}
+          <div className="grid auto-rows-[minmax(0,_1fr)] grid-cols-1 gap-5 md:grid-cols-6">
+            {testimonials.map((t, i) => {
+              const isFeatured = t.featured;
+              const spans = isFeatured
+                ? "md:col-span-4 md:row-span-2"
+                : i % 5 === 1 || i % 5 === 4
+                ? "md:col-span-2"
+                : "md:col-span-2";
+              return (
+                <article
+                  key={t.name}
+                  className={`group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] p-6 transition-all hover:border-white/30 hover:bg-white/[0.06] md:p-7 ${spans} ${
+                    isFeatured ? "bg-gradient-to-br from-white/[0.08] to-white/[0.02]" : ""
+                  }`}
+                >
+                  {/* Package chip */}
+                  <div className="mb-5 flex items-center justify-between">
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-xs font-semibold text-emerald-300">
+                      <TrendingUp className="h-3 w-3" />
+                      {t.package}
+                    </span>
+                    <span className="text-xs font-medium uppercase tracking-wider text-neutral-500">
+                      Batch {t.year}
+                    </span>
+                  </div>
+
+                  {isFeatured && (
+                    <Quote className="mb-4 h-10 w-10 text-white/20" />
+                  )}
+
+                  <p
+                    className={`mb-6 leading-relaxed text-neutral-200 ${
+                      isFeatured ? "text-xl md:text-2xl" : "text-base"
+                    }`}
+                  >
+                    {isFeatured ? `"${t.text}"` : t.text}
+                  </p>
+
+                  {/* Footer */}
+                  <div
+                    className={`mt-auto flex items-center gap-3 border-t border-white/10 pt-5 ${
+                      isFeatured ? "md:pt-6" : ""
+                    }`}
+                  >
+                    <div
+                      className={`flex items-center justify-center rounded-full bg-gradient-to-br from-white to-neutral-300 font-bold text-neutral-900 ring-2 ring-white/10 ${
+                        isFeatured ? "h-14 w-14 text-base" : "h-11 w-11 text-sm"
+                      }`}
+                    >
+                      {t.initials}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p
+                        className={`truncate font-semibold text-white ${
+                          isFeatured ? "text-lg" : ""
+                        }`}
+                      >
+                        {t.name}
+                      </p>
+                      <p className="truncate text-sm text-neutral-400">
+                        {t.role} ·{" "}
+                        <span className="text-neutral-200">{t.company}</span>
+                      </p>
+                      <p className="truncate text-xs text-neutral-500">
+                        {t.branch}
+                      </p>
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -561,9 +687,11 @@ export default function LandingPage() {
                 const day = d.getDate();
                 const month = d.toLocaleDateString(undefined, { month: "short" });
                 return (
-                  <div
+                  <button
+                    type="button"
                     key={event.id}
-                    className="group flex items-center gap-5 rounded-2xl border border-neutral-200 bg-white p-5 transition-all hover:-translate-y-0.5 hover:border-neutral-900 hover:shadow-lg md:p-6"
+                    onClick={() => setSelectedEvent(event)}
+                    className="group flex w-full items-center gap-5 rounded-2xl border border-neutral-200 bg-white p-5 text-left transition-all hover:-translate-y-0.5 hover:border-neutral-900 hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 md:p-6"
                   >
                     {/* Date block */}
                     <div className="flex h-16 w-16 flex-shrink-0 flex-col items-center justify-center rounded-xl bg-neutral-900 text-white md:h-20 md:w-20">
@@ -594,13 +722,120 @@ export default function LandingPage() {
                     </div>
 
                     <ArrowRight className="hidden h-5 w-5 flex-shrink-0 text-neutral-400 transition-all group-hover:translate-x-1 group-hover:text-neutral-900 sm:block" />
-                  </div>
+                  </button>
                 );
               })
             )}
           </div>
         </div>
       </section>
+
+      {/* ==================== EVENT DETAILS MODAL ==================== */}
+      {selectedEvent && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="event-modal-title"
+          className="fixed inset-0 z-[100] flex items-end justify-center bg-black/60 p-0 backdrop-blur-sm sm:items-center sm:p-4"
+          onClick={() => setSelectedEvent(null)}
+        >
+          <div
+            className="relative max-h-[90vh] w-full max-w-2xl overflow-hidden rounded-t-2xl bg-white shadow-2xl sm:rounded-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="relative flex items-start gap-5 border-b border-neutral-200 bg-neutral-50 p-6 md:p-7">
+              <div className="flex h-16 w-16 flex-shrink-0 flex-col items-center justify-center rounded-xl bg-neutral-900 text-white md:h-20 md:w-20">
+                <span className="text-2xl font-bold md:text-3xl">
+                  {new Date(selectedEvent.eventDate).getDate()}
+                </span>
+                <span className="text-[10px] font-semibold uppercase tracking-wider md:text-xs">
+                  {new Date(selectedEvent.eventDate).toLocaleDateString(
+                    undefined,
+                    { month: "short" }
+                  )}
+                </span>
+              </div>
+              <div className="min-w-0 flex-1 pr-10">
+                <div className="mb-2 inline-block rounded-full border border-neutral-200 bg-white px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-neutral-700">
+                  {selectedEvent.type.replace(/_/g, " ")}
+                </div>
+                <h3
+                  id="event-modal-title"
+                  className="text-xl font-bold text-neutral-900 md:text-2xl"
+                >
+                  {selectedEvent.title}
+                </h3>
+                <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-neutral-600">
+                  <span className="flex items-center gap-1.5">
+                    <Calendar className="h-4 w-4" />
+                    {new Date(selectedEvent.eventDate).toLocaleDateString(
+                      undefined,
+                      {
+                        weekday: "short",
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      }
+                    )}
+                  </span>
+                  {selectedEvent.eventTime && (
+                    <span>⏰ {selectedEvent.eventTime}</span>
+                  )}
+                  {selectedEvent.location && (
+                    <span className="flex items-center gap-1.5">
+                      <MapPin className="h-4 w-4" />
+                      {selectedEvent.location}
+                    </span>
+                  )}
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedEvent(null)}
+                aria-label="Close"
+                className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-white text-neutral-600 shadow-sm ring-1 ring-neutral-200 transition hover:bg-neutral-100 hover:text-neutral-900"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            {/* Body */}
+            <div className="max-h-[60vh] overflow-y-auto p-6 md:p-7">
+              {selectedEvent.description ? (
+                <p className="whitespace-pre-wrap text-base leading-relaxed text-neutral-700">
+                  {selectedEvent.description}
+                </p>
+              ) : (
+                <p className="text-base italic text-neutral-500">
+                  No additional details provided for this event.
+                </p>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className="flex flex-col-reverse gap-3 border-t border-neutral-200 bg-neutral-50 p-5 sm:flex-row sm:justify-end md:px-7">
+              <Button
+                variant="outline"
+                className="border-neutral-300 bg-white text-neutral-900 hover:bg-neutral-100"
+                onClick={() => setSelectedEvent(null)}
+              >
+                Close
+              </Button>
+              <Button
+                className="bg-neutral-900 text-white hover:bg-neutral-800"
+                onClick={() => {
+                  setSelectedEvent(null);
+                  navigate("/login");
+                }}
+              >
+                Sign in to register
+                <ArrowRight className="ml-1.5 h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ==================== FINAL CTA ==================== */}
       <section className="relative overflow-hidden py-24">
@@ -665,7 +900,7 @@ export default function LandingPage() {
                 <li>
                   <button
                     onClick={() => navigate("/login")}
-                    className="transition-colors hover:text-indigo-600"
+                    className="transition-colors hover:text-neutral-900"
                   >
                     Student Portal
                   </button>
@@ -673,7 +908,7 @@ export default function LandingPage() {
                 <li>
                   <button
                     onClick={() => navigate("/signup")}
-                    className="transition-colors hover:text-indigo-600"
+                    className="transition-colors hover:text-neutral-900"
                   >
                     Register
                   </button>
@@ -681,7 +916,7 @@ export default function LandingPage() {
                 <li>
                   <button
                     onClick={() => scrollTo("events")}
-                    className="transition-colors hover:text-indigo-600"
+                    className="transition-colors hover:text-neutral-900"
                   >
                     Events
                   </button>
@@ -689,7 +924,7 @@ export default function LandingPage() {
                 <li>
                   <button
                     onClick={() => scrollTo("recruiters")}
-                    className="transition-colors hover:text-indigo-600"
+                    className="transition-colors hover:text-neutral-900"
                   >
                     Recruiters
                   </button>
@@ -703,23 +938,23 @@ export default function LandingPage() {
               </h3>
               <ul className="space-y-2.5 text-sm text-neutral-600">
                 <li className="flex items-start gap-2">
-                  <MapPin className="mt-0.5 h-4 w-4 flex-shrink-0 text-indigo-600" />
+                  <MapPin className="mt-0.5 h-4 w-4 flex-shrink-0 text-neutral-900" />
                   <span>Vishwaniketan iMEET, Khalapur</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <Mail className="h-4 w-4 flex-shrink-0 text-indigo-600" />
+                  <Mail className="h-4 w-4 flex-shrink-0 text-neutral-900" />
                   <a
                     href="mailto:tpo@vishwaniketan.edu.in"
-                    className="transition-colors hover:text-indigo-600"
+                    className="transition-colors hover:text-neutral-900"
                   >
                     tpo@vishwaniketan.edu.in
                   </a>
                 </li>
                 <li className="flex items-center gap-2">
-                  <Phone className="h-4 w-4 flex-shrink-0 text-indigo-600" />
+                  <Phone className="h-4 w-4 flex-shrink-0 text-neutral-900" />
                   <a
                     href="tel:+917070416209"
-                    className="transition-colors hover:text-indigo-600"
+                    className="transition-colors hover:text-neutral-900"
                   >
                     +91 70704 16209
                   </a>
@@ -734,10 +969,10 @@ export default function LandingPage() {
               reserved.
             </p>
             <div className="flex gap-5">
-              <a href="#" className="transition-colors hover:text-indigo-600">
+              <a href="#" className="transition-colors hover:text-neutral-900">
                 Privacy Policy
               </a>
-              <a href="#" className="transition-colors hover:text-indigo-600">
+              <a href="#" className="transition-colors hover:text-neutral-900">
                 Terms of Service
               </a>
             </div>

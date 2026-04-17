@@ -3,6 +3,12 @@ import prisma from "../lib/prisma";
 import logger from "../../utils/logger/logger";
 import { achievementSchema } from "../../utils/types/zodSchema";
 import { deleteByPublicId, extractPublicIdFromUrl } from "../lib/cloudinary";
+import { invalidateCache } from "../lib/cache";
+
+const invalidateForUser = (userId: number) => {
+  invalidateCache(`student:detail:${userId}`);
+  invalidateCache("admin:stats");
+};
 
 const parseDate = (value: unknown): Date | null => {
   if (!value) return null;
@@ -49,6 +55,7 @@ export const createAchievement = async (req: Request, res: Response) => {
         isVerified: false,
       },
     });
+    invalidateForUser(userId);
     return res.status(201).json({ achievement: created });
   } catch (error) {
     logger.error({ error }, "createAchievement failed");
@@ -94,6 +101,7 @@ export const updateAchievement = async (req: Request, res: Response) => {
       where: { id },
       data: updateData,
     });
+    invalidateForUser(userId);
     return res.status(200).json({ achievement: updated });
   } catch (error) {
     logger.error({ error }, "updateAchievement failed");
@@ -119,6 +127,7 @@ export const deleteAchievement = async (req: Request, res: Response) => {
     }
 
     await prisma.achievement.delete({ where: { id } });
+    invalidateForUser(userId);
     return res.status(200).json({ message: "Achievement deleted" });
   } catch (error) {
     logger.error({ error }, "deleteAchievement failed");

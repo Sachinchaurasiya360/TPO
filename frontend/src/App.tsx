@@ -19,10 +19,14 @@ import { Achievement } from "@/pages/student/Achievement";
 import { Aptitude } from "@/pages/student/Aptitude";
 import { StudentJobs } from "@/pages/student/Jobs";
 import { StudentApplications } from "@/pages/student/Applications";
+import { Projects } from "@/pages/student/Projects";
 
 // Role dashboards
 import { FacultyDashboard } from "@/pages/faculty/Dashboard";
+import { FacultyStudentDetail } from "@/pages/faculty/StudentDetail";
 import { AdminDashboard } from "@/pages/admin/Dashboard";
+import { StudentDetail } from "@/pages/admin/StudentDetail";
+import { FacultyDetail } from "@/pages/admin/FacultyDetail";
 import { AlumniDashboard } from "@/pages/alumni/Dashboard";
 import { Alumni as AlumniProfileEdit } from "@/pages/alumni/ProfileEdit";
 
@@ -85,6 +89,14 @@ function App() {
             }
           />
           <Route
+            path="/student/projects"
+            element={
+              <ProtectedRoute allowedRoles={["STUDENT"]}>
+                <Projects />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/student/internship"
             element={
               <ProtectedRoute allowedRoles={["STUDENT"]}>
@@ -134,6 +146,14 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/faculty/students/:id"
+            element={
+              <ProtectedRoute allowedRoles={["FACULTY"]}>
+                <FacultyStudentDetail />
+              </ProtectedRoute>
+            }
+          />
 
           {/* Admin */}
           <Route
@@ -141,6 +161,22 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={["ADMIN"]}>
                 <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/students/:id"
+            element={
+              <ProtectedRoute allowedRoles={["ADMIN"]}>
+                <StudentDetail />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/faculty/:id"
+            element={
+              <ProtectedRoute allowedRoles={["ADMIN"]}>
+                <FacultyDetail />
               </ProtectedRoute>
             }
           />

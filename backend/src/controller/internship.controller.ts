@@ -3,6 +3,7 @@ import prisma from "../lib/prisma";
 import logger from "../../utils/logger/logger";
 import { internshipSchema } from "../../utils/types/zodSchema";
 import { deleteByPublicId, extractPublicIdFromUrl } from "../lib/cloudinary";
+import { invalidateCache } from "../lib/cache";
 
 const parseDate = (value: unknown): Date | null => {
   if (!value) return null;
@@ -60,6 +61,8 @@ export const createInternship = async (req: Request, res: Response) => {
         isVerified: false,
       },
     });
+    invalidateCache(`student:detail:${userId}`);
+    invalidateCache("admin:stats");
     return res.status(201).json({ internship: created });
   } catch (error) {
     logger.error({ error }, "createInternship failed");
@@ -113,6 +116,8 @@ export const updateInternship = async (req: Request, res: Response) => {
       where: { id },
       data: updateData,
     });
+    invalidateCache(`student:detail:${userId}`);
+    invalidateCache("admin:stats");
     return res.status(200).json({ internship: updated });
   } catch (error) {
     logger.error({ error }, "updateInternship failed");
@@ -138,6 +143,8 @@ export const deleteInternship = async (req: Request, res: Response) => {
     }
 
     await prisma.internship.delete({ where: { id } });
+    invalidateCache(`student:detail:${userId}`);
+    invalidateCache("admin:stats");
     return res.status(200).json({ message: "Internship deleted" });
   } catch (error) {
     logger.error({ error }, "deleteInternship failed");

@@ -1,6 +1,5 @@
 import express from "express";
 import { isAuthenticated, isAdmin } from "../middleware/auth";
-import { imageUpload, handleUploadError } from "../middleware/upload";
 import {
   getStats,
   listPendingRegistrations,
@@ -9,6 +8,7 @@ import {
 } from "../controller/admin.controller";
 import {
   listFaculty,
+  getFacultyDetail,
   createFaculty,
   updateFaculty,
   setUserStatus,
@@ -24,7 +24,6 @@ import {
   getJob,
   updateJob,
   setJobStatus,
-  uploadCompanyLogo,
   listApplications,
   updateApplicationStatus,
 } from "../controller/admin.jobs.controller";
@@ -50,6 +49,7 @@ router.post("/registrations/:id/reject", rejectRegistration);
 
 // Faculty
 router.get("/faculty", listFaculty);
+router.get("/faculty/:id", getFacultyDetail);
 router.post("/faculty", createFaculty);
 router.patch("/faculty/:id", updateFaculty);
 
@@ -67,12 +67,6 @@ router.post("/jobs", createJob);
 router.get("/jobs/:id", getJob);
 router.patch("/jobs/:id", updateJob);
 router.patch("/jobs/:id/status", setJobStatus);
-router.post(
-  "/jobs/logo",
-  imageUpload.single("file"),
-  handleUploadError,
-  uploadCompanyLogo
-);
 router.get("/jobs/:id/applications", listApplications);
 router.patch("/applications/:id/status", updateApplicationStatus);
 

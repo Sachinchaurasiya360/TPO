@@ -7,7 +7,6 @@ import {
   uploadProfilePic,
   uploadResume,
   uploadCertificate,
-  uploadMarksheet,
   cancelProfileVerification,
 } from "../controller/student.controller";
 import { getMarks, updateMarks } from "../controller/marks.controller";
@@ -23,6 +22,12 @@ import {
   updateAchievement,
   deleteAchievement,
 } from "../controller/achievement.controller";
+import {
+  listProjects,
+  createProject,
+  updateProject,
+  deleteProject,
+} from "../controller/project.controller";
 import {
   listEligibleJobs,
   getEligibleJob,
@@ -66,18 +71,18 @@ router.post("/achievements", createAchievement);
 router.patch("/achievements/:id", updateAchievement);
 router.delete("/achievements/:id", deleteAchievement);
 
+// Projects
+router.get("/projects", listProjects);
+router.post("/projects", createProject);
+router.patch("/projects/:id", updateProject);
+router.delete("/projects/:id", deleteProject);
+
 // Generic uploads (returns { url })
 router.post(
   "/uploads/certificate",
   pdfUpload.single("file"),
   handleUploadError,
   uploadCertificate
-);
-router.post(
-  "/uploads/marksheet",
-  pdfUpload.single("file"),
-  handleUploadError,
-  uploadMarksheet
 );
 
 // Verification management

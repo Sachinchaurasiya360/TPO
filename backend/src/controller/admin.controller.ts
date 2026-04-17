@@ -7,10 +7,12 @@ import {
   accountRejectedEmail,
 } from "../lib/emailTemplates";
 import { rejectRegistrationSchema } from "../../utils/types/zodSchema";
+import { cached, invalidateCache } from "../lib/cache";
 
 export const getStats = async (_req: Request, res: Response) => {
   try {
-    const [
+    const payload = await cached("admin:stats", async () => {
+      const [
       totalStudents,
       totalAlumni,
       totalFaculty,
@@ -36,23 +38,26 @@ export const getStats = async (_req: Request, res: Response) => {
       }),
     ]);
 
-    return res.status(200).json({
-      totals: {
-        students: totalStudents,
-        alumni: totalAlumni,
-        faculty: totalFaculty,
-      },
-      pending: {
-        registrations: pendingRegistrations,
-        profileOrMarksVerifications: pendingVerifications,
-        internshipVerifications: unverifiedInternships,
-        achievementVerifications: unverifiedAchievements,
-      },
-      studentsByDepartment: studentsByDept.map((row) => ({
-        department: row.department,
-        count: row._count._all,
-      })),
+      return {
+        totals: {
+          students: totalStudents,
+          alumni: totalAlumni,
+          faculty: totalFaculty,
+        },
+        pending: {
+          registrations: pendingRegistrations,
+          profileOrMarksVerifications: pendingVerifications,
+          internshipVerifications: unverifiedInternships,
+          achievementVerifications: unverifiedAchievements,
+        },
+        studentsByDepartment: studentsByDept.map((row) => ({
+          department: row.department,
+          count: row._count._all,
+        })),
+      };
     });
+
+    return res.status(200).json(payload);
   } catch (error) {
     logger.error({ error }, "admin getStats failed");
     return res.status(500).json({ message: "Internal server error" });
@@ -61,20 +66,22 @@ export const getStats = async (_req: Request, res: Response) => {
 
 export const listPendingRegistrations = async (_req: Request, res: Response) => {
   try {
-    const items = await prisma.user.findMany({
-      where: { role: "STUDENT", isVerified: false, isActive: true },
-      orderBy: { createdAt: "desc" },
-      select: {
-        id: true,
-        fullName: true,
-        emailId: true,
-        contactNo: true,
-        studentId: true,
-        department: true,
-        academicYear: true,
-        createdAt: true,
-      },
-    });
+    const items = await cached("admin:pending-registrations", async () =>
+      prisma.user.findMany({
+        where: { role: "STUDENT", isVerified: false, isActive: true },
+        orderBy: { createdAt: "desc" },
+        select: {
+          id: true,
+          fullName: true,
+          emailId: true,
+          contactNo: true,
+          studentId: true,
+          department: true,
+          academicYear: true,
+          createdAt: true,
+        },
+      })
+    );
     return res.status(200).json({ items });
   } catch (error) {
     logger.error({ error }, "listPendingRegistrations failed");
@@ -99,6 +106,11 @@ export const approveRegistration = async (req: Request, res: Response) => {
       where: { id },
       data: { isVerified: true, isActive: true },
     });
+
+    invalidateCache("admin:stats");
+    invalidateCache("admin:pending-registrations");
+    invalidateCache("admin:students:list:");
+    invalidateCache(`student:detail:${id}`);
 
     const { subject, html } = accountApprovedEmail(user.fullName);
     sendMail({ to: user.emailId, subject, html }).catch((e) =>
@@ -131,6 +143,11 @@ export const rejectRegistration = async (req: Request, res: Response) => {
       where: { id },
       data: { isActive: false },
     });
+
+    invalidateCache("admin:stats");
+    invalidateCache("admin:pending-registrations");
+    invalidateCache("admin:students:list:");
+    invalidateCache(`student:detail:${id}`);
 
     const { subject, html } = accountRejectedEmail(user.fullName, parsed.data.reason);
     sendMail({ to: user.emailId, subject, html }).catch((e) =>

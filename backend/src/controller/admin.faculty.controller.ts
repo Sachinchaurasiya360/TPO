@@ -37,6 +37,25 @@ export const listFaculty = async (_req: Request, res: Response) => {
   }
 };
 
+export const getFacultyDetail = async (req: Request, res: Response) => {
+  const id = Number(req.params.id);
+  if (Number.isNaN(id)) {
+    return res.status(400).json({ message: "Invalid id" });
+  }
+
+  try {
+    const faculty = await prisma.user.findFirst({
+      where: { id, role: "FACULTY" },
+      select: FACULTY_SELECT,
+    });
+    if (!faculty) return res.status(404).json({ message: "Faculty not found" });
+    return res.status(200).json({ faculty });
+  } catch (error) {
+    logger.error({ error }, "getFacultyDetail failed");
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 export const createFaculty = async (req: Request, res: Response) => {
   const parsed = createFacultySchema.safeParse(req.body);
   if (!parsed.success) {

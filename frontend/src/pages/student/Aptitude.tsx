@@ -1,21 +1,26 @@
-import { Navbar } from "@/components/shared/navbar";
-import { Sidebar } from "@/components/shared/sidebar";
-import { useLogout } from "@/lib/useLogout";
+import { Brain } from "lucide-react";
+import { StudentLayout } from "@/components/shared/StudentLayout";
 
 export function Aptitude() {
-  const handleLogOut = useLogout();
   return (
-    <div>
-      <Navbar buttonName="Logout" onClick={handleLogOut} />
-      <div className="flex">
-        <Sidebar />
-        <div className="p-6 flex-1">
-          <h1 className="text-2xl font-bold">Aptitude Tests</h1>
-          <p className="text-muted-foreground mt-2">
-            Aptitude tests and homework assignments will appear here in Phase J.
+    <StudentLayout
+      title="Aptitude tests"
+      subtitle="Practice problems and scheduled assessments."
+    >
+      <div className="mx-auto max-w-3xl">
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-neutral-300 bg-white px-6 py-24 text-center">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-neutral-100">
+            <Brain className="h-5 w-5 text-neutral-500" />
+          </div>
+          <h2 className="mt-4 text-lg font-semibold text-neutral-900">
+            Coming soon
+          </h2>
+          <p className="mt-1 max-w-md text-sm text-neutral-500">
+            Aptitude tests and homework assignments will appear here once the
+            placement cell publishes them.
           </p>
         </div>
       </div>
-    </div>
+    </StudentLayout>
   );
 }

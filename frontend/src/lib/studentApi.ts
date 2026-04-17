@@ -4,6 +4,18 @@ export { MAX_FILE_SIZE_BYTES, validateFileSize } from "./fileUpload";
 export type Department = "CSE" | "COMPUTER" | "ELECTRICAL" | "MECHANICAL" | "EXTC" | "CIVIL";
 export type AcademicYear = "FIRST_YEAR" | "SECOND_YEAR" | "THIRD_YEAR" | "FOURTH_YEAR";
 
+export const DEPARTMENT_LABELS: Record<Department, string> = {
+  CSE: "CSE(AI/ML)",
+  COMPUTER: "COMPUTER",
+  ELECTRICAL: "ELECTRICAL",
+  MECHANICAL: "MECHANICAL",
+  EXTC: "EXTC",
+  CIVIL: "CIVIL",
+};
+
+export const departmentLabel = (d: string | null | undefined): string =>
+  d ? DEPARTMENT_LABELS[d as Department] ?? d : "";
+
 export interface StudentProfile {
   id: number;
   fullName: string;
@@ -119,16 +131,6 @@ export interface Marks {
   sem6: number | null;
   sem7: number | null;
   sem8: number | null;
-  sscMarksheetUrl: string | null;
-  hscMarksheetUrl: string | null;
-  sem1MarksheetUrl: string | null;
-  sem2MarksheetUrl: string | null;
-  sem3MarksheetUrl: string | null;
-  sem4MarksheetUrl: string | null;
-  sem5MarksheetUrl: string | null;
-  sem6MarksheetUrl: string | null;
-  sem7MarksheetUrl: string | null;
-  sem8MarksheetUrl: string | null;
   isVerified: boolean;
   updatedAt: string;
 }
@@ -156,16 +158,6 @@ export type UpdateMarksPayload = Partial<
     | "sem6"
     | "sem7"
     | "sem8"
-    | "sscMarksheetUrl"
-    | "hscMarksheetUrl"
-    | "sem1MarksheetUrl"
-    | "sem2MarksheetUrl"
-    | "sem3MarksheetUrl"
-    | "sem4MarksheetUrl"
-    | "sem5MarksheetUrl"
-    | "sem6MarksheetUrl"
-    | "sem7MarksheetUrl"
-    | "sem8MarksheetUrl"
   >
 >;
 
@@ -295,6 +287,62 @@ export const deleteAchievement = async (id: string): Promise<void> => {
   await api.delete(`/student/achievements/${id}`);
 };
 
+// =================== PROJECT ===================
+
+export interface Project {
+  id: string;
+  title: string;
+  description: string | null;
+  techStack: string[];
+  projectUrl: string | null;
+  repoUrl: string | null;
+  startDate: string | null;
+  endDate: string | null;
+  isVerified: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ProjectPayload {
+  title: string;
+  description?: string;
+  techStack?: string[];
+  projectUrl?: string;
+  repoUrl?: string;
+  startDate?: string;
+  endDate?: string;
+}
+
+export const listProjects = async (): Promise<{ items: Project[] }> => {
+  const { data } = await api.get<{ items: Project[] }>("/student/projects");
+  return data;
+};
+
+export const createProject = async (
+  payload: ProjectPayload
+): Promise<{ project: Project }> => {
+  const { data } = await api.post<{ project: Project }>(
+    "/student/projects",
+    payload
+  );
+  return data;
+};
+
+export const updateProject = async (
+  id: string,
+  payload: Partial<ProjectPayload>
+): Promise<{ project: Project }> => {
+  const { data } = await api.patch<{ project: Project }>(
+    `/student/projects/${id}`,
+    payload
+  );
+  return data;
+};
+
+export const deleteProject = async (id: string): Promise<void> => {
+  await api.delete(`/student/projects/${id}`);
+};
+
 // =================== GENERIC UPLOADS ===================
 
 const upload = async (path: string, file: File): Promise<{ url: string }> => {
@@ -308,6 +356,3 @@ const upload = async (path: string, file: File): Promise<{ url: string }> => {
 
 export const uploadCertificate = (file: File) =>
   upload("/student/uploads/certificate", file);
-
-export const uploadMarksheet = (file: File) =>
-  upload("/student/uploads/marksheet", file);

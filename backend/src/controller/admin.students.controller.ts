@@ -5,6 +5,7 @@ import { sendMail } from "../lib/mail";
 import { alumniInviteEmail } from "../lib/emailTemplates";
 import { listStudentsSchema } from "../../utils/types/zodSchema";
 import { Prisma } from "../../prisma/output/prismaclient";
+import { cached } from "../lib/cache";
 
 const STUDENT_LIST_SELECT = {
   id: true,
@@ -59,25 +60,30 @@ export const listStudents = async (req: Request, res: Response) => {
     ];
   }
 
-  try {
-    const [items, total] = await Promise.all([
-      prisma.user.findMany({
-        where,
-        orderBy: [{ department: "asc" }, { fullName: "asc" }],
-        select: STUDENT_LIST_SELECT,
-        skip: (page - 1) * limit,
-        take: limit,
-      }),
-      prisma.user.count({ where }),
-    ]);
+  const cacheKey = `admin:students:list:${JSON.stringify(parsed.data)}`;
 
-    return res.status(200).json({
-      items,
-      page,
-      limit,
-      total,
-      totalPages: Math.max(1, Math.ceil(total / limit)),
+  try {
+    const result = await cached(cacheKey, async () => {
+      const [items, total] = await Promise.all([
+        prisma.user.findMany({
+          where,
+          orderBy: [{ department: "asc" }, { fullName: "asc" }],
+          select: STUDENT_LIST_SELECT,
+          skip: (page - 1) * limit,
+          take: limit,
+        }),
+        prisma.user.count({ where }),
+      ]);
+      return {
+        items,
+        page,
+        limit,
+        total,
+        totalPages: Math.max(1, Math.ceil(total / limit)),
+      };
     });
+
+    return res.status(200).json(result);
   } catch (error) {
     logger.error({ error }, "listStudents failed");
     return res.status(500).json({ message: "Internal server error" });
@@ -91,41 +97,43 @@ export const getStudentDetail = async (req: Request, res: Response) => {
   }
 
   try {
-    const [user, marks, internships, achievements, pendingVerifications] =
-      await Promise.all([
-        prisma.user.findFirst({
-          where: { id, role: { in: ["STUDENT", "ALUMNI"] } },
-          select: {
-            ...STUDENT_LIST_SELECT,
-            parentsContactNo: true,
-            skills: true,
-            socialProfile: true,
-          },
-        }),
-        prisma.marks.findUnique({ where: { userId: id } }),
-        prisma.internship.findMany({
-          where: { userId: id },
-          orderBy: { startDate: "desc" },
-        }),
-        prisma.achievement.findMany({
-          where: { userId: id },
-          orderBy: { createdAt: "desc" },
-        }),
-        prisma.verificationRequest.findMany({
-          where: { userId: id, status: "PENDING" },
-          orderBy: { createdAt: "desc" },
-        }),
-      ]);
+    const result = await cached(`student:detail:${id}`, async () => {
+      const [user, marks, internships, achievements, projects, pendingVerifications] =
+        await Promise.all([
+          prisma.user.findFirst({
+            where: { id, role: { in: ["STUDENT", "ALUMNI"] } },
+            select: {
+              ...STUDENT_LIST_SELECT,
+              parentsContactNo: true,
+              skills: true,
+              socialProfile: true,
+            },
+          }),
+          prisma.marks.findUnique({ where: { userId: id } }),
+          prisma.internship.findMany({
+            where: { userId: id },
+            orderBy: { startDate: "desc" },
+          }),
+          prisma.achievement.findMany({
+            where: { userId: id },
+            orderBy: { createdAt: "desc" },
+          }),
+          prisma.project.findMany({
+            where: { userId: id },
+            orderBy: { createdAt: "desc" },
+          }),
+          prisma.verificationRequest.findMany({
+            where: { userId: id, status: "PENDING" },
+            orderBy: { createdAt: "desc" },
+          }),
+        ]);
 
-    if (!user) return res.status(404).json({ message: "Student not found" });
-
-    return res.status(200).json({
-      user,
-      marks,
-      internships,
-      achievements,
-      pendingVerifications,
+      return { user, marks, internships, achievements, projects, pendingVerifications };
     });
+
+    if (!result.user) return res.status(404).json({ message: "Student not found" });
+
+    return res.status(200).json(result);
   } catch (error) {
     logger.error({ error }, "getStudentDetail failed");
     return res.status(500).json({ message: "Internal server error" });

@@ -21,19 +21,6 @@ const NUMERIC_FIELDS = [
   "sem8",
 ] as const;
 
-const MARKSHEET_FIELDS = [
-  "sscMarksheetUrl",
-  "hscMarksheetUrl",
-  "sem1MarksheetUrl",
-  "sem2MarksheetUrl",
-  "sem3MarksheetUrl",
-  "sem4MarksheetUrl",
-  "sem5MarksheetUrl",
-  "sem6MarksheetUrl",
-  "sem7MarksheetUrl",
-  "sem8MarksheetUrl",
-] as const;
-
 const ensureMarksRow = async (userId: number) => {
   const existing = await prisma.marks.findUnique({ where: { userId } });
   if (existing) return existing;
@@ -69,23 +56,6 @@ export const updateMarks = async (req: Request, res: Response) => {
   try {
     const current = await ensureMarksRow(userId);
 
-    // 1. Apply marksheet URL updates directly (proof docs, not verification-gated)
-    const directUpdates: Record<string, unknown> = {};
-    for (const f of MARKSHEET_FIELDS) {
-      if (f in payload) {
-        const v = payload[f];
-        if (v !== undefined) directUpdates[f] = v === "" ? null : v;
-      }
-    }
-
-    if (Object.keys(directUpdates).length > 0) {
-      await prisma.marks.update({
-        where: { userId },
-        data: directUpdates,
-      });
-    }
-
-    // 2. Compute diff on numeric fields (from the pre-update snapshot)
     const incomingNumeric: Record<string, unknown> = {};
     for (const f of NUMERIC_FIELDS) {
       if (f in payload && payload[f] !== undefined) {
@@ -113,7 +83,7 @@ export const updateMarks = async (req: Request, res: Response) => {
     return res.status(200).json({
       marks,
       pendingVerification: pending,
-      appliedFields: Object.keys(directUpdates),
+      appliedFields: [],
       pendingFieldCount: verification.pendingCount,
     });
   } catch (error) {

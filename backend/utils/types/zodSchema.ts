@@ -90,8 +90,6 @@ export const updateProfileSchema = z.object({
 const pct = z.number().min(0).max(100).optional();
 const cgpa = z.number().min(0).max(10).optional();
 
-const urlOpt = z.string().url().optional().or(z.literal(""));
-
 export const updateMarksSchema = z.object({
   sscPercentage: pct,
   hscPercentage: pct,
@@ -103,16 +101,6 @@ export const updateMarksSchema = z.object({
   sem6: cgpa,
   sem7: cgpa,
   sem8: cgpa,
-  sscMarksheetUrl: urlOpt,
-  hscMarksheetUrl: urlOpt,
-  sem1MarksheetUrl: urlOpt,
-  sem2MarksheetUrl: urlOpt,
-  sem3MarksheetUrl: urlOpt,
-  sem4MarksheetUrl: urlOpt,
-  sem5MarksheetUrl: urlOpt,
-  sem6MarksheetUrl: urlOpt,
-  sem7MarksheetUrl: urlOpt,
-  sem8MarksheetUrl: urlOpt,
 });
 
 // ==================== INTERNSHIP ====================
@@ -140,11 +128,22 @@ export const achievementSchema = z.object({
   achievementDate: z.string().datetime().optional().or(z.string().optional()),
 });
 
+// ==================== PROJECT ====================
+
+export const projectSchema = z.object({
+  title: z.string().min(1),
+  description: z.string().optional(),
+  techStack: z.array(z.string()).optional(),
+  projectUrl: z.string().url().optional().or(z.literal("")),
+  repoUrl: z.string().url().optional().or(z.literal("")),
+  startDate: z.string().datetime().optional().or(z.string().optional()),
+  endDate: z.string().datetime().optional().or(z.string().optional()),
+});
+
 // ==================== JOB ====================
 
 export const jobSchema = z.object({
   companyName: z.string().min(1),
-  companyLogo: z.string().url().optional(),
   jobTitle: z.string().min(1),
   description: z.string().min(1),
   package: z.string().min(1),

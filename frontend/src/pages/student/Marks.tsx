@@ -1,16 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Navbar } from "@/components/shared/navbar";
-import { Sidebar } from "@/components/shared/sidebar";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { useLogout } from "@/lib/useLogout";
+import { Loader2, AlertCircle, Save } from "lucide-react";
+import { StudentLayout } from "@/components/shared/StudentLayout";
 import { extractErrorMessage } from "@/lib/api";
-import { validateFileSize } from "@/lib/fileUpload";
 import {
   getMarks,
   updateMarks,
-  uploadMarksheet,
   type Marks,
   type PendingVerification,
   type UpdateMarksPayload,
@@ -28,47 +23,34 @@ type ScoreKey =
   | "sem7"
   | "sem8";
 
-type UrlKey =
-  | "sscMarksheetUrl"
-  | "hscMarksheetUrl"
-  | "sem1MarksheetUrl"
-  | "sem2MarksheetUrl"
-  | "sem3MarksheetUrl"
-  | "sem4MarksheetUrl"
-  | "sem5MarksheetUrl"
-  | "sem6MarksheetUrl"
-  | "sem7MarksheetUrl"
-  | "sem8MarksheetUrl";
-
 interface Row {
   label: string;
   scoreKey: ScoreKey;
-  urlKey: UrlKey;
   unit: string;
   max: number;
 }
 
 const ROWS: Row[] = [
-  { label: "SSC", scoreKey: "sscPercentage", urlKey: "sscMarksheetUrl", unit: "%", max: 100 },
-  { label: "HSC", scoreKey: "hscPercentage", urlKey: "hscMarksheetUrl", unit: "%", max: 100 },
-  { label: "Sem 1", scoreKey: "sem1", urlKey: "sem1MarksheetUrl", unit: "CGPA", max: 10 },
-  { label: "Sem 2", scoreKey: "sem2", urlKey: "sem2MarksheetUrl", unit: "CGPA", max: 10 },
-  { label: "Sem 3", scoreKey: "sem3", urlKey: "sem3MarksheetUrl", unit: "CGPA", max: 10 },
-  { label: "Sem 4", scoreKey: "sem4", urlKey: "sem4MarksheetUrl", unit: "CGPA", max: 10 },
-  { label: "Sem 5", scoreKey: "sem5", urlKey: "sem5MarksheetUrl", unit: "CGPA", max: 10 },
-  { label: "Sem 6", scoreKey: "sem6", urlKey: "sem6MarksheetUrl", unit: "CGPA", max: 10 },
-  { label: "Sem 7", scoreKey: "sem7", urlKey: "sem7MarksheetUrl", unit: "CGPA", max: 10 },
-  { label: "Sem 8", scoreKey: "sem8", urlKey: "sem8MarksheetUrl", unit: "CGPA", max: 10 },
+  { label: "SSC", scoreKey: "sscPercentage", unit: "%", max: 100 },
+  { label: "HSC", scoreKey: "hscPercentage", unit: "%", max: 100 },
+  { label: "Semester 1", scoreKey: "sem1", unit: "CGPA", max: 10 },
+  { label: "Semester 2", scoreKey: "sem2", unit: "CGPA", max: 10 },
+  { label: "Semester 3", scoreKey: "sem3", unit: "CGPA", max: 10 },
+  { label: "Semester 4", scoreKey: "sem4", unit: "CGPA", max: 10 },
+  { label: "Semester 5", scoreKey: "sem5", unit: "CGPA", max: 10 },
+  { label: "Semester 6", scoreKey: "sem6", unit: "CGPA", max: 10 },
+  { label: "Semester 7", scoreKey: "sem7", unit: "CGPA", max: 10 },
+  { label: "Semester 8", scoreKey: "sem8", unit: "CGPA", max: 10 },
 ];
 
 export function Marks() {
-  const handleLogOut = useLogout();
   const [marks, setMarks] = useState<Marks | null>(null);
   const [pending, setPending] = useState<PendingVerification | null>(null);
-  const [scores, setScores] = useState<Record<ScoreKey, string>>({} as Record<ScoreKey, string>);
+  const [scores, setScores] = useState<Record<ScoreKey, string>>(
+    {} as Record<ScoreKey, string>
+  );
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [uploadingKey, setUploadingKey] = useState<UrlKey | null>(null);
 
   const load = async () => {
     setLoading(true);
@@ -130,7 +112,9 @@ export function Marks() {
       setMarks(res.marks);
       setPending(res.pendingVerification);
       if (res.pendingFieldCount > 0) {
-        toast.success(`${res.pendingFieldCount} score(s) submitted for faculty approval.`);
+        toast.success(
+          `${res.pendingFieldCount} score(s) submitted for faculty approval.`
+        );
       } else {
         toast.success("No score changes detected.");
       }
@@ -141,178 +125,177 @@ export function Marks() {
     }
   };
 
-  const handleMarksheetUpload = async (urlKey: UrlKey, file: File) => {
-    if (!validateFileSize(file)) return;
-    setUploadingKey(urlKey);
-    try {
-      const { url } = await uploadMarksheet(file);
-      const res = await updateMarks({ [urlKey]: url } as UpdateMarksPayload);
-      setMarks(res.marks);
-      toast.success("Marksheet uploaded.");
-    } catch (err) {
-      toast.error(extractErrorMessage(err));
-    } finally {
-      setUploadingKey(null);
-    }
-  };
+  const filledCount = ROWS.filter(
+    (r) => scores[r.scoreKey] && scores[r.scoreKey].trim() !== ""
+  ).length;
 
   return (
-    <div>
-      <Navbar buttonName="Logout" onClick={handleLogOut} />
-      <div className="flex">
-        <Sidebar />
-        <div className="flex-1 p-4">
-          {loading || !marks ? (
-            <div className="p-6 text-muted-foreground">Loading marks…</div>
-          ) : (
-            <>
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <h1 className="text-2xl font-semibold">Academic marks</h1>
-                  <p className="text-sm text-muted-foreground">
-                    Score changes require faculty approval. Marksheet uploads are saved
-                    directly (PDF, max 2MB).
+    <StudentLayout
+      title="Academic marks"
+      subtitle="Enter your SSC, HSC and semester-wise scores. Changes require faculty approval."
+    >
+      {loading || !marks ? (
+        <div className="flex items-center justify-center py-24">
+          <Loader2 className="h-6 w-6 animate-spin text-neutral-400" />
+        </div>
+      ) : (
+        <div className="mx-auto max-w-4xl space-y-6">
+          {/* Stats strip */}
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <StatCard label="Entries" value={`${filledCount}/${ROWS.length}`} />
+            <StatCard
+              label="SSC %"
+              value={
+                marks.sscPercentage !== null ? `${marks.sscPercentage}` : "—"
+              }
+            />
+            <StatCard
+              label="HSC %"
+              value={
+                marks.hscPercentage !== null ? `${marks.hscPercentage}` : "—"
+              }
+            />
+            <StatCard
+              label="Status"
+              value={marks.isVerified ? "Verified" : "Pending"}
+              valueClass={
+                marks.isVerified ? "text-green-700" : "text-yellow-700"
+              }
+            />
+          </div>
+
+          {/* Pending */}
+          {pending && Object.keys(pending.changes).length > 0 && (
+            <section className="rounded-2xl border border-yellow-200 bg-yellow-50 p-5">
+              <div className="flex items-start gap-3">
+                <AlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-yellow-700" />
+                <div className="min-w-0 flex-1">
+                  <h3 className="text-sm font-semibold text-yellow-900">
+                    Pending faculty approval
+                  </h3>
+                  <p className="mt-0.5 text-xs text-yellow-800">
+                    {Object.keys(pending.changes).length} score change(s)
+                    awaiting review.
                   </p>
+                  <ul className="mt-3 space-y-1 text-xs text-yellow-900">
+                    {Object.entries(pending.changes).map(([field, diff]) => (
+                      <li key={field}>
+                        <span className="font-semibold">{field}:</span>{" "}
+                        <span className="line-through opacity-60">
+                          {String(diff.oldValue ?? "—")}
+                        </span>{" "}
+                        → <span>{String(diff.newValue ?? "—")}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               </div>
-
-              {pending && Object.keys(pending.changes).length > 0 && (
-                <Card className="mb-4 border-yellow-400 bg-yellow-50">
-                  <CardHeader>
-                    <CardTitle className="text-yellow-900">
-                      Pending faculty approval
-                    </CardTitle>
-                    <CardDescription className="text-yellow-800">
-                      {Object.keys(pending.changes).length} score change(s) awaiting review.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="text-sm text-yellow-900 space-y-1">
-                      {Object.entries(pending.changes).map(([field, diff]) => (
-                        <li key={field}>
-                          <strong>{field}:</strong>{" "}
-                          <span className="line-through opacity-60">
-                            {String(diff.oldValue ?? "—")}
-                          </span>{" "}
-                          → <span>{String(diff.newValue ?? "—")}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-              )}
-
-              <form onSubmit={handleSubmit}>
-                <Card>
-                  <CardContent className="p-0">
-                    <table className="w-full text-sm">
-                      <thead className="bg-gray-50 text-left">
-                        <tr>
-                          <th className="p-3 w-28">Exam / Sem</th>
-                          <th className="p-3 w-40">Score</th>
-                          <th className="p-3">Marksheet (PDF)</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {ROWS.map((r) => (
-                          <MarkRow
-                            key={r.scoreKey}
-                            row={r}
-                            value={scores[r.scoreKey] ?? ""}
-                            onChange={(v) => setScore(r.scoreKey, v)}
-                            currentUrl={marks[r.urlKey]}
-                            uploading={uploadingKey === r.urlKey}
-                            onUpload={(file) => handleMarksheetUpload(r.urlKey, file)}
-                          />
-                        ))}
-                      </tbody>
-                    </table>
-                  </CardContent>
-                </Card>
-
-                <div className="flex justify-end mt-4">
-                  <Button type="submit" disabled={saving}>
-                    {saving ? "Saving…" : "Save scores"}
-                  </Button>
-                </div>
-              </form>
-            </>
+            </section>
           )}
+
+          <form onSubmit={handleSubmit}>
+            <section className="rounded-2xl border border-neutral-200 bg-white p-6">
+              <header className="mb-5">
+                <h3 className="text-base font-semibold text-neutral-900">
+                  Your scores
+                </h3>
+                <p className="mt-0.5 text-sm text-neutral-500">
+                  Percentages for SSC &amp; HSC, CGPA on a 10-point scale for
+                  semesters.
+                </p>
+              </header>
+
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                {ROWS.map((r) => (
+                  <ScoreField
+                    key={r.scoreKey}
+                    row={r}
+                    value={scores[r.scoreKey] ?? ""}
+                    onChange={(v) => setScore(r.scoreKey, v)}
+                  />
+                ))}
+              </div>
+            </section>
+
+            <div className="mt-4 flex justify-end">
+              <button
+                type="submit"
+                disabled={saving}
+                className="inline-flex items-center justify-center gap-2 rounded-md bg-neutral-900 px-5 py-2 text-sm font-medium text-white transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {saving ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Save className="h-4 w-4" />
+                )}
+                {saving ? "Saving…" : "Save scores"}
+              </button>
+            </div>
+          </form>
         </div>
-      </div>
+      )}
+    </StudentLayout>
+  );
+}
+
+function StatCard({
+  label,
+  value,
+  valueClass,
+}: {
+  label: string;
+  value: string;
+  valueClass?: string;
+}) {
+  return (
+    <div className="rounded-xl border border-neutral-200 bg-white px-4 py-3">
+      <p className="text-[10px] font-semibold uppercase tracking-wider text-neutral-500">
+        {label}
+      </p>
+      <p
+        className={`mt-1 text-lg font-semibold text-neutral-900 ${
+          valueClass ?? ""
+        }`}
+      >
+        {value}
+      </p>
     </div>
   );
 }
 
-interface MarkRowProps {
+function ScoreField({
+  row,
+  value,
+  onChange,
+}: {
   row: Row;
   value: string;
   onChange: (v: string) => void;
-  currentUrl: string | null;
-  uploading: boolean;
-  onUpload: (file: File) => void;
-}
-
-function MarkRow({ row, value, onChange, currentUrl, uploading, onUpload }: MarkRowProps) {
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    onUpload(file);
-    if (inputRef.current) inputRef.current.value = "";
-  };
-
+}) {
   return (
-    <tr className="border-t">
-      <td className="p-3 font-medium">{row.label}</td>
-      <td className="p-3">
-        <div className="flex items-center gap-2">
-          <input
-            type="number"
-            step="0.01"
-            min={0}
-            max={row.max}
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-            className="h-9 w-24 rounded-md border px-3 text-sm"
-            placeholder={row.unit === "%" ? "0 - 100" : "0 - 10"}
-          />
-          <span className="text-xs text-muted-foreground">{row.unit}</span>
-        </div>
-      </td>
-      <td className="p-3">
-        <div className="flex items-center gap-3">
-          {currentUrl ? (
-            <a
-              href={currentUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="text-blue-600 underline text-xs"
-            >
-              View current
-            </a>
-          ) : (
-            <span className="text-xs text-muted-foreground">Not uploaded</span>
-          )}
-          <input
-            ref={inputRef}
-            type="file"
-            accept="application/pdf"
-            className="hidden"
-            onChange={onFileChange}
-          />
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            disabled={uploading}
-            onClick={() => inputRef.current?.click()}
-          >
-            {uploading ? "Uploading…" : currentUrl ? "Replace" : "Upload"}
-          </Button>
-        </div>
-      </td>
-    </tr>
+    <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-3">
+      <label
+        htmlFor={row.scoreKey}
+        className="flex items-center justify-between text-xs font-medium text-neutral-700"
+      >
+        <span>{row.label}</span>
+        <span className="rounded bg-white px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-neutral-500">
+          {row.unit}
+        </span>
+      </label>
+      <div className="mt-2 flex items-center gap-2">
+        <input
+          id={row.scoreKey}
+          type="number"
+          step="0.01"
+          min={0}
+          max={row.max}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={row.unit === "%" ? "0 – 100" : "0 – 10"}
+          className="h-10 flex-1 rounded-md border border-neutral-200 bg-white px-3 text-sm text-neutral-900 placeholder-neutral-400 transition focus:border-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900/10"
+        />
+      </div>
+    </div>
   );
 }

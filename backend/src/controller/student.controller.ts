@@ -11,6 +11,13 @@ import {
   cancelVerification,
 } from "../lib/verification";
 import { uploadBuffer, deleteByPublicId, extractPublicIdFromUrl } from "../lib/cloudinary";
+import { invalidateCache } from "../lib/cache";
+
+const invalidateStudentCaches = (userId: number) => {
+  invalidateCache(`student:detail:${userId}`);
+  invalidateCache("admin:students:list:");
+  invalidateCache("admin:stats");
+};
 
 const PROFILE_SELECT = {
   id: true,
@@ -109,6 +116,8 @@ export const updateProfile = async (req: Request, res: Response) => {
       getPendingVerification(userId, "PROFILE"),
     ]);
 
+    invalidateStudentCaches(userId);
+
     return res.status(200).json({
       user,
       pendingVerification: pending,
@@ -151,6 +160,7 @@ export const uploadProfilePic = async (req: Request, res: Response) => {
       }
     }
 
+    invalidateStudentCaches(userId);
     return res.status(200).json({ url: result.secure_url });
   } catch (error) {
     logger.error({ error }, "uploadProfilePic failed");
@@ -188,6 +198,7 @@ export const uploadResume = async (req: Request, res: Response) => {
       }
     }
 
+    invalidateStudentCaches(userId);
     return res.status(200).json({ url: result.secure_url });
   } catch (error) {
     logger.error({ error }, "uploadResume failed");
@@ -204,25 +215,10 @@ export const uploadCertificate = async (req: Request, res: Response) => {
       resourceType: "raw",
       publicId: `cert-user-${userId}-${Date.now()}`,
     });
+    invalidateStudentCaches(userId);
     return res.status(200).json({ url: result.secure_url });
   } catch (error) {
     logger.error({ error }, "uploadCertificate failed");
-    return res.status(500).json({ message: "Upload failed" });
-  }
-};
-
-export const uploadMarksheet = async (req: Request, res: Response) => {
-  if (!req.file) return res.status(400).json({ message: "No file uploaded" });
-  const userId = req.user!.id;
-  try {
-    const result = await uploadBuffer(req.file.buffer, {
-      folder: "tpo/marksheets",
-      resourceType: "raw",
-      publicId: `marksheet-user-${userId}-${Date.now()}`,
-    });
-    return res.status(200).json({ url: result.secure_url });
-  } catch (error) {
-    logger.error({ error }, "uploadMarksheet failed");
     return res.status(500).json({ message: "Upload failed" });
   }
 };

@@ -1,54 +1,56 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import {
-  Award,
+  FolderGit2,
   Plus,
   Pencil,
   Trash2,
-  Upload,
   Loader2,
   CheckCircle2,
   Clock,
-  FileText,
+  ExternalLink,
+  Github,
   X,
 } from "lucide-react";
 import { StudentLayout } from "@/components/shared/StudentLayout";
 import { extractErrorMessage } from "@/lib/api";
-import { validateFileSize } from "@/lib/fileUpload";
 import {
-  listAchievements,
-  createAchievement,
-  updateAchievement,
-  deleteAchievement,
-  uploadCertificate,
-  type Achievement,
-  type AchievementPayload,
+  listProjects,
+  createProject,
+  updateProject,
+  deleteProject,
+  type Project,
+  type ProjectPayload,
 } from "@/lib/studentApi";
-
-const CATEGORIES = ["academic", "sports", "cultural", "technical", "other"];
 
 interface FormState {
   title: string;
   description: string;
-  category: string;
-  achievementDate: string;
-  certificateUrl: string;
+  techStackRaw: string;
+  projectUrl: string;
+  repoUrl: string;
+  startDate: string;
+  endDate: string;
 }
 
 const emptyForm: FormState = {
   title: "",
   description: "",
-  category: "",
-  achievementDate: "",
-  certificateUrl: "",
+  techStackRaw: "",
+  projectUrl: "",
+  repoUrl: "",
+  startDate: "",
+  endDate: "",
 };
 
-const toForm = (a: Achievement): FormState => ({
-  title: a.title,
-  description: a.description ?? "",
-  category: a.category ?? "",
-  achievementDate: a.achievementDate ? a.achievementDate.slice(0, 10) : "",
-  certificateUrl: a.certificateUrl ?? "",
+const toForm = (p: Project): FormState => ({
+  title: p.title,
+  description: p.description ?? "",
+  techStackRaw: p.techStack.join(", "),
+  projectUrl: p.projectUrl ?? "",
+  repoUrl: p.repoUrl ?? "",
+  startDate: p.startDate ? p.startDate.slice(0, 10) : "",
+  endDate: p.endDate ? p.endDate.slice(0, 10) : "",
 });
 
 const formatDate = (iso: string | null): string => {
@@ -56,24 +58,21 @@ const formatDate = (iso: string | null): string => {
   return new Date(iso).toLocaleDateString(undefined, {
     year: "numeric",
     month: "short",
-    day: "numeric",
   });
 };
 
-export function Achievement() {
-  const [items, setItems] = useState<Achievement[]>([]);
+export function Projects() {
+  const [items, setItems] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isAdding, setIsAdding] = useState(false);
   const [form, setForm] = useState<FormState>(emptyForm);
   const [saving, setSaving] = useState(false);
-  const [uploadingCert, setUploadingCert] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const load = async () => {
     setLoading(true);
     try {
-      const data = await listAchievements();
+      const data = await listProjects();
       setItems(data.items);
     } catch (e) {
       toast.error(extractErrorMessage(e));
@@ -92,9 +91,9 @@ export function Achievement() {
     setIsAdding(true);
   };
 
-  const startEdit = (a: Achievement) => {
-    setEditingId(a.id);
-    setForm(toForm(a));
+  const startEdit = (p: Project) => {
+    setEditingId(p.id);
+    setForm(toForm(p));
     setIsAdding(true);
   };
 
@@ -108,26 +107,6 @@ export function Achievement() {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
-  const onCertChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    if (!validateFileSize(file)) {
-      if (fileInputRef.current) fileInputRef.current.value = "";
-      return;
-    }
-    setUploadingCert(true);
-    try {
-      const { url } = await uploadCertificate(file);
-      set("certificateUrl", url);
-      toast.success("Certificate uploaded.");
-    } catch (err) {
-      toast.error(extractErrorMessage(err));
-    } finally {
-      setUploadingCert(false);
-      if (fileInputRef.current) fileInputRef.current.value = "";
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.title.trim()) {
@@ -136,21 +115,28 @@ export function Achievement() {
     }
 
     setSaving(true);
-    const payload: AchievementPayload = {
+    const techStack = form.techStackRaw
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+
+    const payload: ProjectPayload = {
       title: form.title.trim(),
       description: form.description || undefined,
-      category: form.category || undefined,
-      achievementDate: form.achievementDate || undefined,
-      certificateUrl: form.certificateUrl || undefined,
+      techStack,
+      projectUrl: form.projectUrl || undefined,
+      repoUrl: form.repoUrl || undefined,
+      startDate: form.startDate || undefined,
+      endDate: form.endDate || undefined,
     };
 
     try {
       if (editingId) {
-        await updateAchievement(editingId, payload);
-        toast.success("Achievement updated. Pending re-verification.");
+        await updateProject(editingId, payload);
+        toast.success("Project updated. Pending re-verification.");
       } else {
-        await createAchievement(payload);
-        toast.success("Achievement added. Pending faculty verification.");
+        await createProject(payload);
+        toast.success("Project added. Pending faculty verification.");
       }
       cancelForm();
       await load();
@@ -162,11 +148,11 @@ export function Achievement() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Delete this achievement? This cannot be undone.")) return;
+    if (!confirm("Delete this project? This cannot be undone.")) return;
     try {
-      await deleteAchievement(id);
-      setItems((prev) => prev.filter((a) => a.id !== id));
-      toast.success("Achievement deleted.");
+      await deleteProject(id);
+      setItems((prev) => prev.filter((p) => p.id !== id));
+      toast.success("Project deleted.");
     } catch (err) {
       toast.error(extractErrorMessage(err));
     }
@@ -174,31 +160,32 @@ export function Achievement() {
 
   return (
     <StudentLayout
-      title="Achievements"
-      subtitle="Awards, hackathons, and certifications. Faculty verifies each entry."
-      actions={
-        !isAdding ? (
-          <button
-            type="button"
-            onClick={startAdd}
-            className="inline-flex items-center gap-1.5 rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-800"
-          >
-            <Plus className="h-4 w-4" />
-            Add achievement
-          </button>
-        ) : null
-      }
+      title="Projects"
+      subtitle="Showcase what you've built. Faculty verifies each entry."
     >
       <div className="mx-auto max-w-5xl space-y-4">
+        {!isAdding && (
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={startAdd}
+              className="inline-flex items-center gap-1.5 rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-800"
+            >
+              <Plus className="h-4 w-4" />
+              Add project
+            </button>
+          </div>
+        )}
+
         {isAdding && (
           <section className="rounded-2xl border border-neutral-200 bg-white">
             <header className="flex items-start justify-between gap-4 border-b border-neutral-200 px-6 py-4">
               <div className="min-w-0">
                 <h3 className="text-base font-semibold text-neutral-900">
-                  {editingId ? "Edit achievement" : "Add achievement"}
+                  {editingId ? "Edit project" : "Add project"}
                 </h3>
                 <p className="mt-0.5 text-xs text-neutral-500">
-                  Editing a verified achievement resets it to pending.
+                  Editing a verified project resets it to pending.
                 </p>
               </div>
               <button
@@ -218,97 +205,65 @@ export function Achievement() {
                     label="Title *"
                     value={form.title}
                     onChange={(v) => set("title", v)}
-                    placeholder="Winner - Smart India Hackathon 2025"
+                    placeholder="Real-time placement dashboard"
                     required
                   />
                 </div>
                 <div className="sm:col-span-2">
-                  <TextField
-                    id="description"
-                    label="Description"
-                    value={form.description}
-                    onChange={(v) => set("description", v)}
-                    placeholder="Led a team of 4 to build an AI-powered traffic solution…"
-                  />
-                </div>
-                <div>
                   <label
-                    htmlFor="category"
+                    htmlFor="description"
                     className="block text-xs font-medium text-neutral-700"
                   >
-                    Category
+                    Description
                   </label>
-                  <select
-                    id="category"
-                    value={form.category}
-                    onChange={(e) => set("category", e.target.value)}
-                    className="mt-1 h-10 w-full rounded-md border border-neutral-200 bg-white px-3 text-sm text-neutral-900 transition focus:border-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900/10"
-                  >
-                    <option value="">Select category</option>
-                    {CATEGORIES.map((c) => (
-                      <option key={c} value={c}>
-                        {c.charAt(0).toUpperCase() + c.slice(1)}
-                      </option>
-                    ))}
-                  </select>
+                  <textarea
+                    id="description"
+                    value={form.description}
+                    onChange={(e) => set("description", e.target.value)}
+                    placeholder="What does it do? What tech choices did you make?"
+                    rows={3}
+                    className="mt-1 w-full rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 transition focus:border-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900/10"
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <TextField
+                    id="techStack"
+                    label="Tech stack (comma-separated)"
+                    value={form.techStackRaw}
+                    onChange={(v) => set("techStackRaw", v)}
+                    placeholder="React, Node.js, PostgreSQL, Docker"
+                  />
                 </div>
                 <TextField
-                  id="achievementDate"
-                  label="Date"
-                  type="date"
-                  value={form.achievementDate}
-                  onChange={(v) => set("achievementDate", v)}
+                  id="projectUrl"
+                  label="Live URL"
+                  type="url"
+                  value={form.projectUrl}
+                  onChange={(v) => set("projectUrl", v)}
+                  placeholder="https://myproject.vercel.app"
                 />
-              </div>
-
-              <div className="mt-5 rounded-lg border border-neutral-200 bg-neutral-50 p-4">
-                <p className="text-xs font-semibold uppercase tracking-wide text-neutral-500">
-                  Certificate
-                </p>
-                <p className="mt-0.5 text-xs text-neutral-500">
-                  PDF, max 2MB.
-                </p>
-                <div className="mt-3 flex flex-wrap items-center gap-3">
-                  {form.certificateUrl ? (
-                    <a
-                      href={form.certificateUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-1.5 text-xs font-medium text-neutral-900 underline"
-                    >
-                      <FileText className="h-3.5 w-3.5" />
-                      View uploaded file
-                    </a>
-                  ) : (
-                    <span className="text-xs text-neutral-500">
-                      No file uploaded
-                    </span>
-                  )}
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="application/pdf"
-                    className="hidden"
-                    onChange={onCertChange}
-                  />
-                  <button
-                    type="button"
-                    disabled={uploadingCert}
-                    onClick={() => fileInputRef.current?.click()}
-                    className="inline-flex items-center gap-1.5 rounded-md border border-neutral-200 bg-white px-3 py-1.5 text-xs font-medium text-neutral-900 transition hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-60"
-                  >
-                    {uploadingCert ? (
-                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                    ) : (
-                      <Upload className="h-3.5 w-3.5" />
-                    )}
-                    {uploadingCert
-                      ? "Uploading…"
-                      : form.certificateUrl
-                        ? "Replace"
-                        : "Upload"}
-                  </button>
-                </div>
+                <TextField
+                  id="repoUrl"
+                  label="Repository URL"
+                  type="url"
+                  value={form.repoUrl}
+                  onChange={(v) => set("repoUrl", v)}
+                  placeholder="https://github.com/you/repo"
+                />
+                <TextField
+                  id="startDate"
+                  label="Start date"
+                  type="date"
+                  value={form.startDate}
+                  onChange={(v) => set("startDate", v)}
+                />
+                <TextField
+                  id="endDate"
+                  label="End date"
+                  type="date"
+                  value={form.endDate}
+                  onChange={(v) => set("endDate", v)}
+                />
               </div>
 
               <div className="mt-5 flex justify-end gap-2">
@@ -339,59 +294,81 @@ export function Achievement() {
         ) : items.length === 0 && !isAdding ? (
           <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-neutral-300 bg-white px-6 py-20 text-center">
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-neutral-100">
-              <Award className="h-5 w-5 text-neutral-500" />
+              <FolderGit2 className="h-5 w-5 text-neutral-500" />
             </div>
             <h3 className="mt-4 text-lg font-semibold text-neutral-900">
-              No achievements yet
+              No projects yet
             </h3>
             <p className="mt-1 text-sm text-neutral-500">
-              Click "Add achievement" to create your first entry.
+              Click "Add project" to showcase your work.
             </p>
           </div>
         ) : (
           <div className="grid gap-3">
-            {items.map((a) => (
+            {items.map((p) => (
               <article
-                key={a.id}
+                key={p.id}
                 className="rounded-2xl border border-neutral-200 bg-white p-5 transition hover:border-neutral-300"
               >
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
                       <h3 className="text-base font-semibold text-neutral-900">
-                        {a.title}
+                        {p.title}
                       </h3>
-                      {a.category && (
-                        <span className="rounded-full border border-neutral-200 bg-neutral-50 px-2 py-0.5 text-[11px] font-medium capitalize text-neutral-700">
-                          {a.category}
-                        </span>
-                      )}
-                      <VerificationBadge isVerified={a.isVerified} />
+                      <VerificationBadge isVerified={p.isVerified} />
                     </div>
-                    <p className="mt-1 text-sm text-neutral-500">
-                      {formatDate(a.achievementDate)}
-                    </p>
-                    {a.description && (
-                      <p className="mt-2 text-sm text-neutral-700">
-                        {a.description}
+                    {(p.startDate || p.endDate) && (
+                      <p className="mt-1 text-sm text-neutral-500">
+                        {formatDate(p.startDate)} → {formatDate(p.endDate)}
                       </p>
                     )}
-                    {a.certificateUrl && (
-                      <a
-                        href={a.certificateUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-neutral-900 underline"
-                      >
-                        <FileText className="h-3.5 w-3.5" />
-                        View certificate
-                      </a>
+                    {p.description && (
+                      <p className="mt-2 text-sm text-neutral-700">
+                        {p.description}
+                      </p>
                     )}
+                    {p.techStack.length > 0 && (
+                      <div className="mt-3 flex flex-wrap gap-1.5">
+                        {p.techStack.map((t) => (
+                          <span
+                            key={t}
+                            className="rounded-full border border-neutral-200 bg-neutral-50 px-2 py-0.5 text-[11px] font-medium text-neutral-700"
+                          >
+                            {t}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                    <div className="mt-3 flex flex-wrap gap-3 text-xs">
+                      {p.projectUrl && (
+                        <a
+                          href={p.projectUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-1 font-medium text-neutral-900 underline"
+                        >
+                          <ExternalLink className="h-3.5 w-3.5" />
+                          Live
+                        </a>
+                      )}
+                      {p.repoUrl && (
+                        <a
+                          href={p.repoUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-1 font-medium text-neutral-900 underline"
+                        >
+                          <Github className="h-3.5 w-3.5" />
+                          Code
+                        </a>
+                      )}
+                    </div>
                   </div>
                   <div className="flex flex-shrink-0 gap-2">
                     <button
                       type="button"
-                      onClick={() => startEdit(a)}
+                      onClick={() => startEdit(p)}
                       className="inline-flex items-center gap-1 rounded-md border border-neutral-200 bg-white px-3 py-1.5 text-xs font-medium text-neutral-900 transition hover:bg-neutral-50"
                     >
                       <Pencil className="h-3.5 w-3.5" />
@@ -399,7 +376,7 @@ export function Achievement() {
                     </button>
                     <button
                       type="button"
-                      onClick={() => handleDelete(a.id)}
+                      onClick={() => handleDelete(p.id)}
                       className="inline-flex items-center gap-1 rounded-md border border-neutral-200 bg-white px-3 py-1.5 text-xs font-medium text-red-600 transition hover:bg-red-50"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
