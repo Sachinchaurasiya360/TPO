@@ -671,7 +671,7 @@ export default function LandingPage() {
           </div>
 
           <div className="mx-auto max-w-3xl space-y-4">
-            {upcomingEvents.length === 0 ? (
+            {!upcomingEvents || upcomingEvents.length === 0 ? (
               <div className="rounded-2xl border border-dashed border-neutral-300 bg-neutral-50 p-12 text-center">
                 <Calendar className="mx-auto mb-3 h-10 w-10 text-neutral-400" />
                 <p className="text-base font-medium text-neutral-700">
