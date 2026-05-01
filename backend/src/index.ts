@@ -48,3 +48,5 @@ app.use((err: Error, _req: Request, res: Response, _next: express.NextFunction) 
 app.listen(PORT, () => {
   logger.info(`Server running on port ${PORT}`);
 });
+
+export default app;
