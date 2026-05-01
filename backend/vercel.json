@@ -1,0 +1,4 @@
+{
+  "buildCommand": "prisma generate && tsc -p tsconfig.json && npm run db:deploy || true",
+  "outputDirectory": "dist"
+}
