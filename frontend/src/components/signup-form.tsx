@@ -110,7 +110,7 @@ export function SignupForm() {
             <input
               id="fullName"
               type="text"
-              placeholder="John Chaurasiya"
+              placeholder="John Doe"
               required
               value={formData.fullName}
               onChange={handleChange}
