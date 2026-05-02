@@ -2,14 +2,6 @@ import { Request, Response } from "express";
 import prisma from "../lib/prisma";
 import logger from "../../utils/logger/logger";
 import { updateProfileSchema } from "../../utils/types/zodSchema";
-import {
-  PROFILE_DIRECT_FIELDS,
-  PROFILE_VERIFICATION_FIELDS,
-  computeDiff,
-  upsertVerificationRequest,
-  getPendingVerification,
-  cancelVerification,
-} from "../lib/verification";
 import { uploadBuffer, deleteByPublicId, extractPublicIdFromUrl } from "../lib/cloudinary";
 import { invalidateCache } from "../lib/cache";
 
@@ -44,16 +36,13 @@ const PROFILE_SELECT = {
 export const getProfile = async (req: Request, res: Response) => {
   try {
     const userId = req.user!.id;
-    const [user, pending] = await Promise.all([
-      prisma.user.findUnique({ where: { id: userId }, select: PROFILE_SELECT }),
-      getPendingVerification(userId, "PROFILE"),
-    ]);
+    const user = await prisma.user.findUnique({ where: { id: userId }, select: PROFILE_SELECT });
 
     if (!user) {
       return res.status(404).json({ message: "Profile not found" });
     }
 
-    return res.status(200).json({ user, pendingVerification: pending });
+    return res.status(200).json({ user });
   } catch (error) {
     logger.error({ error }, "getProfile failed");
     return res.status(500).json({ message: "Internal server error" });
@@ -75,55 +64,23 @@ export const updateProfile = async (req: Request, res: Response) => {
   try {
     const current = await prisma.user.findUnique({
       where: { id: userId },
-      select: PROFILE_SELECT,
+      select: { id: true },
     });
 
     if (!current) {
       return res.status(404).json({ message: "Profile not found" });
     }
 
-    // 1. Apply direct-edit fields immediately
-    const directUpdates: Record<string, unknown> = {};
-    for (const f of PROFILE_DIRECT_FIELDS) {
-      if (f in payload && payload[f] !== undefined) {
-        directUpdates[f] = payload[f];
-      }
-    }
-
-    if (Object.keys(directUpdates).length > 0) {
-      await prisma.user.update({
-        where: { id: userId },
-        data: directUpdates,
-      });
-    }
-
-    // 2. Compute diff of verification-required fields vs current (non-updated) values
-    const diff = computeDiff(
-      current as unknown as Record<string, unknown>,
-      payload,
-      [...PROFILE_VERIFICATION_FIELDS]
-    );
-
-    const verification = await upsertVerificationRequest({
-      userId,
-      entityType: "PROFILE",
-      diff,
+    await prisma.user.update({
+      where: { id: userId },
+      data: payload,
     });
 
-    // Return fresh state
-    const [user, pending] = await Promise.all([
-      prisma.user.findUnique({ where: { id: userId }, select: PROFILE_SELECT }),
-      getPendingVerification(userId, "PROFILE"),
-    ]);
+    const user = await prisma.user.findUnique({ where: { id: userId }, select: PROFILE_SELECT });
 
     invalidateStudentCaches(userId);
 
-    return res.status(200).json({
-      user,
-      pendingVerification: pending,
-      appliedFields: Object.keys(directUpdates),
-      pendingFieldCount: verification.pendingCount,
-    });
+    return res.status(200).json({ user });
   } catch (error) {
     logger.error({ error }, "updateProfile failed");
     return res.status(500).json({ message: "Internal server error" });
@@ -220,21 +177,5 @@ export const uploadCertificate = async (req: Request, res: Response) => {
   } catch (error) {
     logger.error({ error }, "uploadCertificate failed");
     return res.status(500).json({ message: "Upload failed" });
-  }
-};
-
-export const cancelProfileVerification = async (req: Request, res: Response) => {
-  const userId = req.user!.id;
-  const { id } = req.params;
-
-  try {
-    const ok = await cancelVerification({ requestId: id, userId });
-    if (!ok) {
-      return res.status(404).json({ message: "No pending request found" });
-    }
-    return res.status(200).json({ message: "Pending changes cancelled" });
-  } catch (error) {
-    logger.error({ error }, "cancelProfileVerification failed");
-    return res.status(500).json({ message: "Internal server error" });
   }
 };

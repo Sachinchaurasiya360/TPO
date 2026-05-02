@@ -144,11 +144,24 @@ export function AdminDashboard() {
           </div>
           <div className="flex items-center gap-3">
             {user && <NotificationBell />}
-            <div className="hidden text-right sm:block">
-              <p className="text-sm font-medium text-neutral-900">
-                {user?.fullName}
-              </p>
-              <p className="text-[11px] text-neutral-500">{user?.emailId}</p>
+            <div className="hidden items-center gap-2 sm:flex">
+              {user?.profilePic ? (
+                <img
+                  src={user.profilePic}
+                  alt=""
+                  className="h-8 w-8 rounded-full object-cover"
+                />
+              ) : (
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-neutral-900 text-xs font-bold text-white">
+                  {user?.fullName?.slice(0, 2).toUpperCase() || "AD"}
+                </div>
+              )}
+              <div className="hidden text-right lg:block">
+                <p className="text-sm font-medium text-neutral-900">
+                  {user?.fullName}
+                </p>
+                <p className="text-[11px] text-neutral-500">{user?.emailId}</p>
+              </div>
             </div>
           </div>
         </header>

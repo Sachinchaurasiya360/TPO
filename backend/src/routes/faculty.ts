@@ -14,6 +14,11 @@ import {
   updateDeptFaculty,
   setDeptFacultyStatus,
 } from "../controller/faculty.hod.controller";
+import {
+  listStudentNotes,
+  addStudentNote,
+  deleteStudentNote,
+} from "../controller/notes.controller";
 
 const router = express.Router();
 
@@ -31,6 +36,11 @@ router.post("/achievements/:id/review", reviewAchievement);
 // Department students
 router.get("/students", listDeptStudents);
 router.get("/students/:id", getDeptStudentDetail);
+
+// Student notes
+router.get("/students/:id/notes", listStudentNotes);
+router.post("/students/:id/notes", addStudentNote);
+router.delete("/students/:id/notes/:noteId", deleteStudentNote);
 
 // HOD-only
 router.get("/hod/faculty", isHOD, listDeptFaculty);

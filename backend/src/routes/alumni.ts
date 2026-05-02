@@ -13,6 +13,7 @@ import {
   listFeed,
   listDirectory,
   getAlumniById,
+  getMyAcademicHistory,
 } from "../controller/alumni.controller";
 
 const router = express.Router();
@@ -26,6 +27,7 @@ router.get("/by/:id", getAlumniById);
 
 router.get("/me", isAlumni, getMyAlumniProfile);
 router.patch("/me", isAlumni, updateAlumniProfile);
+router.get("/me/academic-history", isAlumni, getMyAcademicHistory);
 
 router.post("/me/past-orgs", isAlumni, addPastOrg);
 router.delete("/me/past-orgs/:id", isAlumni, deletePastOrg);

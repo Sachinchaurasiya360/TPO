@@ -120,16 +120,29 @@ export function FacultyDashboard() {
           </div>
           <div className="flex items-center gap-3">
             {user && <NotificationBell />}
-            <div className="hidden text-right sm:block">
-              <p className="text-sm font-medium text-neutral-900">
-                {user?.fullName}
-                {user?.isHOD && (
-                  <span className="ml-1 rounded bg-amber-100 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-amber-800">
-                    HOD
-                  </span>
-                )}
-              </p>
-              <p className="text-[11px] text-neutral-500">{user?.emailId}</p>
+            <div className="hidden items-center gap-2 sm:flex">
+              {user?.profilePic ? (
+                <img
+                  src={user.profilePic}
+                  alt=""
+                  className="h-8 w-8 rounded-full object-cover"
+                />
+              ) : (
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-neutral-900 text-xs font-bold text-white">
+                  {user?.fullName?.slice(0, 2).toUpperCase() || "FA"}
+                </div>
+              )}
+              <div className="hidden text-right lg:block">
+                <p className="text-sm font-medium text-neutral-900">
+                  {user?.fullName}
+                  {user?.isHOD && (
+                    <span className="ml-1 rounded bg-amber-100 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-amber-800">
+                      HOD
+                    </span>
+                  )}
+                </p>
+                <p className="text-[11px] text-neutral-500">{user?.emailId}</p>
+              </div>
             </div>
           </div>
         </header>

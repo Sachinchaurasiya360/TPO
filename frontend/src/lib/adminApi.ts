@@ -247,3 +247,26 @@ export const setUserStatus = async (
 ): Promise<void> => {
   await api.patch(`/admin/users/${id}/status`, { isActive });
 };
+
+// =================== STUDENT NOTES ===================
+
+export interface StudentNote {
+  id: string;
+  content: string;
+  createdAt: string;
+  author: { id: number; fullName: string; role: string; profilePic: string | null };
+}
+
+export const listStudentNotes = async (studentId: number): Promise<StudentNote[]> => {
+  const { data } = await api.get<{ notes: StudentNote[] }>(`/admin/students/${studentId}/notes`);
+  return data.notes;
+};
+
+export const addStudentNote = async (studentId: number, content: string): Promise<StudentNote> => {
+  const { data } = await api.post<{ note: StudentNote }>(`/admin/students/${studentId}/notes`, { content });
+  return data.note;
+};
+
+export const deleteStudentNote = async (studentId: number, noteId: string): Promise<void> => {
+  await api.delete(`/admin/students/${studentId}/notes/${noteId}`);
+};

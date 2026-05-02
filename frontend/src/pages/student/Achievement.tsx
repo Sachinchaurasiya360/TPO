@@ -177,16 +177,14 @@ export function Achievement() {
       title="Achievements"
       subtitle="Awards, hackathons, and certifications. Faculty verifies each entry."
       actions={
-        !isAdding ? (
-          <button
-            type="button"
-            onClick={startAdd}
-            className="inline-flex items-center gap-1.5 rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-800"
-          >
-            <Plus className="h-4 w-4" />
-            Add achievement
-          </button>
-        ) : null
+        <button
+          type="button"
+          onClick={startAdd}
+          className="inline-flex items-center gap-1.5 rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-800"
+        >
+          <Plus className="h-4 w-4" />
+          Add achievement
+        </button>
       }
     >
       <div className="mx-auto max-w-5xl space-y-4">

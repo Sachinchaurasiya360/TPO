@@ -20,6 +20,11 @@ import {
   graduateStudent,
 } from "../controller/admin.students.controller";
 import {
+  listStudentNotes,
+  addStudentNote,
+  deleteStudentNote,
+} from "../controller/notes.controller";
+import {
   createJob,
   listJobs,
   getJob,
@@ -59,6 +64,11 @@ router.patch("/faculty/:id", updateFaculty);
 router.get("/students", listStudents);
 router.get("/students/:id", getStudentDetail);
 router.post("/students/:id/graduate", graduateStudent);
+
+// Student notes
+router.get("/students/:id/notes", listStudentNotes);
+router.post("/students/:id/notes", addStudentNote);
+router.delete("/students/:id/notes/:noteId", deleteStudentNote);
 
 // Generic user status toggle (active/inactive)
 router.patch("/users/:id/status", setUserStatus);

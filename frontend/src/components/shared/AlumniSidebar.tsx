@@ -5,6 +5,7 @@ import {
   FileText,
   Users,
   Megaphone,
+  BookOpen,
   LogOut,
   ChevronLeft,
   ChevronRight,
@@ -16,6 +17,7 @@ import { useLogout } from "@/lib/useLogout";
 export type AlumniTab =
   | "overview"
   | "profile"
+  | "academic"
   | "posts"
   | "feed"
   | "directory";
@@ -29,6 +31,7 @@ interface Item {
 const items: Item[] = [
   { key: "overview", label: "Overview", icon: LayoutDashboard },
   { key: "profile", label: "Career Profile", icon: UserCog },
+  { key: "academic", label: "Academic History", icon: BookOpen },
   { key: "posts", label: "My Posts", icon: FileText },
   { key: "feed", label: "Alumni Feed", icon: Megaphone },
   { key: "directory", label: "Directory", icon: Users },
@@ -117,9 +120,17 @@ export function AlumniSidebar({ active, onSelect }: AlumniSidebarProps) {
       <div className="border-t border-neutral-200 p-3">
         {!collapsed && user && (
           <div className="mb-2 flex items-center gap-2.5 rounded-md border border-neutral-200 bg-neutral-50 px-3 py-2">
-            <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-neutral-900 text-xs font-bold text-white">
-              {user.fullName?.slice(0, 2).toUpperCase() || "AL"}
-            </div>
+            {user.profilePic ? (
+              <img
+                src={user.profilePic}
+                alt=""
+                className="h-8 w-8 flex-shrink-0 rounded-full object-cover"
+              />
+            ) : (
+              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-neutral-900 text-xs font-bold text-white">
+                {user.fullName?.slice(0, 2).toUpperCase() || "AL"}
+              </div>
+            )}
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-medium text-neutral-900">
                 {user.fullName}

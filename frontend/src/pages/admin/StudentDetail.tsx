@@ -18,11 +18,12 @@ import {
   FolderGit2,
   Download,
 } from "lucide-react";
-import { getStudentDetail, type StudentDetailResponse } from "@/lib/adminApi";
+import { getStudentDetail, type StudentDetailResponse, listStudentNotes, addStudentNote, deleteStudentNote } from "@/lib/adminApi";
 import { departmentLabel } from "@/lib/studentApi";
 import { extractErrorMessage } from "@/lib/api";
 import { AdminSidebar, type AdminTab } from "@/components/shared/AdminSidebar";
 import { exportStudentProfileToPdf } from "@/lib/studentProfileExport";
+import { StudentNotesPanel } from "@/components/shared/StudentNotesPanel";
 
 export function StudentDetail() {
   const { id } = useParams<{ id: string }>();
@@ -417,6 +418,14 @@ export function StudentDetail() {
             </ul>
           )}
         </Section>
+
+        {/* Internal notes */}
+        <StudentNotesPanel
+          studentId={user.id}
+          fetchNotes={listStudentNotes}
+          addNote={addStudentNote}
+          deleteNote={deleteStudentNote}
+        />
         </main>
       </div>
     </div>

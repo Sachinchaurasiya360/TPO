@@ -120,9 +120,17 @@ export function FacultySidebar({ active, onSelect }: FacultySidebarProps) {
       <div className="border-t border-neutral-200 p-3">
         {!collapsed && user && (
           <div className="mb-2 flex items-center gap-2.5 rounded-md border border-neutral-200 bg-neutral-50 px-3 py-2">
-            <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-neutral-900 text-xs font-bold text-white">
-              {user.fullName?.slice(0, 2).toUpperCase() || "FA"}
-            </div>
+            {user.profilePic ? (
+              <img
+                src={user.profilePic}
+                alt=""
+                className="h-8 w-8 flex-shrink-0 rounded-full object-cover"
+              />
+            ) : (
+              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-neutral-900 text-xs font-bold text-white">
+                {user.fullName?.slice(0, 2).toUpperCase() || "FA"}
+              </div>
+            )}
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-medium text-neutral-900">
                 {user.fullName}

@@ -1,8 +1,10 @@
 import { toast } from "sonner";
 
 export const MAX_FILE_SIZE_BYTES = 2 * 1024 * 1024; // 2 MB
-
 export const MAX_SIZE_LABEL = "2MB";
+
+export const MAX_PROFILE_PIC_BYTES = 1 * 1024 * 1024; // 1 MB
+export const MAX_PROFILE_PIC_LABEL = "1MB";
 
 const formatSize = (bytes: number): string => {
   if (bytes < 1024) return `${bytes} B`;

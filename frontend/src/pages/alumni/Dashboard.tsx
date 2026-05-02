@@ -23,10 +23,12 @@ import {
   createAlumniPost,
   listMyAlumniPosts,
   deleteMyAlumniPost,
+  getAlumniAcademicHistory,
   POST_TYPE_LABELS,
   type AlumniUser,
   type AlumniPost,
   type AlumniPostType,
+  type AcademicHistoryResponse,
 } from "@/lib/alumniApi";
 import {
   AlumniFeedView,
@@ -41,11 +43,17 @@ import {
   Mail,
   Building2,
   X,
+  Award,
+  BookOpen,
+  Code2,
+  FileCheck2,
+  Link as LinkIcon,
 } from "lucide-react";
 
 const ALUMNI_TABS: AlumniTab[] = [
   "overview",
   "profile",
+  "academic",
   "posts",
   "feed",
   "directory",
@@ -56,6 +64,10 @@ const TAB_TITLES: Record<AlumniTab, { title: string; subtitle: string }> = {
   profile: {
     title: "Career Profile",
     subtitle: "Maintain current role, past organisations, and higher studies.",
+  },
+  academic: {
+    title: "Academic History",
+    subtitle: "Your marks, internships, achievements, and projects from your student days.",
   },
   posts: {
     title: "My Posts",
@@ -119,6 +131,7 @@ export function AlumniDashboard() {
           <div className="max-w-6xl mx-auto">
             {tab === "overview" && <OverviewTab onNavigate={setTab} />}
             {tab === "profile" && <ProfileTab />}
+            {tab === "academic" && <AcademicHistoryTab />}
             {tab === "posts" && <PostsTab />}
             {tab === "feed" && <AlumniFeedView />}
             {tab === "directory" && <AlumniDirectoryView />}
@@ -1047,3 +1060,345 @@ function PostFormDialog({
   );
 }
 
+// ==================== ACADEMIC HISTORY ====================
+
+function AcademicHistoryTab() {
+  const [data, setData] = useState<AcademicHistoryResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        setData(await getAlumniAcademicHistory());
+      } catch (e) {
+        toast.error(extractErrorMessage(e));
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="space-y-4">
+        {[0, 1, 2, 3].map((i) => (
+          <div key={i} className="h-32 animate-pulse rounded-lg border border-neutral-200 bg-white" />
+        ))}
+      </div>
+    );
+  }
+
+  if (!data) return null;
+
+  const { user, marks, internships, achievements, projects } = data;
+
+  const semLabels = [
+    { key: "sscPercentage", label: "SSC %" },
+    { key: "hscPercentage", label: "HSC %" },
+    { key: "sem1", label: "Sem 1" },
+    { key: "sem2", label: "Sem 2" },
+    { key: "sem3", label: "Sem 3" },
+    { key: "sem4", label: "Sem 4" },
+    { key: "sem5", label: "Sem 5" },
+    { key: "sem6", label: "Sem 6" },
+    { key: "sem7", label: "Sem 7" },
+    { key: "sem8", label: "Sem 8" },
+  ] as const;
+
+  return (
+    <div className="space-y-6">
+      {/* Student Profile Summary */}
+      <Card>
+        <CardContent className="p-5">
+          <div className="flex items-start gap-4">
+            {user.profilePic ? (
+              <img
+                src={user.profilePic}
+                alt=""
+                className="h-16 w-16 rounded-full object-cover flex-shrink-0"
+              />
+            ) : (
+              <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-full bg-neutral-200 text-lg font-semibold text-neutral-700">
+                {user.fullName.slice(0, 2).toUpperCase()}
+              </div>
+            )}
+            <div className="min-w-0 flex-1">
+              <h3 className="text-base font-semibold text-neutral-900">{user.fullName}</h3>
+              {user.legalName && user.legalName !== user.fullName && (
+                <p className="text-xs text-neutral-500">Legal name: {user.legalName}</p>
+              )}
+              <div className="mt-1 flex flex-wrap gap-2 text-xs text-neutral-600">
+                {user.studentId && <span>ID: <strong>{user.studentId}</strong></span>}
+                {user.department && <span>· {departmentLabel(user.department)}</span>}
+                {user.avgCgpa != null && user.avgCgpa > 0 && (
+                  <span>· CGPA <strong>{user.avgCgpa.toFixed(2)}</strong></span>
+                )}
+              </div>
+              {user.skills.length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-1">
+                  {user.skills.map((s) => (
+                    <span key={s} className="rounded bg-neutral-100 px-2 py-0.5 text-[11px] text-neutral-700">
+                      {s}
+                    </span>
+                  ))}
+                </div>
+              )}
+              <div className="mt-2 flex flex-wrap gap-3 text-xs text-neutral-500">
+                {user.resumeUrl && (
+                  <a
+                    href={user.resumeUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 text-blue-600 hover:underline"
+                  >
+                    <FileCheck2 className="h-3 w-3" /> Resume
+                  </a>
+                )}
+                {user.socialProfile && (
+                  <a
+                    href={user.socialProfile}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 text-blue-600 hover:underline"
+                  >
+                    <LinkIcon className="h-3 w-3" /> Social Profile
+                  </a>
+                )}
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Marks */}
+      <Card>
+        <CardContent className="p-5">
+          <div className="flex items-center gap-2 mb-4">
+            <BookOpen className="h-4 w-4 text-neutral-500" />
+            <h3 className="text-sm font-semibold text-neutral-900">Academic Marks</h3>
+            {marks?.isVerified && (
+              <span className="rounded bg-emerald-100 px-2 py-0.5 text-[10px] font-medium text-emerald-700">
+                Verified
+              </span>
+            )}
+          </div>
+          {!marks ? (
+            <p className="text-sm text-neutral-500">No marks recorded.</p>
+          ) : (
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+              {semLabels.map(({ key, label }) => {
+                const val = marks[key as keyof typeof marks] as number | null;
+                return (
+                  <div
+                    key={key}
+                    className="rounded-md border border-neutral-200 bg-neutral-50 p-3 text-center"
+                  >
+                    <p className="text-[10px] font-medium uppercase tracking-wide text-neutral-500">
+                      {label}
+                    </p>
+                    <p className={`mt-1 text-lg font-semibold ${val == null ? "text-neutral-300" : "text-neutral-900"}`}>
+                      {val != null ? val : "—"}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Internships */}
+      <Card>
+        <CardContent className="p-5">
+          <div className="flex items-center gap-2 mb-4">
+            <Briefcase className="h-4 w-4 text-neutral-500" />
+            <h3 className="text-sm font-semibold text-neutral-900">
+              Internships <span className="text-neutral-400 font-normal">({internships.length})</span>
+            </h3>
+          </div>
+          {internships.length === 0 ? (
+            <p className="text-sm text-neutral-500">No internships recorded.</p>
+          ) : (
+            <div className="space-y-3">
+              {internships.map((intship) => (
+                <div
+                  key={intship.id}
+                  className="rounded-md border border-neutral-200 bg-neutral-50 p-3"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <p className="text-sm font-semibold text-neutral-900">{intship.role}</p>
+                      <p className="text-xs text-neutral-600">{intship.companyName}</p>
+                      {intship.duration && (
+                        <p className="text-xs text-neutral-500">{intship.duration}</p>
+                      )}
+                      <p className="text-xs text-neutral-400 mt-0.5">
+                        {new Date(intship.startDate).toLocaleDateString()}
+                        {intship.endDate ? ` — ${new Date(intship.endDate).toLocaleDateString()}` : " — Present"}
+                      </p>
+                    </div>
+                    <div className="flex flex-col items-end gap-1">
+                      {intship.isVerified && (
+                        <span className="rounded bg-emerald-100 px-2 py-0.5 text-[10px] font-medium text-emerald-700">
+                          Verified
+                        </span>
+                      )}
+                      {intship.certificateUrl && (
+                        <a
+                          href={intship.certificateUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[11px] text-blue-600 hover:underline"
+                        >
+                          Certificate
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                  {intship.roleDescription && (
+                    <p className="mt-2 text-xs text-neutral-600">{intship.roleDescription}</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Achievements */}
+      <Card>
+        <CardContent className="p-5">
+          <div className="flex items-center gap-2 mb-4">
+            <Award className="h-4 w-4 text-neutral-500" />
+            <h3 className="text-sm font-semibold text-neutral-900">
+              Achievements <span className="text-neutral-400 font-normal">({achievements.length})</span>
+            </h3>
+          </div>
+          {achievements.length === 0 ? (
+            <p className="text-sm text-neutral-500">No achievements recorded.</p>
+          ) : (
+            <div className="space-y-3">
+              {achievements.map((ach) => (
+                <div
+                  key={ach.id}
+                  className="rounded-md border border-neutral-200 bg-neutral-50 p-3"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <p className="text-sm font-semibold text-neutral-900">{ach.title}</p>
+                      {ach.category && (
+                        <span className="rounded bg-blue-100 px-2 py-0.5 text-[10px] font-medium text-blue-700">
+                          {ach.category}
+                        </span>
+                      )}
+                      {ach.achievementDate && (
+                        <p className="text-xs text-neutral-400 mt-0.5">
+                          {new Date(ach.achievementDate).toLocaleDateString()}
+                        </p>
+                      )}
+                      {ach.description && (
+                        <p className="mt-1 text-xs text-neutral-600">{ach.description}</p>
+                      )}
+                    </div>
+                    <div className="flex flex-col items-end gap-1">
+                      {ach.isVerified && (
+                        <span className="rounded bg-emerald-100 px-2 py-0.5 text-[10px] font-medium text-emerald-700">
+                          Verified
+                        </span>
+                      )}
+                      {ach.certificateUrl && (
+                        <a
+                          href={ach.certificateUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[11px] text-blue-600 hover:underline"
+                        >
+                          Certificate
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Projects */}
+      <Card>
+        <CardContent className="p-5">
+          <div className="flex items-center gap-2 mb-4">
+            <Code2 className="h-4 w-4 text-neutral-500" />
+            <h3 className="text-sm font-semibold text-neutral-900">
+              Projects <span className="text-neutral-400 font-normal">({projects.length})</span>
+            </h3>
+          </div>
+          {projects.length === 0 ? (
+            <p className="text-sm text-neutral-500">No projects recorded.</p>
+          ) : (
+            <div className="space-y-3">
+              {projects.map((proj) => (
+                <div
+                  key={proj.id}
+                  className="rounded-md border border-neutral-200 bg-neutral-50 p-3"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-semibold text-neutral-900">{proj.title}</p>
+                      {proj.techStack.length > 0 && (
+                        <div className="mt-1 flex flex-wrap gap-1">
+                          {proj.techStack.map((t) => (
+                            <span key={t} className="rounded bg-neutral-200 px-1.5 py-0.5 text-[10px] text-neutral-700">
+                              {t}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      {proj.description && (
+                        <p className="mt-1 text-xs text-neutral-600">{proj.description}</p>
+                      )}
+                      {(proj.startDate || proj.endDate) && (
+                        <p className="mt-0.5 text-xs text-neutral-400">
+                          {proj.startDate ? new Date(proj.startDate).toLocaleDateString() : ""}
+                          {proj.endDate ? ` — ${new Date(proj.endDate).toLocaleDateString()}` : proj.startDate ? " — Present" : ""}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex flex-col items-end gap-1 flex-shrink-0">
+                      {proj.isVerified && (
+                        <span className="rounded bg-emerald-100 px-2 py-0.5 text-[10px] font-medium text-emerald-700">
+                          Verified
+                        </span>
+                      )}
+                      {proj.projectUrl && (
+                        <a
+                          href={proj.projectUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[11px] text-blue-600 hover:underline"
+                        >
+                          Live
+                        </a>
+                      )}
+                      {proj.repoUrl && (
+                        <a
+                          href={proj.repoUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[11px] text-blue-600 hover:underline"
+                        >
+                          Repo
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
