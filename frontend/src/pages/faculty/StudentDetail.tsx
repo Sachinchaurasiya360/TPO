@@ -18,6 +18,9 @@ import {
 import {
   getDeptStudentDetail,
   type DeptStudentDetail,
+  listStudentNotes,
+  addStudentNote,
+  deleteStudentNote,
 } from "@/lib/facultyApi";
 import { departmentLabel } from "@/lib/studentApi";
 import { extractErrorMessage } from "@/lib/api";
@@ -25,6 +28,7 @@ import {
   FacultySidebar,
   type FacultyTab,
 } from "@/components/shared/FacultySidebar";
+import { StudentNotesPanel } from "@/components/shared/StudentNotesPanel";
 
 export function FacultyStudentDetail() {
   const { id } = useParams<{ id: string }>();
@@ -334,6 +338,14 @@ export function FacultyStudentDetail() {
               </ul>
             )}
           </Section>
+
+          {/* Internal notes */}
+          <StudentNotesPanel
+            studentId={user.id}
+            fetchNotes={listStudentNotes}
+            addNote={addStudentNote}
+            deleteNote={deleteStudentNote}
+          />
         </main>
       </div>
     </div>

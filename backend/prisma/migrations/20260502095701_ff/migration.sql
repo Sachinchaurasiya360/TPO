@@ -41,7 +41,16 @@ CREATE TYPE "AlumniPostType" AS ENUM ('MENTORSHIP', 'REFERRAL', 'CAREER_ADVICE',
 CREATE TYPE "TestCategory" AS ENUM ('APTITUDE', 'TECHNICAL', 'CODING', 'PERSONALITY');
 
 -- CreateEnum
-CREATE TYPE "TestStatus" AS ENUM ('DRAFT', 'PUBLISHED');
+CREATE TYPE "TestStatus" AS ENUM ('DRAFT', 'PUBLISHED', 'ARCHIVED');
+
+-- CreateEnum
+CREATE TYPE "SubmissionStatus" AS ENUM ('IN_PROGRESS', 'SUBMITTED', 'REVIEWED');
+
+-- CreateEnum
+CREATE TYPE "BroadcastStatus" AS ENUM ('PENDING', 'PROCESSING', 'COMPLETED', 'PARTIAL', 'FAILED');
+
+-- CreateEnum
+CREATE TYPE "BroadcastType" AS ENUM ('JOB_POSTED', 'EVENT_CREATED', 'ACCOUNT_APPROVED', 'ALUMNI_INVITE', 'CUSTOM');
 
 -- CreateTable
 CREATE TABLE "User" (
@@ -153,6 +162,24 @@ CREATE TABLE "Achievement" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Achievement_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Project" (
+    "id" TEXT NOT NULL,
+    "userId" INTEGER NOT NULL,
+    "title" TEXT NOT NULL,
+    "description" TEXT,
+    "techStack" TEXT[],
+    "projectUrl" TEXT,
+    "repoUrl" TEXT,
+    "startDate" TIMESTAMP(3),
+    "endDate" TIMESTAMP(3),
+    "isVerified" BOOLEAN NOT NULL DEFAULT false,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Project_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -295,6 +322,10 @@ CREATE TABLE "AptitudeTest" (
     "category" "TestCategory" NOT NULL,
     "status" "TestStatus" NOT NULL DEFAULT 'DRAFT',
     "isActive" BOOLEAN NOT NULL DEFAULT false,
+    "isHomework" BOOLEAN NOT NULL DEFAULT false,
+    "department" "Department",
+    "eligibleYears" "AcademicYear"[],
+    "createdById" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -314,6 +345,49 @@ CREATE TABLE "Question" (
     "marks" INTEGER NOT NULL,
 
     CONSTRAINT "Question_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "TestSubmission" (
+    "id" TEXT NOT NULL,
+    "testId" INTEGER NOT NULL,
+    "studentId" INTEGER NOT NULL,
+    "attemptNumber" INTEGER NOT NULL DEFAULT 1,
+    "startedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "submittedAt" TIMESTAMP(3),
+    "answers" JSONB NOT NULL,
+    "autoScore" INTEGER,
+    "finalScore" INTEGER,
+    "tabSwitchCount" INTEGER NOT NULL DEFAULT 0,
+    "status" "SubmissionStatus" NOT NULL DEFAULT 'IN_PROGRESS',
+    "reviewedById" INTEGER,
+    "reviewedAt" TIMESTAMP(3),
+    "facultyRemarks" TEXT,
+
+    CONSTRAINT "TestSubmission_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "BroadcastJob" (
+    "id" TEXT NOT NULL,
+    "type" "BroadcastType" NOT NULL,
+    "subject" TEXT NOT NULL,
+    "htmlBody" TEXT NOT NULL,
+    "recipientIds" INTEGER[],
+    "status" "BroadcastStatus" NOT NULL DEFAULT 'PENDING',
+    "totalCount" INTEGER NOT NULL,
+    "sentCount" INTEGER NOT NULL DEFAULT 0,
+    "failedCount" INTEGER NOT NULL DEFAULT 0,
+    "failures" JSONB,
+    "attempts" INTEGER NOT NULL DEFAULT 0,
+    "maxAttempts" INTEGER NOT NULL DEFAULT 3,
+    "lastError" TEXT,
+    "createdById" INTEGER,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "startedAt" TIMESTAMP(3),
+    "completedAt" TIMESTAMP(3),
+
+    CONSTRAINT "BroadcastJob_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -348,6 +422,9 @@ CREATE INDEX "Internship_userId_idx" ON "Internship"("userId");
 
 -- CreateIndex
 CREATE INDEX "Achievement_userId_idx" ON "Achievement"("userId");
+
+-- CreateIndex
+CREATE INDEX "Project_userId_idx" ON "Project"("userId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "AlumniProfile_userId_key" ON "AlumniProfile"("userId");
@@ -392,7 +469,31 @@ CREATE INDEX "Notification_userId_isRead_idx" ON "Notification"("userId", "isRea
 CREATE INDEX "Notification_createdAt_idx" ON "Notification"("createdAt");
 
 -- CreateIndex
+CREATE INDEX "AptitudeTest_status_idx" ON "AptitudeTest"("status");
+
+-- CreateIndex
+CREATE INDEX "AptitudeTest_createdById_idx" ON "AptitudeTest"("createdById");
+
+-- CreateIndex
 CREATE INDEX "Question_testId_idx" ON "Question"("testId");
+
+-- CreateIndex
+CREATE INDEX "TestSubmission_studentId_idx" ON "TestSubmission"("studentId");
+
+-- CreateIndex
+CREATE INDEX "TestSubmission_testId_idx" ON "TestSubmission"("testId");
+
+-- CreateIndex
+CREATE INDEX "TestSubmission_status_idx" ON "TestSubmission"("status");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "TestSubmission_testId_studentId_attemptNumber_key" ON "TestSubmission"("testId", "studentId", "attemptNumber");
+
+-- CreateIndex
+CREATE INDEX "BroadcastJob_status_idx" ON "BroadcastJob"("status");
+
+-- CreateIndex
+CREATE INDEX "BroadcastJob_createdAt_idx" ON "BroadcastJob"("createdAt");
 
 -- AddForeignKey
 ALTER TABLE "VerificationRequest" ADD CONSTRAINT "VerificationRequest_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -408,6 +509,9 @@ ALTER TABLE "Internship" ADD CONSTRAINT "Internship_userId_fkey" FOREIGN KEY ("u
 
 -- AddForeignKey
 ALTER TABLE "Achievement" ADD CONSTRAINT "Achievement_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Project" ADD CONSTRAINT "Project_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "AlumniProfile" ADD CONSTRAINT "AlumniProfile_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -437,4 +541,16 @@ ALTER TABLE "Event" ADD CONSTRAINT "Event_createdById_fkey" FOREIGN KEY ("create
 ALTER TABLE "Notification" ADD CONSTRAINT "Notification_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "AptitudeTest" ADD CONSTRAINT "AptitudeTest_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Question" ADD CONSTRAINT "Question_testId_fkey" FOREIGN KEY ("testId") REFERENCES "AptitudeTest"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "TestSubmission" ADD CONSTRAINT "TestSubmission_testId_fkey" FOREIGN KEY ("testId") REFERENCES "AptitudeTest"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "TestSubmission" ADD CONSTRAINT "TestSubmission_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "TestSubmission" ADD CONSTRAINT "TestSubmission_reviewedById_fkey" FOREIGN KEY ("reviewedById") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;

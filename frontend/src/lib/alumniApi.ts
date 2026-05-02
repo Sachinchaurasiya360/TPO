@@ -233,3 +233,84 @@ export const getAlumniById = async (id: number) => {
   const { data } = await api.get<{ user: AlumniUser }>(`/alumni/by/${id}`);
   return data.user;
 };
+
+// ==================== ACADEMIC HISTORY ====================
+
+export interface AlumniMarks {
+  id: string;
+  sscPercentage: number | null;
+  hscPercentage: number | null;
+  sem1: number | null;
+  sem2: number | null;
+  sem3: number | null;
+  sem4: number | null;
+  sem5: number | null;
+  sem6: number | null;
+  sem7: number | null;
+  sem8: number | null;
+  isVerified: boolean;
+  updatedAt: string;
+}
+
+export interface AlumniInternship {
+  id: string;
+  companyName: string;
+  role: string;
+  roleDescription: string | null;
+  duration: string | null;
+  startDate: string;
+  endDate: string | null;
+  certificateUrl: string | null;
+  isVerified: boolean;
+}
+
+export interface AlumniAchievement {
+  id: string;
+  title: string;
+  description: string | null;
+  category: string | null;
+  certificateUrl: string | null;
+  achievementDate: string | null;
+  isVerified: boolean;
+}
+
+export interface AlumniProject {
+  id: string;
+  title: string;
+  description: string | null;
+  techStack: string[];
+  projectUrl: string | null;
+  repoUrl: string | null;
+  startDate: string | null;
+  endDate: string | null;
+  isVerified: boolean;
+}
+
+export interface AcademicHistoryUser {
+  id: number;
+  fullName: string;
+  legalName: string | null;
+  emailId: string;
+  contactNo: string | null;
+  studentId: string | null;
+  department: Department | null;
+  academicYear: string | null;
+  skills: string[];
+  socialProfile: string | null;
+  profilePic: string | null;
+  resumeUrl: string | null;
+  avgCgpa: number | null;
+}
+
+export interface AcademicHistoryResponse {
+  user: AcademicHistoryUser;
+  marks: AlumniMarks | null;
+  internships: AlumniInternship[];
+  achievements: AlumniAchievement[];
+  projects: AlumniProject[];
+}
+
+export const getAlumniAcademicHistory = async (): Promise<AcademicHistoryResponse> => {
+  const { data } = await api.get<AcademicHistoryResponse>("/alumni/me/academic-history");
+  return data;
+};

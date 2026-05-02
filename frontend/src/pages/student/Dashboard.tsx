@@ -7,25 +7,23 @@ import {
   ExternalLink,
   Loader2,
   ShieldCheck,
-  AlertCircle,
-  X,
 } from "lucide-react";
 import { StudentLayout } from "@/components/shared/StudentLayout";
 import { extractErrorMessage } from "@/lib/api";
+import { useAuth } from "@/context/AuthContext";
 import {
   getProfile,
   updateProfile,
   uploadProfilePic,
   uploadResume,
-  cancelVerification,
   type StudentProfile,
-  type PendingVerification,
   DEPARTMENT_LABELS,
   type Department,
   type AcademicYear,
   type UpdateProfilePayload,
 } from "@/lib/studentApi";
 import { validateFileSize } from "@/lib/fileUpload";
+import { MAX_PROFILE_PIC_BYTES } from "@/lib/fileUpload";
 
 const DEPARTMENTS: Department[] = [
   "CSE",
@@ -41,14 +39,6 @@ const YEARS: { value: AcademicYear; label: string }[] = [
   { value: "THIRD_YEAR", label: "3rd Year" },
   { value: "FOURTH_YEAR", label: "4th Year" },
 ];
-
-const FIELD_LABELS: Record<string, string> = {
-  fullName: "Full Name",
-  legalName: "Legal Name",
-  studentId: "Student ID",
-  department: "Department",
-  academicYear: "Academic Year",
-};
 
 interface FormState {
   fullName: string;
@@ -96,9 +86,9 @@ const buildPayload = (form: FormState): UpdateProfilePayload => {
 export function StudentDashboard() {
   const picInputRef = useRef<HTMLInputElement>(null);
   const resumeInputRef = useRef<HTMLInputElement>(null);
+  const { refresh } = useAuth();
 
   const [profile, setProfile] = useState<StudentProfile | null>(null);
-  const [pending, setPending] = useState<PendingVerification | null>(null);
   const [form, setForm] = useState<FormState | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -110,7 +100,6 @@ export function StudentDashboard() {
     try {
       const data = await getProfile();
       setProfile(data.user);
-      setPending(data.pendingVerification);
       setForm(toFormState(data.user));
     } catch (e) {
       toast.error(extractErrorMessage(e));
@@ -134,15 +123,8 @@ export function StudentDashboard() {
     try {
       const res = await updateProfile(buildPayload(form));
       setProfile(res.user);
-      setPending(res.pendingVerification);
       setForm(toFormState(res.user));
-      if (res.pendingFieldCount > 0) {
-        toast.success(
-          `Changes saved. ${res.pendingFieldCount} field(s) await faculty approval.`
-        );
-      } else {
-        toast.success("Profile updated.");
-      }
+      toast.success("Profile updated.");
     } catch (err) {
       toast.error(extractErrorMessage(err));
     } finally {
@@ -153,7 +135,7 @@ export function StudentDashboard() {
   const onPicChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (!validateFileSize(file)) {
+    if (!validateFileSize(file, MAX_PROFILE_PIC_BYTES)) {
       if (picInputRef.current) picInputRef.current.value = "";
       return;
     }
@@ -161,6 +143,8 @@ export function StudentDashboard() {
     try {
       const { url } = await uploadProfilePic(file);
       setProfile((p) => (p ? { ...p, profilePic: url } : p));
+      // Refresh AuthContext so header/sidebar reflect the new picture immediately
+      await refresh();
       toast.success("Profile picture updated.");
     } catch (err) {
       toast.error(extractErrorMessage(err));
@@ -187,18 +171,6 @@ export function StudentDashboard() {
     } finally {
       setUploadingResume(false);
       if (resumeInputRef.current) resumeInputRef.current.value = "";
-    }
-  };
-
-  const handleCancelPending = async () => {
-    if (!pending) return;
-    if (!confirm("Discard all pending changes?")) return;
-    try {
-      await cancelVerification(pending.id);
-      await load();
-      toast.success("Pending changes cancelled.");
-    } catch (err) {
-      toast.error(extractErrorMessage(err));
     }
   };
 
@@ -290,66 +262,22 @@ export function StudentDashboard() {
             </div>
           </section>
 
-          {/* Pending approval banner */}
-          {pending && Object.keys(pending.changes).length > 0 && (
-            <section className="rounded-2xl border border-yellow-200 bg-yellow-50 p-5">
-              <div className="flex items-start gap-3">
-                <AlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-yellow-700" />
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <h3 className="text-sm font-semibold text-yellow-900">
-                        Pending faculty approval
-                      </h3>
-                      <p className="mt-0.5 text-xs text-yellow-800">
-                        These changes are awaiting verification.
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={handleCancelPending}
-                      className="inline-flex items-center gap-1 rounded-md border border-yellow-300 bg-white px-2.5 py-1 text-xs font-medium text-yellow-900 hover:bg-yellow-100"
-                    >
-                      <X className="h-3 w-3" />
-                      Cancel all
-                    </button>
-                  </div>
-                  <ul className="mt-3 space-y-1 text-xs text-yellow-900">
-                    {Object.entries(pending.changes).map(([field, diff]) => (
-                      <li key={field}>
-                        <span className="font-semibold">
-                          {FIELD_LABELS[field] ?? field}:
-                        </span>{" "}
-                        <span className="line-through opacity-60">
-                          {String(diff.oldValue ?? "—")}
-                        </span>{" "}
-                        → <span>{String(diff.newValue ?? "—")}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </section>
-          )}
-
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Basic info */}
             <Section
               title="Basic information"
-              subtitle="Fields marked with a badge require faculty verification before becoming visible to admin and recruiters."
+              subtitle="Update your personal details and contact information."
             >
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <FormField
                   id="fullName"
                   label="Full Name"
-                  verify
                   value={form.fullName}
                   onChange={(v) => set("fullName", v)}
                 />
                 <FormField
                   id="legalName"
                   label="Legal Name"
-                  verify
                   value={form.legalName}
                   onChange={(v) => set("legalName", v)}
                   placeholder="As on official records"
@@ -377,14 +305,12 @@ export function StudentDashboard() {
                 <FormField
                   id="studentId"
                   label="Student ID"
-                  verify
                   value={form.studentId}
                   onChange={(v) => set("studentId", v)}
                 />
                 <FormSelect
                   id="department"
                   label="Department"
-                  verify
                   value={form.department}
                   onChange={(v) => set("department", v)}
                   options={[
@@ -398,7 +324,6 @@ export function StudentDashboard() {
                 <FormSelect
                   id="academicYear"
                   label="Academic Year"
-                  verify
                   value={form.academicYear}
                   onChange={(v) => set("academicYear", v)}
                   options={[
@@ -521,7 +446,6 @@ function FormField({
   onChange,
   placeholder,
   disabled,
-  verify,
   className,
 }: {
   id: string;
@@ -530,7 +454,6 @@ function FormField({
   onChange: (v: string) => void;
   placeholder?: string;
   disabled?: boolean;
-  verify?: boolean;
   className?: string;
 }) {
   return (
@@ -540,7 +463,6 @@ function FormField({
         className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-neutral-700"
       >
         {label}
-        {verify && <VerifyBadge />}
       </label>
       <input
         id={id}
@@ -560,14 +482,12 @@ function FormSelect({
   value,
   onChange,
   options,
-  verify,
 }: {
   id: string;
   label: string;
   value: string;
   onChange: (v: string) => void;
   options: { value: string; label: string }[];
-  verify?: boolean;
 }) {
   return (
     <div className="space-y-1.5">
@@ -576,7 +496,6 @@ function FormSelect({
         className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-neutral-700"
       >
         {label}
-        {verify && <VerifyBadge />}
       </label>
       <select
         id={id}
@@ -594,13 +513,3 @@ function FormSelect({
   );
 }
 
-function VerifyBadge() {
-  return (
-    <span
-      title="Changes to this field require faculty approval"
-      className="rounded border border-yellow-300 bg-yellow-50 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-yellow-800"
-    >
-      Verify
-    </span>
-  );
-}

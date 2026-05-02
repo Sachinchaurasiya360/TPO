@@ -193,6 +193,10 @@ model User {
   alumniProfile         AlumniProfile?
   alumniPosts           AlumniPost[]
 
+  // Relations - notes
+  notesAbout            StudentNote[] @relation("StudentNotes")
+  notesAuthored         StudentNote[] @relation("NoteAuthors")
+
   // Relations - verification
   verificationRequests  VerificationRequest[] @relation("StudentVerifications")
   reviewedRequests      VerificationRequest[] @relation("FacultyReviews")
@@ -596,4 +600,21 @@ model BroadcastJob {
 
   @@index([status])
   @@index([createdAt])
+}
+
+// ==================== STUDENT NOTES ====================
+
+model StudentNote {
+  id        String   @id @default(cuid())
+  studentId Int
+  student   User     @relation("StudentNotes", fields: [studentId], references: [id], onDelete: Cascade)
+  authorId  Int
+  author    User     @relation("NoteAuthors", fields: [authorId], references: [id], onDelete: Cascade)
+  content   String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([studentId])
+  @@index([authorId])
 }

@@ -1,13 +1,12 @@
 import express from "express";
 import { isAuthenticated, isStudent } from "../middleware/auth";
-import { imageUpload, pdfUpload, handleUploadError } from "../middleware/upload";
+import { imageUpload, profilePicUpload, pdfUpload, handleUploadError } from "../middleware/upload";
 import {
   getProfile,
   updateProfile,
   uploadProfilePic,
   uploadResume,
   uploadCertificate,
-  cancelProfileVerification,
 } from "../controller/student.controller";
 import { getMarks, updateMarks } from "../controller/marks.controller";
 import {
@@ -44,7 +43,7 @@ router.get("/profile", getProfile);
 router.patch("/profile", updateProfile);
 router.post(
   "/profile/profile-pic",
-  imageUpload.single("file"),
+  profilePicUpload.single("file"),
   handleUploadError,
   uploadProfilePic
 );
@@ -84,9 +83,6 @@ router.post(
   handleUploadError,
   uploadCertificate
 );
-
-// Verification management
-router.delete("/verification/:id", cancelProfileVerification);
 
 // F08 - Jobs & Applications
 router.get("/jobs", listEligibleJobs);

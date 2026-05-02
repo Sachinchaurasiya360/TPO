@@ -405,6 +405,45 @@ export const listDirectory = async (req: Request, res: Response) => {
   }
 };
 
+// ==================== ACADEMIC HISTORY (read-only for alumni) ====================
+
+export const getMyAcademicHistory = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const [user, marks, internships, achievements, projects] = await Promise.all([
+      prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+          id: true,
+          fullName: true,
+          legalName: true,
+          emailId: true,
+          contactNo: true,
+          studentId: true,
+          department: true,
+          academicYear: true,
+          skills: true,
+          socialProfile: true,
+          profilePic: true,
+          resumeUrl: true,
+          avgCgpa: true,
+        },
+      }),
+      prisma.marks.findUnique({ where: { userId } }),
+      prisma.internship.findMany({ where: { userId }, orderBy: { startDate: "desc" } }),
+      prisma.achievement.findMany({ where: { userId }, orderBy: { createdAt: "desc" } }),
+      prisma.project.findMany({ where: { userId }, orderBy: { createdAt: "desc" } }),
+    ]);
+
+    if (!user) return res.status(404).json({ message: "Not found" });
+
+    return res.status(200).json({ user, marks, internships, achievements, projects });
+  } catch (error) {
+    logger.error({ error }, "getMyAcademicHistory failed");
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 export const getAlumniById = async (req: Request, res: Response) => {
   try {
     const id = Number(req.params.id);

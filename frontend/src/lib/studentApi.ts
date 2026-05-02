@@ -52,7 +52,6 @@ export interface PendingVerification {
 
 export interface ProfileResponse {
   user: StudentProfile;
-  pendingVerification: PendingVerification | null;
 }
 
 export interface UpdateProfilePayload {
@@ -69,19 +68,6 @@ export interface UpdateProfilePayload {
   resumeUrl?: string;
 }
 
-export interface UpdateProfileResponse extends ProfileResponse {
-  appliedFields: string[];
-  pendingFieldCount: number;
-}
-
-export const VERIFICATION_FIELDS = [
-  "fullName",
-  "legalName",
-  "studentId",
-  "department",
-  "academicYear",
-] as const;
-
 export const getProfile = async (): Promise<ProfileResponse> => {
   const { data } = await api.get<ProfileResponse>("/student/profile");
   return data;
@@ -89,8 +75,8 @@ export const getProfile = async (): Promise<ProfileResponse> => {
 
 export const updateProfile = async (
   payload: UpdateProfilePayload
-): Promise<UpdateProfileResponse> => {
-  const { data } = await api.patch<UpdateProfileResponse>("/student/profile", payload);
+): Promise<ProfileResponse> => {
+  const { data } = await api.patch<ProfileResponse>("/student/profile", payload);
   return data;
 };
 
@@ -110,10 +96,6 @@ export const uploadResume = async (file: File): Promise<{ url: string }> => {
     headers: { "Content-Type": "multipart/form-data" },
   });
   return data;
-};
-
-export const cancelVerification = async (id: string): Promise<void> => {
-  await api.delete(`/student/verification/${id}`);
 };
 
 // =================== MARKS ===================
