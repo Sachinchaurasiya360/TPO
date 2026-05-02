@@ -1,6 +1,6 @@
-# Vishwaniketan TPO Portal
+# Vishwaniketan TPO
 
-Role-based Training & Placement Office portal for Vishwaniketan iMEET — Students, Alumni, Faculty, HODs, and Admins, with a faculty verification workflow for all student data.
+Role-based Training & Placement Office portal for Vishwaniketan iMEET â€” Students, Alumni, Faculty, HODs, and Admins, with a faculty verification workflow for all student data.
 
 ## Tech Stack
 
@@ -13,13 +13,13 @@ Role-based Training & Placement Office portal for Vishwaniketan iMEET — Students
 
 | # | Module | Status |
 |---|--------|--------|
-| F01 | Auth — signup, JWT login, forgot/reset password | ? |
-| F02 | Student profile — verification-gated fields, avatar, resume | ? |
-| F03 | Marks — SSC/HSC/Sem 1-8 CGPA, marksheets, auto `avgCgpa` | ? |
-| F04 | Internships — CRUD, certificate upload, faculty verification | ? |
-| F05 | Achievements — CRUD, certificate upload, faculty verification | ? |
-| F06 | Admin Dashboard — approvals, students, faculty, jobs, events | ? |
-| F07 | Faculty Dashboard — verification queue, dept students, HOD mgmt | ? |
+| F01 | Auth â€” signup, JWT login, forgot/reset password | ? |
+| F02 | Student profile â€” verification-gated fields, avatar, resume | ? |
+| F03 | Marks â€” SSC/HSC/Sem 1-8 CGPA, marksheets, auto `avgCgpa` | ? |
+| F04 | Internships â€” CRUD, certificate upload, faculty verification | ? |
+| F05 | Achievements â€” CRUD, certificate upload, faculty verification | ? |
+| F06 | Admin Dashboard â€” approvals, students, faculty, jobs, events | ? |
+| F07 | Faculty Dashboard â€” verification queue, dept students, HOD mgmt | ? |
 | F08 | Jobs & Applications | ?? |
 | F09 | Events | ?? |
 | F10 | Notifications | ?? |
@@ -81,8 +81,8 @@ cd frontend && npm run dev   # port 5173
 
 ## Verification Model
 
-- **Field-level diff** (profile, marks) — changes held in `VerificationRequest` until faculty approves; existing values stay live.
-- **Row-level flag** (internships, achievements) — new rows start `isVerified=false`; faculty flips to approve.
+- **Field-level diff** (profile, marks) â€” changes held in `VerificationRequest` until faculty approves; existing values stay live.
+- **Row-level flag** (internships, achievements) â€” new rows start `isVerified=false`; faculty flips to approve.
 
 ## API
 
