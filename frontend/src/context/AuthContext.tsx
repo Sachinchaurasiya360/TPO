@@ -48,6 +48,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     refresh();
   }, []);
 
+  useEffect(() => {
+    const handleTokenExpired = () => setUser(null);
+    window.addEventListener("auth:token-expired", handleTokenExpired);
+    return () => window.removeEventListener("auth:token-expired", handleTokenExpired);
+  }, []);
+
   const login = (u: AuthUser) => setUser(u);
 
   const logout = async () => {

@@ -141,6 +141,10 @@ export const adminSetJobStatus = async (
   return data.job;
 };
 
+export const adminDeleteJob = async (id: string): Promise<void> => {
+  await api.delete(`/admin/jobs/${id}`);
+};
+
 export const adminListApplications = async (
   jobId: string,
   status?: ApplicationStatus

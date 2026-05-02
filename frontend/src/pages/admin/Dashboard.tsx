@@ -34,6 +34,7 @@ import {
   adminCreateJob,
   adminUpdateJob,
   adminSetJobStatus,
+  adminDeleteJob,
   adminListApplications,
   adminUpdateApplicationStatus,
   type Job,
@@ -166,7 +167,7 @@ export function AdminDashboard() {
           </div>
         </header>
 
-        <main className="flex-1 p-6">
+        <main className="flex-1 p-4 pb-20 md:p-6 md:pb-6">
           <div className="max-w-7xl mx-auto">
             {tab === "overview" && <OverviewTab onNavigate={setTab} />}
             {tab === "approvals" && <ApprovalsTab />}
@@ -1521,9 +1522,6 @@ const emptyJobForm = {
   minCgpa: "",
   deadline: "",
   rounds: "",
-  openings: "",
-  bondDetails: "",
-  additionalNotes: "",
 };
 
 function JobsTab() {
@@ -1554,6 +1552,17 @@ function JobsTab() {
       const next: JobStatus = job.status === "OPEN" ? "CLOSED" : "OPEN";
       await adminSetJobStatus(job.id, next);
       toast.success(`Job ${next.toLowerCase()}`);
+      load();
+    } catch (e) {
+      toast.error(extractErrorMessage(e));
+    }
+  };
+
+  const handleDelete = async (job: Job) => {
+    if (!confirm(`Delete "${job.jobTitle}" at ${job.companyName}? This cannot be undone.`)) return;
+    try {
+      await adminDeleteJob(job.id);
+      toast.success("Job deleted");
       load();
     } catch (e) {
       toast.error(extractErrorMessage(e));
@@ -1623,6 +1632,9 @@ function JobsTab() {
                   </Button>
                   <Button size="sm" variant="outline" onClick={() => handleToggleStatus(j)}>
                     {j.status === "OPEN" ? "Close" : "Reopen"}
+                  </Button>
+                  <Button size="sm" variant="outline" className="text-red-600 hover:text-red-700 hover:border-red-300" onClick={() => handleDelete(j)}>
+                    Delete
                   </Button>
                 </div>
               </CardContent>
@@ -1697,9 +1709,6 @@ function jobToForm(job: Job): typeof emptyJobForm {
     minCgpa: job.minCgpa != null ? String(job.minCgpa) : "",
     deadline: deadlineLocal,
     rounds: job.rounds.join(", "),
-    openings: job.openings != null ? String(job.openings) : "",
-    bondDetails: job.bondDetails ?? "",
-    additionalNotes: job.additionalNotes ?? "",
   };
 }
 
@@ -1754,7 +1763,6 @@ function JobFormDialog({
         eligibleYears: form.eligibleYears as CreateJobPayload["eligibleYears"],
         deadline: new Date(form.deadline).toISOString(),
         ...(form.minCgpa ? { minCgpa: Number(form.minCgpa) } : {}),
-        ...(form.openings ? { openings: Number(form.openings) } : {}),
         ...(form.rounds
           ? {
               rounds: form.rounds
@@ -1763,8 +1771,6 @@ function JobFormDialog({
                 .filter(Boolean),
             }
           : {}),
-        ...(form.bondDetails ? { bondDetails: form.bondDetails } : {}),
-        ...(form.additionalNotes ? { additionalNotes: form.additionalNotes } : {}),
       };
       if (isEdit && job) {
         await adminUpdateJob(job.id, payload);
@@ -1833,16 +1839,8 @@ function JobFormDialog({
                 onChange={(e) => setForm({ ...form, location: e.target.value })}
               />
             </Field>
-            <Field>
-              <FieldLabel>Openings</FieldLabel>
-              <Input
-                type="number"
-                value={form.openings}
-                onChange={(e) => setForm({ ...form, openings: e.target.value })}
-              />
-            </Field>
           </div>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 gap-3">
             <Field>
               <FieldLabel>Job Type</FieldLabel>
               <select
@@ -1854,20 +1852,6 @@ function JobFormDialog({
               >
                 {JOB_TYPES.map((j) => (
                   <option key={j}>{j}</option>
-                ))}
-              </select>
-            </Field>
-            <Field>
-              <FieldLabel>Mode</FieldLabel>
-              <select
-                className="h-9 w-full rounded-md border bg-background px-3 text-sm"
-                value={form.locationType}
-                onChange={(e) =>
-                  setForm({ ...form, locationType: e.target.value as LocationType })
-                }
-              >
-                {LOCATION_TYPES.map((l) => (
-                  <option key={l}>{l}</option>
                 ))}
               </select>
             </Field>
@@ -1943,21 +1927,7 @@ function JobFormDialog({
               />
             </Field>
           </div>
-          <Field>
-            <FieldLabel>Bond Details</FieldLabel>
-            <Input
-              value={form.bondDetails}
-              onChange={(e) => setForm({ ...form, bondDetails: e.target.value })}
-            />
-          </Field>
-          <Field>
-            <FieldLabel>Additional Notes</FieldLabel>
-            <textarea
-              className="w-full min-h-[60px] rounded-md border bg-background px-3 py-2 text-sm"
-              value={form.additionalNotes}
-              onChange={(e) => setForm({ ...form, additionalNotes: e.target.value })}
-            />
-          </Field>
+
         </FieldGroup>
         <div className="flex gap-2 mt-6 justify-end">
           <Button variant="outline" onClick={onClose} disabled={saving}>

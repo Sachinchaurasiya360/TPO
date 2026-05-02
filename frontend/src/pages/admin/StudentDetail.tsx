@@ -101,7 +101,7 @@ export function StudentDetail() {
           </div>
         </header>
 
-        <main className="mx-auto w-full max-w-6xl space-y-6 px-6 py-8">
+        <main className="mx-auto w-full max-w-6xl space-y-6 px-4 py-6 pb-24 md:px-6 md:py-8 md:pb-8">
         {/* Profile header */}
         <section className="rounded-2xl border border-neutral-200 bg-white p-6">
           <div className="flex flex-wrap items-start gap-5">

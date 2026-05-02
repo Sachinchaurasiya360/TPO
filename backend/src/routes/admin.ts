@@ -30,6 +30,7 @@ import {
   getJob,
   updateJob,
   setJobStatus,
+  deleteJob,
   listApplications,
   updateApplicationStatus,
 } from "../controller/admin.jobs.controller";
@@ -79,6 +80,7 @@ router.post("/jobs", createJob);
 router.get("/jobs/:id", getJob);
 router.patch("/jobs/:id", updateJob);
 router.patch("/jobs/:id/status", setJobStatus);
+router.delete("/jobs/:id", deleteJob);
 router.get("/jobs/:id/applications", listApplications);
 router.patch("/applications/:id/status", updateApplicationStatus);
 

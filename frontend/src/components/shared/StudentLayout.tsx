@@ -22,7 +22,7 @@ export function StudentLayout({
       <StudentSidebar />
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b border-neutral-200 bg-white px-6">
+        <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-2 border-b border-neutral-200 bg-white px-4 md:gap-4 md:px-6">
           <div className="min-w-0">
             <h1 className="truncate text-lg font-semibold text-neutral-900">
               {title}
@@ -61,7 +61,7 @@ export function StudentLayout({
           </div>
         </header>
 
-        <main className="flex-1 px-6 py-6">{children}</main>
+        <main className="flex-1 px-4 py-4 pb-20 md:px-6 md:py-6 md:pb-6">{children}</main>
       </div>
     </div>
   );

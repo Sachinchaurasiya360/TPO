@@ -232,6 +232,16 @@ export const setJobStatus = async (req: Request, res: Response) => {
   }
 };
 
+export const deleteJob = async (req: Request, res: Response) => {
+  try {
+    await prisma.job.delete({ where: { id: req.params.id } });
+    return res.status(200).json({ message: "Job deleted" });
+  } catch (error) {
+    logger.error({ error }, "deleteJob failed");
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 // ==================== APPLICATIONS ====================
 
 export const listApplications = async (req: Request, res: Response) => {

@@ -194,18 +194,18 @@ export function Internship() {
     <StudentLayout
       title="Internships"
       subtitle="Faculty verifies each entry. Certificates must be PDF, max 2MB."
-      actions={
-        <button
-          type="button"
-          onClick={startAdd}
-          className="inline-flex items-center gap-1.5 rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-800"
-        >
-          <Plus className="h-4 w-4" />
-          Add internship
-        </button>
-      }
     >
       <div className="mx-auto max-w-5xl space-y-4">
+        <div className="flex justify-end">
+          <button
+            type="button"
+            onClick={startAdd}
+            className="inline-flex items-center gap-1.5 rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-800"
+          >
+            <Plus className="h-4 w-4" />
+            Add internship
+          </button>
+        </div>
         {isAdding && (
           <section className="rounded-2xl border border-neutral-200 bg-white">
             <header className="flex items-start justify-between gap-4 border-b border-neutral-200 px-6 py-4">

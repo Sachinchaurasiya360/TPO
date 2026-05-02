@@ -45,10 +45,12 @@ export function StudentSidebar() {
   const [collapsed, setCollapsed] = useState(false);
 
   return (
+    <>
+    {/* Desktop sidebar — hidden on mobile */}
     <aside
       className={`${
         collapsed ? "w-16" : "w-60"
-      } sticky top-0 flex h-screen flex-shrink-0 flex-col border-r border-neutral-200 bg-white transition-[width] duration-200`}
+      } sticky top-0 hidden md:flex h-screen flex-shrink-0 flex-col border-r border-neutral-200 bg-white transition-[width] duration-200`}
     >
       <button
         onClick={() => setCollapsed((c) => !c)}
@@ -154,5 +156,33 @@ export function StudentSidebar() {
         </button>
       </div>
     </aside>
+
+    {/* Mobile bottom nav — visible only on small screens */}
+    <nav className="fixed bottom-0 left-0 right-0 z-40 flex items-center justify-around overflow-x-auto border-t border-neutral-200 bg-white px-1 py-1 md:hidden">
+      {items.map((item) => {
+        const Icon = item.icon;
+        const isActive = pathname === item.path;
+        return (
+          <button
+            key={item.path}
+            onClick={() => navigate(item.path)}
+            className={`flex flex-col items-center gap-0.5 flex-shrink-0 rounded-md px-2 py-1.5 text-[10px] font-medium transition ${
+              isActive ? "text-neutral-900" : "text-neutral-400"
+            }`}
+          >
+            <Icon className={`h-5 w-5 ${isActive ? "stroke-[2.5]" : ""}`} />
+            <span>{item.label}</span>
+          </button>
+        );
+      })}
+      <button
+        onClick={handleLogout}
+        className="flex flex-col items-center gap-0.5 flex-shrink-0 rounded-md px-2 py-1.5 text-[10px] font-medium text-neutral-400 transition"
+      >
+        <LogOut className="h-5 w-5" />
+        <span>Logout</span>
+      </button>
+    </nav>
+    </>
   );
 }

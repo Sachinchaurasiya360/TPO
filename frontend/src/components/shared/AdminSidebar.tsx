@@ -49,10 +49,12 @@ export function AdminSidebar({ active, onSelect }: AdminSidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
 
   return (
+    <>
+    {/* Desktop sidebar — hidden on mobile */}
     <aside
       className={`${
         collapsed ? "w-16" : "w-60"
-      } group sticky top-0 flex h-screen flex-shrink-0 flex-col border-r border-neutral-200 bg-white transition-[width] duration-200`}
+      } group sticky top-0 hidden md:flex h-screen flex-shrink-0 flex-col border-r border-neutral-200 bg-white transition-[width] duration-200`}
     >
       {/* Floating collapse toggle */}
       <button
@@ -158,5 +160,33 @@ export function AdminSidebar({ active, onSelect }: AdminSidebarProps) {
         </button>
       </div>
     </aside>
+
+    {/* Mobile bottom nav — visible only on small screens */}
+    <nav className="fixed bottom-0 left-0 right-0 z-40 flex items-center justify-around border-t border-neutral-200 bg-white px-2 py-1 md:hidden">
+      {items.map((item) => {
+        const Icon = item.icon;
+        const isActive = active === item.key;
+        return (
+          <button
+            key={item.key}
+            onClick={() => onSelect(item.key)}
+            className={`flex flex-col items-center gap-0.5 rounded-md px-2 py-1.5 text-[10px] font-medium transition ${
+              isActive ? "text-neutral-900" : "text-neutral-400"
+            }`}
+          >
+            <Icon className={`h-5 w-5 ${ isActive ? "stroke-[2.5]" : ""}`} />
+            <span>{item.label}</span>
+          </button>
+        );
+      })}
+      <button
+        onClick={handleLogout}
+        className="flex flex-col items-center gap-0.5 rounded-md px-2 py-1.5 text-[10px] font-medium text-neutral-400 transition"
+      >
+        <LogOut className="h-5 w-5" />
+        <span>Logout</span>
+      </button>
+    </nav>
+    </>
   );
 }
