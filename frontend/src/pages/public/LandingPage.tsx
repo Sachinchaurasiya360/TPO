@@ -137,7 +137,7 @@ export default function LandingPage() {
       branch: "Computer Engg.",
       year: "2025",
       package: "7.2 LPA",
-      text: "The mock interviews and resume reviews gave me the edge I needed. I walked into my first-ever on-campus interview feeling fully prepared — and walked out with an offer on day one of placements. The TPO team genuinely invests in every student.",
+      text: "The mock interviews and resume reviews gave me the edge I needed. Walked into my first on-campus drive fully prepared — and walked out with an offer.",
       initials: "RS",
       featured: true,
     },
@@ -148,7 +148,7 @@ export default function LandingPage() {
       branch: "IT",
       year: "2025",
       package: "6.5 LPA",
-      text: "From aptitude prep to final offer — the portal made every step effortless.",
+      text: "From aptitude prep to final offer — every step was effortless.",
       initials: "PD",
     },
     {
@@ -158,7 +158,7 @@ export default function LandingPage() {
       branch: "Mechanical",
       year: "2024",
       package: "8.0 LPA",
-      text: "Alumni sessions opened up paths I hadn't even considered.",
+      text: "Alumni sessions opened paths I hadn't even considered.",
       initials: "AP",
     },
     {
@@ -168,7 +168,7 @@ export default function LandingPage() {
       branch: "Computer Engg.",
       year: "2025",
       package: "9.5 LPA",
-      text: "Converted my summer internship to a full-time role. The placement cell helped me prep thoroughly for both rounds.",
+      text: "Converted my internship to a full-time role. The placement cell helped me prep for both rounds.",
       initials: "SK",
     },
     {
@@ -188,7 +188,7 @@ export default function LandingPage() {
       branch: "IT",
       year: "2025",
       package: "7.0 LPA",
-      text: "Department-scoped listings saved me hours of filtering through irrelevant openings.",
+      text: "Department-scoped listings saved me hours of filtering.",
       initials: "NJ",
     },
     {
@@ -198,7 +198,7 @@ export default function LandingPage() {
       branch: "Computer Engg.",
       year: "2024",
       package: "6.8 LPA",
-      text: "The verification flow built real credibility with recruiters — interviewers could see my profile was legit.",
+      text: "The verified profile built real credibility with recruiters.",
       initials: "VR",
     },
   ];

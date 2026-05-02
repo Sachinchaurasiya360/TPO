@@ -18,6 +18,7 @@ import {
   reviewInternship,
   reviewAchievement,
   listDeptStudents,
+  listDeptAlumni,
   listDeptFaculty,
   updateDeptFaculty,
   setDeptFacultyStatus,
@@ -27,6 +28,8 @@ import {
   type DeptStudentListResponse,
   type DeptStudentFilters,
   type DeptFacultyItem,
+  type AlumniListItem,
+  type AlumniListResponse,
 } from "@/lib/facultyApi";
 import {
   ClipboardCheck,
@@ -52,6 +55,7 @@ const FACULTY_TABS: FacultyTab[] = [
   "overview",
   "queue",
   "students",
+  "alumni",
   "faculty",
   "aptitude",
 ];
@@ -68,6 +72,10 @@ const TAB_TITLES: Record<FacultyTab, { title: string; subtitle: string }> = {
   students: {
     title: "Students",
     subtitle: "Browse and filter students in your department.",
+  },
+  alumni: {
+    title: "Alumni",
+    subtitle: "View alumni from your department.",
   },
   faculty: {
     title: "Department Faculty",
@@ -152,6 +160,7 @@ export function FacultyDashboard() {
             {tab === "overview" && <OverviewTab onNavigate={setTab} />}
             {tab === "queue" && <QueueTab />}
             {tab === "students" && <StudentsTab />}
+            {tab === "alumni" && <AlumniTab />}
             {tab === "faculty" && user?.isHOD && <FacultyTabPanel />}
             {tab === "aptitude" && <FacultyAptitudeTab />}
           </div>
@@ -941,6 +950,111 @@ function StudentsTab() {
           </>
         )}
       </div>
+    </div>
+  );
+}
+
+// ==================== ALUMNI ====================
+
+function AlumniTab() {
+  const [items, setItems] = useState<AlumniListItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [query, setQuery] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal] = useState(0);
+
+  const load = useCallback(async (p: number, q: string) => {
+    setLoading(true);
+    try {
+      const res = await listDeptAlumni({ page: p, limit: 20, search: q || undefined });
+      setItems(res.items);
+      setTotal(res.total);
+      setTotalPages(res.totalPages);
+    } catch {
+      toast.error("Failed to load alumni");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    load(page, query);
+  }, [load, page, query]);
+
+  const handleSearch = () => {
+    setPage(1);
+    setQuery(search);
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-2">
+        <Input
+          placeholder="Search by name, email or student ID…"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+          className="max-w-xs text-sm"
+        />
+        <Button size="sm" onClick={handleSearch} variant="outline">Search</Button>
+      </div>
+
+      {loading ? (
+        <div className="flex h-40 items-center justify-center text-sm text-neutral-500">Loading…</div>
+      ) : items.length === 0 ? (
+        <div className="flex h-40 items-center justify-center text-sm text-neutral-500">No alumni found.</div>
+      ) : (
+        <>
+          <div className="overflow-hidden rounded-lg border border-neutral-200 bg-white">
+            <table className="w-full text-sm">
+              <thead className="border-b border-neutral-200 bg-neutral-50 text-xs font-medium uppercase tracking-wide text-neutral-500">
+                <tr>
+                  <th className="px-4 py-3 text-left">Name</th>
+                  <th className="px-4 py-3 text-left">Current Company</th>
+                  <th className="px-4 py-3 text-left">Role</th>
+                  <th className="px-4 py-3 text-left">Package</th>
+                  <th className="px-4 py-3 text-left">Grad. Year</th>
+                  <th className="px-4 py-3 text-left">Email</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-neutral-100">
+                {items.map((a) => (
+                  <tr key={a.id} className="hover:bg-neutral-50">
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-2">
+                        {a.profilePic ? (
+                          <img src={a.profilePic} alt="" className="h-7 w-7 flex-shrink-0 rounded-full object-cover" />
+                        ) : (
+                          <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-neutral-900 text-[10px] font-bold text-white">
+                            {a.fullName.slice(0, 2).toUpperCase()}
+                          </div>
+                        )}
+                        <span className="font-medium text-neutral-900">{a.fullName}</span>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-neutral-600">{a.alumniProfile?.currentOrg ?? "—"}</td>
+                    <td className="px-4 py-3 text-neutral-600">{a.alumniProfile?.currentRole ?? "—"}</td>
+                    <td className="px-4 py-3 text-neutral-600">{a.alumniProfile?.package ?? "—"}</td>
+                    <td className="px-4 py-3 text-neutral-600">{a.alumniProfile?.graduationYear ?? "—"}</td>
+                    <td className="px-4 py-3 text-neutral-500">{a.emailId}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="flex items-center justify-between text-xs text-neutral-500">
+            <span>{total} alumni</span>
+            <div className="flex items-center gap-2">
+              <Button size="sm" variant="outline" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>Prev</Button>
+              <span>Page {page} / {totalPages}</span>
+              <Button size="sm" variant="outline" disabled={page >= totalPages} onClick={() => setPage((p) => p + 1)}>Next</Button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }

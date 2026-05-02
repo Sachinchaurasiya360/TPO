@@ -180,6 +180,44 @@ export const listDeptStudents = async (
   return data;
 };
 
+export interface AlumniListItem {
+  id: number;
+  fullName: string;
+  emailId: string;
+  studentId: string | null;
+  department: Department | null;
+  profilePic: string | null;
+  resumeUrl: string | null;
+  isVerified: boolean;
+  isActive: boolean;
+  createdAt: string;
+  alumniProfile: {
+    currentOrg: string | null;
+    currentRole: string | null;
+    package: string | null;
+    graduationYear: number | null;
+  } | null;
+}
+
+export interface AlumniListResponse {
+  items: AlumniListItem[];
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+
+export const listDeptAlumni = async (filters: { page?: number; limit?: number; search?: string } = {}): Promise<AlumniListResponse> => {
+  const params: Record<string, string | number> = {};
+  Object.entries(filters).forEach(([key, value]) => {
+    if (value !== undefined && value !== "" && value !== null) {
+      params[key] = value as string | number;
+    }
+  });
+  const { data } = await api.get<AlumniListResponse>("/faculty/alumni", { params });
+  return data;
+};
+
 export const getDeptStudentDetail = async (id: number): Promise<DeptStudentDetail> => {
   const { data } = await api.get<DeptStudentDetail>(`/faculty/students/${id}`);
   return data;

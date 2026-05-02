@@ -8,6 +8,7 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
+  UserCheck,
 } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
@@ -17,6 +18,7 @@ export type FacultyTab =
   | "overview"
   | "queue"
   | "students"
+  | "alumni"
   | "faculty"
   | "aptitude";
 
@@ -31,6 +33,7 @@ const items: Item[] = [
   { key: "overview", label: "Overview", icon: LayoutDashboard },
   { key: "queue", label: "Verification Queue", icon: ClipboardCheck },
   { key: "students", label: "Students", icon: GraduationCap },
+  { key: "alumni", label: "Alumni", icon: UserCheck },
   { key: "faculty", label: "Department Faculty", icon: Users, hodOnly: true },
   { key: "aptitude", label: "Aptitude Tests", icon: Brain },
 ];

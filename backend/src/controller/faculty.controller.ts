@@ -449,6 +449,65 @@ export const listDeptStudents = async (req: Request, res: Response) => {
   }
 };
 
+export const listDeptAlumni = async (req: Request, res: Response) => {
+  const dept = requireDept(req, res);
+  if (!dept) return;
+
+  const parsed = facultyListStudentsSchema.safeParse(req.query);
+  if (!parsed.success) {
+    return res.status(400).json({ message: "Invalid filters" });
+  }
+
+  const { page, limit, search } = parsed.data;
+
+  const where: Prisma.UserWhereInput = {
+    role: "ALUMNI",
+    department: dept,
+  };
+  if (search && search.trim()) {
+    const term = search.trim();
+    where.OR = [
+      { fullName: { contains: term, mode: "insensitive" } },
+      { emailId: { contains: term, mode: "insensitive" } },
+      { studentId: { contains: term, mode: "insensitive" } },
+    ];
+  }
+
+  try {
+    const [items, total] = await Promise.all([
+      prisma.user.findMany({
+        where,
+        orderBy: [{ fullName: "asc" }],
+        select: {
+          ...DEPT_STUDENT_SELECT,
+          alumniProfile: {
+            select: {
+              currentOrg: true,
+              currentRole: true,
+              package: true,
+              graduationYear: true,
+            },
+          },
+        },
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      prisma.user.count({ where }),
+    ]);
+
+    return res.status(200).json({
+      items,
+      page,
+      limit,
+      total,
+      totalPages: Math.max(1, Math.ceil(total / limit)),
+    });
+  } catch (error) {
+    logger.error({ error }, "listDeptAlumni failed");
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 export const getDeptStudentDetail = async (req: Request, res: Response) => {
   const dept = requireDept(req, res);
   if (!dept) return;

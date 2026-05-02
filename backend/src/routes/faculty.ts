@@ -8,6 +8,7 @@ import {
   reviewAchievement,
   listDeptStudents,
   getDeptStudentDetail,
+  listDeptAlumni,
 } from "../controller/faculty.controller";
 import {
   listDeptFaculty,
@@ -36,6 +37,9 @@ router.post("/achievements/:id/review", reviewAchievement);
 // Department students
 router.get("/students", listDeptStudents);
 router.get("/students/:id", getDeptStudentDetail);
+
+// Department alumni
+router.get("/alumni", listDeptAlumni);
 
 // Student notes
 router.get("/students/:id/notes", listStudentNotes);
