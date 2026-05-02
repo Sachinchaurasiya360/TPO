@@ -1,4 +1,4 @@
-# Vishwaniketan TPO
+# Vishwaniketan TPO Portal
 
 Role-based Training & Placement Office portal for Vishwaniketan iMEET — Students, Alumni, Faculty, HODs, and Admins, with a faculty verification workflow for all student data.
 
