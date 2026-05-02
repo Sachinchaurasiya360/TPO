@@ -29,7 +29,6 @@ import {
   type DeptStudentFilters,
   type DeptFacultyItem,
   type AlumniListItem,
-  type AlumniListResponse,
 } from "@/lib/facultyApi";
 import {
   ClipboardCheck,
