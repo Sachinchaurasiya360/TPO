@@ -953,10 +953,10 @@ export default function LandingPage() {
                 <li className="flex items-center gap-2">
                   <Phone className="h-4 w-4 flex-shrink-0 text-neutral-900" />
                   <a
-                    href="tel:+917070416209"
+                    href="tel:+917350011498"
                     className="transition-colors hover:text-neutral-900"
                   >
-                    +91 70704 16209
+                    +91 73500 11498
                   </a>
                 </li>
               </ul>
