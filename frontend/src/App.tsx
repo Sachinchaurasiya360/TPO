@@ -21,7 +21,6 @@ import { StudentJobs } from "@/pages/student/Jobs";
 import { StudentApplications } from "@/pages/student/Applications";
 import { Projects } from "@/pages/student/Projects";
 import { StudentAlumniFeed } from "@/pages/student/AlumniFeed";
-import { StudentAlumniDirectory } from "@/pages/student/AlumniDirectory";
 
 // Role dashboards
 import { FacultyDashboard } from "@/pages/faculty/Dashboard";
@@ -145,14 +144,6 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/student/alumni-directory"
-            element={
-              <ProtectedRoute allowedRoles={["STUDENT"]}>
-                <StudentAlumniDirectory />
-              </ProtectedRoute>
-            }
-          />
 
           {/* Faculty */}
           <Route
@@ -165,6 +156,14 @@ function App() {
           />
           <Route
             path="/faculty/students/:id"
+            element={
+              <ProtectedRoute allowedRoles={["FACULTY"]}>
+                <FacultyStudentDetail />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/alumni/students/:id"
             element={
               <ProtectedRoute allowedRoles={["FACULTY"]}>
                 <FacultyStudentDetail />

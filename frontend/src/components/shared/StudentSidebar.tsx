@@ -10,7 +10,6 @@ import {
   Brain,
   FolderGit2,
   Megaphone,
-  UsersRound,
   LogOut,
   ChevronLeft,
   ChevronRight,
@@ -34,7 +33,6 @@ const items: NavItem[] = [
   { label: "Achievements", path: "/student/achievement", icon: Award },
   { label: "Aptitude", path: "/student/aptitude", icon: Brain },
   { label: "Alumni Feed", path: "/student/alumni-feed", icon: Megaphone },
-  { label: "Alumni Directory", path: "/student/alumni-directory", icon: UsersRound },
 ];
 
 export function StudentSidebar() {

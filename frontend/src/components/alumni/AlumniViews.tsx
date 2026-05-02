@@ -42,8 +42,8 @@ export function AlumniPostCard({ post }: { post: AlumniPost }) {
   return (
     <Card>
       <CardContent className="p-4">
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex items-start gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div className="flex min-w-0 items-start gap-3">
             {post.alumni.profilePic ? (
               <img
                 src={post.alumni.profilePic}
@@ -143,9 +143,9 @@ export function AlumniFeedView() {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap gap-2">
+      <div className="grid gap-2 sm:flex sm:flex-wrap">
         <select
-          className="h-9 rounded-md border bg-white px-3 text-sm"
+          className="h-9 w-full rounded-md border bg-white px-3 text-sm sm:w-auto"
           value={filters.postType ?? ""}
           onChange={(e) =>
             setFilters({
@@ -164,7 +164,7 @@ export function AlumniFeedView() {
           ))}
         </select>
         <Input
-          className="h-9 w-64"
+          className="h-9 w-full sm:w-64"
           placeholder="Search title, body, company…"
           value={filters.search ?? ""}
           onChange={(e) => setFilters({ ...filters, search: e.target.value })}
@@ -216,9 +216,9 @@ export function AlumniDirectoryView() {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap gap-2">
+      <div className="grid gap-2 sm:flex sm:flex-wrap">
         <select
-          className="h-9 rounded-md border bg-white px-3 text-sm"
+          className="h-9 w-full rounded-md border bg-white px-3 text-sm sm:w-auto"
           value={filters.department ?? ""}
           onChange={(e) =>
             setFilters({
@@ -237,7 +237,7 @@ export function AlumniDirectoryView() {
           ))}
         </select>
         <Input
-          className="h-9 w-32"
+          className="h-9 w-full sm:w-32"
           type="number"
           placeholder="Grad year"
           value={filters.graduationYear ?? ""}
@@ -251,7 +251,7 @@ export function AlumniDirectoryView() {
           }
         />
         <Input
-          className="h-9 w-48"
+          className="h-9 w-full sm:w-48"
           placeholder="Company"
           value={filters.currentOrg ?? ""}
           onChange={(e) =>
@@ -259,7 +259,7 @@ export function AlumniDirectoryView() {
           }
         />
         <select
-          className="h-9 rounded-md border bg-white px-3 text-sm"
+          className="h-9 w-full rounded-md border bg-white px-3 text-sm sm:w-auto"
           value={filters.track ?? ""}
           onChange={(e) =>
             setFilters({
@@ -276,7 +276,7 @@ export function AlumniDirectoryView() {
           <option value="HIGHER_STUDIES">Higher Studies</option>
         </select>
         <Input
-          className="h-9 w-64"
+          className="h-9 w-full sm:w-64"
           placeholder="Search name or email"
           value={filters.search ?? ""}
           onChange={(e) =>

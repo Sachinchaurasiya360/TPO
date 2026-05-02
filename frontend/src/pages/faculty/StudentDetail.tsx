@@ -76,6 +76,9 @@ export function FacultyStudentDetail() {
 
   const { user, marks, internships, achievements } = data;
   const initials = user.fullName?.slice(0, 2).toUpperCase() || "ST";
+  const isAlumni = user.role === "ALUMNI";
+  const backTo = isAlumni ? "/faculty?tab=alumni" : "/faculty?tab=students";
+  const detailTitle = isAlumni ? "Alumni details" : "Student details";
 
   return (
     <div className="flex min-h-screen bg-neutral-50">
@@ -83,39 +86,39 @@ export function FacultyStudentDetail() {
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="sticky top-0 z-30 border-b border-neutral-200 bg-white">
-          <div className="mx-auto flex h-16 max-w-6xl items-center gap-4 px-6">
+          <div className="mx-auto flex min-h-16 max-w-6xl items-center gap-3 px-4 py-3 sm:gap-4 md:px-6">
             <Link
-              to="/faculty?tab=students"
-              className="inline-flex items-center gap-1.5 text-sm text-neutral-600 hover:text-neutral-900"
+              to={backTo}
+              className="inline-flex flex-shrink-0 items-center gap-1.5 text-sm text-neutral-600 hover:text-neutral-900"
             >
               <ArrowLeft className="h-4 w-4" />
               Back
             </Link>
-            <div className="h-4 w-px bg-neutral-200" />
-            <h1 className="text-sm font-semibold text-neutral-900">
-              Student details
+            <div className="hidden h-4 w-px bg-neutral-200 sm:block" />
+            <h1 className="min-w-0 truncate text-sm font-semibold text-neutral-900">
+              {detailTitle}
             </h1>
           </div>
         </header>
 
-        <main className="mx-auto w-full max-w-6xl space-y-6 px-6 py-8">
-          <section className="rounded-2xl border border-neutral-200 bg-white p-6">
-            <div className="flex flex-wrap items-start gap-5">
+        <main className="mx-auto w-full max-w-6xl space-y-4 px-3 py-4 pb-24 sm:px-4 sm:py-6 md:space-y-6 md:px-6 md:py-8 md:pb-8">
+          <section className="rounded-xl border border-neutral-200 bg-white p-4 sm:rounded-2xl sm:p-6">
+            <div className="flex flex-col items-start gap-4 sm:flex-row sm:flex-wrap sm:gap-5">
               {user.profilePic ? (
                 <img
                   src={user.profilePic}
                   alt={user.fullName}
-                  className="h-20 w-20 rounded-full object-cover ring-1 ring-neutral-200"
+                  className="h-16 w-16 rounded-full object-cover ring-1 ring-neutral-200 sm:h-20 sm:w-20"
                 />
               ) : (
-                <div className="flex h-20 w-20 items-center justify-center rounded-full bg-neutral-900 text-lg font-bold text-white">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-neutral-900 text-base font-bold text-white sm:h-20 sm:w-20 sm:text-lg">
                   {initials}
                 </div>
               )}
 
-              <div className="min-w-0 flex-1">
+              <div className="min-w-0 flex-1 self-stretch">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h2 className="text-2xl font-semibold tracking-tight text-neutral-900">
+                  <h2 className="min-w-0 break-words text-xl font-semibold tracking-tight text-neutral-900 sm:text-2xl">
                     {user.fullName}
                   </h2>
                   <span
@@ -206,7 +209,7 @@ export function FacultyStudentDetail() {
               </div>
 
               {user.avgCgpa !== null && user.avgCgpa !== undefined && (
-                <div className="rounded-xl border border-neutral-200 bg-neutral-50 px-5 py-4 text-center">
+                <div className="w-full rounded-xl border border-neutral-200 bg-neutral-50 px-5 py-4 text-center sm:w-auto">
                   <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
                     Avg CGPA
                   </p>
@@ -235,6 +238,41 @@ export function FacultyStudentDetail() {
               <EmptyRow label="No skills listed yet." />
             )}
           </Section>
+
+          {isAlumni && user.alumniProfile && (
+            <Section title="Alumni profile">
+              <div className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2 lg:grid-cols-4">
+                <ProfileMetric
+                  label="Current company"
+                  value={user.alumniProfile.currentOrg ?? "Not set"}
+                />
+                <ProfileMetric
+                  label="Current role"
+                  value={user.alumniProfile.currentRole ?? "Not set"}
+                />
+                <ProfileMetric
+                  label="Package"
+                  value={user.alumniProfile.package ?? "Not set"}
+                />
+                <ProfileMetric
+                  label="Graduation year"
+                  value={
+                    user.alumniProfile.graduationYear
+                      ? String(user.alumniProfile.graduationYear)
+                      : "Not set"
+                  }
+                />
+              </div>
+              {user.alumniProfile.placedBy && (
+                <p className="mt-3 text-sm text-neutral-600">
+                  Placed by:{" "}
+                  <span className="font-medium text-neutral-900">
+                    {user.alumniProfile.placedBy}
+                  </span>
+                </p>
+              )}
+            </Section>
+          )}
 
           <Section title="Academic marks">
             {!marks ? (
@@ -274,8 +312,8 @@ export function FacultyStudentDetail() {
                   const it = i as Record<string, unknown>;
                   return (
                     <li key={String(it.id)} className="py-3">
-                      <div className="flex flex-wrap items-start justify-between gap-2">
-                        <div>
+                      <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
+                        <div className="min-w-0">
                           <p className="font-medium text-neutral-900">
                             {String(it.role)} · {String(it.companyName)}
                           </p>
@@ -311,8 +349,8 @@ export function FacultyStudentDetail() {
                   const ac = a as Record<string, unknown>;
                   return (
                     <li key={String(ac.id)} className="py-3">
-                      <div className="flex flex-wrap items-start justify-between gap-2">
-                        <div>
+                      <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
+                        <div className="min-w-0">
                           <p className="font-medium text-neutral-900">
                             {String(ac.title)}
                           </p>
@@ -360,7 +398,7 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section className="rounded-2xl border border-neutral-200 bg-white p-6">
+    <section className="rounded-xl border border-neutral-200 bg-white p-4 sm:rounded-2xl sm:p-6">
       <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-neutral-500">
         {title}
       </h3>
@@ -407,6 +445,19 @@ function Metric({
       </p>
       <p className="mt-0.5 text-base font-semibold text-neutral-900">
         {value !== null && value !== undefined ? `${value}${suffix ?? ""}` : "—"}
+      </p>
+    </div>
+  );
+}
+
+function ProfileMetric({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2.5">
+      <p className="text-[11px] font-medium uppercase tracking-wide text-neutral-500">
+        {label}
+      </p>
+      <p className="mt-0.5 break-words text-sm font-semibold text-neutral-900">
+        {value}
       </p>
     </div>
   );

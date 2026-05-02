@@ -111,12 +111,12 @@ export function AlumniDashboard() {
     <div className="flex min-h-screen bg-neutral-50">
       <AlumniSidebar active={tab} onSelect={setTab} />
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b border-neutral-200 bg-white px-6">
-          <div>
+        <header className="sticky top-0 z-30 flex min-h-16 items-center justify-between gap-3 border-b border-neutral-200 bg-white px-4 py-3 md:px-6">
+          <div className="min-w-0">
             <h1 className="text-lg font-semibold text-neutral-900">{title}</h1>
-            <p className="text-xs text-neutral-500">{subtitle}</p>
+            <p className="line-clamp-2 text-xs text-neutral-500">{subtitle}</p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-shrink-0 items-center gap-3">
             {user && <NotificationBell />}
             <div className="hidden text-right sm:block">
               <p className="text-sm font-medium text-neutral-900">
@@ -127,7 +127,7 @@ export function AlumniDashboard() {
           </div>
         </header>
 
-        <main className="flex-1 p-6">
+        <main className="flex-1 p-4 pb-24 md:p-6 md:pb-6">
           <div className="max-w-6xl mx-auto">
             {tab === "overview" && <OverviewTab onNavigate={setTab} />}
             {tab === "profile" && <ProfileTab />}
@@ -168,7 +168,7 @@ function OverviewTab({ onNavigate }: { onNavigate: (t: AlumniTab) => void }) {
 
   if (loading) {
     return (
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {[0, 1, 2].map((i) => (
           <div
             key={i}
@@ -213,7 +213,7 @@ function OverviewTab({ onNavigate }: { onNavigate: (t: AlumniTab) => void }) {
       {!hasProfile && (
         <Card>
           <CardContent className="p-5">
-            <div className="flex items-start justify-between gap-4">
+            <div className="flex flex-col items-start justify-between gap-4 sm:flex-row">
               <div>
                 <h3 className="text-sm font-semibold text-neutral-900">
                   Finish setting up your alumni profile
@@ -233,7 +233,7 @@ function OverviewTab({ onNavigate }: { onNavigate: (t: AlumniTab) => void }) {
 
       <Card>
         <CardContent className="p-5">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
             <div>
               <h3 className="text-sm font-semibold text-neutral-900">
                 Share something with the community
@@ -266,7 +266,7 @@ function StatCard({
   return (
     <Card>
       <CardContent className="p-5">
-        <div className="flex items-start justify-between">
+        <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
             <p className="text-[11px] font-medium uppercase tracking-wider text-neutral-500">
               {label}
@@ -483,7 +483,7 @@ function PastOrgsSection({
   return (
     <Card>
       <CardContent className="p-5">
-        <div className="mb-4 flex items-center justify-between">
+        <div className="mb-4 flex items-center justify-between gap-3">
           <h3 className="text-sm font-semibold text-neutral-900">
             Past Organisations
           </h3>
@@ -558,7 +558,7 @@ function PastOrgsSection({
                 key={o.id}
                 className="flex items-start justify-between gap-3 py-3"
               >
-                <div>
+                <div className="min-w-0">
                   <div className="text-sm font-medium text-neutral-900">
                     {o.role} · {o.companyName}
                   </div>
@@ -659,7 +659,7 @@ function HigherStudiesSection({
   return (
     <Card>
       <CardContent className="p-5">
-        <div className="mb-4 flex items-center justify-between">
+        <div className="mb-4 flex items-center justify-between gap-3">
           <h3 className="text-sm font-semibold text-neutral-900">
             Higher Studies
           </h3>
@@ -723,7 +723,7 @@ function HigherStudiesSection({
                 />
               </Field>
             </div>
-            <div className="flex justify-end gap-2">
+            <div className="flex flex-wrap justify-end gap-2">
               <Button
                 size="sm"
                 variant="outline"
@@ -798,7 +798,7 @@ function PostsTab() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-3">
         <h2 className="text-base font-semibold text-neutral-900">My Posts</h2>
         <Button onClick={() => setCreating(true)}>
           <Plus className="mr-1 h-3.5 w-3.5" /> New Post
@@ -844,8 +844,8 @@ function PostCard({
   return (
     <Card>
       <CardContent className="p-4">
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex items-start gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div className="flex min-w-0 items-start gap-3">
             {post.alumni.profilePic ? (
               <img
                 src={post.alumni.profilePic}
@@ -872,7 +872,7 @@ function PostCard({
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 sm:flex-shrink-0 sm:justify-end">
             <span
               className={`rounded px-2 py-0.5 text-[11px] font-medium ${
                 post.postType === "REFERRAL"
@@ -976,7 +976,7 @@ function PostFormDialog({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-lg bg-white p-6">
+      <div className="max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-lg bg-white p-4 sm:p-6">
         <div className="mb-4 flex items-center justify-between">
           <h3 className="text-lg font-semibold">New Post</h3>
           <Button variant="ghost" size="sm" onClick={onClose}>
@@ -1017,7 +1017,7 @@ function PostFormDialog({
           </Field>
           {(form.postType === "REFERRAL" ||
             form.postType === "MENTORSHIP") && (
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <Field>
                 <FieldLabel>Company</FieldLabel>
                 <Input
@@ -1047,7 +1047,7 @@ function PostFormDialog({
             />
           </Field>
         </FieldGroup>
-        <div className="mt-6 flex justify-end gap-2">
+        <div className="mt-6 flex flex-wrap justify-end gap-2">
           <Button variant="outline" onClick={onClose} disabled={saving}>
             Cancel
           </Button>
@@ -1110,7 +1110,7 @@ function AcademicHistoryTab() {
       {/* Student Profile Summary */}
       <Card>
         <CardContent className="p-5">
-          <div className="flex items-start gap-4">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
             {user.profilePic ? (
               <img
                 src={user.profilePic}
@@ -1225,8 +1225,8 @@ function AcademicHistoryTab() {
                   key={intship.id}
                   className="rounded-md border border-neutral-200 bg-neutral-50 p-3"
                 >
-                  <div className="flex items-start justify-between gap-2">
-                    <div>
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                    <div className="min-w-0">
                       <p className="text-sm font-semibold text-neutral-900">{intship.role}</p>
                       <p className="text-xs text-neutral-600">{intship.companyName}</p>
                       {intship.duration && (
@@ -1237,7 +1237,7 @@ function AcademicHistoryTab() {
                         {intship.endDate ? ` — ${new Date(intship.endDate).toLocaleDateString()}` : " — Present"}
                       </p>
                     </div>
-                    <div className="flex flex-col items-end gap-1">
+                    <div className="flex flex-wrap items-center gap-1 sm:flex-col sm:items-end">
                       {intship.isVerified && (
                         <span className="rounded bg-emerald-100 px-2 py-0.5 text-[10px] font-medium text-emerald-700">
                           Verified
@@ -1283,8 +1283,8 @@ function AcademicHistoryTab() {
                   key={ach.id}
                   className="rounded-md border border-neutral-200 bg-neutral-50 p-3"
                 >
-                  <div className="flex items-start justify-between gap-2">
-                    <div>
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                    <div className="min-w-0">
                       <p className="text-sm font-semibold text-neutral-900">{ach.title}</p>
                       {ach.category && (
                         <span className="rounded bg-blue-100 px-2 py-0.5 text-[10px] font-medium text-blue-700">
@@ -1300,7 +1300,7 @@ function AcademicHistoryTab() {
                         <p className="mt-1 text-xs text-neutral-600">{ach.description}</p>
                       )}
                     </div>
-                    <div className="flex flex-col items-end gap-1">
+                    <div className="flex flex-wrap items-center gap-1 sm:flex-col sm:items-end">
                       {ach.isVerified && (
                         <span className="rounded bg-emerald-100 px-2 py-0.5 text-[10px] font-medium text-emerald-700">
                           Verified
@@ -1343,7 +1343,7 @@ function AcademicHistoryTab() {
                   key={proj.id}
                   className="rounded-md border border-neutral-200 bg-neutral-50 p-3"
                 >
-                  <div className="flex items-start justify-between gap-2">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-semibold text-neutral-900">{proj.title}</p>
                       {proj.techStack.length > 0 && (
@@ -1365,7 +1365,7 @@ function AcademicHistoryTab() {
                         </p>
                       )}
                     </div>
-                    <div className="flex flex-col items-end gap-1 flex-shrink-0">
+                    <div className="flex flex-wrap items-center gap-1 sm:flex-col sm:items-end sm:flex-shrink-0">
                       {proj.isVerified && (
                         <span className="rounded bg-emerald-100 px-2 py-0.5 text-[10px] font-medium text-emerald-700">
                           Verified

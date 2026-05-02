@@ -521,12 +521,21 @@ export const getDeptStudentDetail = async (req: Request, res: Response) => {
     const [user, marks, internships, achievements, pendingVerifications] =
       await Promise.all([
         prisma.user.findFirst({
-          where: { id, role: "STUDENT", department: dept },
+          where: { id, role: { in: ["STUDENT", "ALUMNI"] }, department: dept },
           select: {
             ...DEPT_STUDENT_SELECT,
             parentsContactNo: true,
             skills: true,
             socialProfile: true,
+            alumniProfile: {
+              select: {
+                currentOrg: true,
+                currentRole: true,
+                package: true,
+                graduationYear: true,
+                placedBy: true,
+              },
+            },
           },
         }),
         prisma.marks.findUnique({ where: { userId: id } }),
@@ -547,7 +556,7 @@ export const getDeptStudentDetail = async (req: Request, res: Response) => {
     if (!user) {
       return res
         .status(404)
-        .json({ message: "Student not found in your department" });
+        .json({ message: "Student or alumni not found in your department" });
     }
 
     return res.status(200).json({
