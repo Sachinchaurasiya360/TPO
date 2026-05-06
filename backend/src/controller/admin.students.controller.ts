@@ -22,6 +22,14 @@ const STUDENT_LIST_SELECT = {
   resumeUrl: true,
   isVerified: true,
   isActive: true,
+  ambassadorAssignments: {
+    select: {
+      id: true,
+      roleName: true,
+      servedAcademicYear: true,
+      createdAt: true,
+    },
+  },
   createdAt: true,
 };
 
@@ -41,6 +49,7 @@ export const listStudents = async (req: Request, res: Response) => {
     isActive,
     minCgpa,
     search,
+    pendingEntity,
   } = parsed.data;
 
   const where: Prisma.UserWhereInput = {
@@ -58,6 +67,26 @@ export const listStudents = async (req: Request, res: Response) => {
       { emailId: { contains: term, mode: "insensitive" } },
       { studentId: { contains: term, mode: "insensitive" } },
     ];
+  }
+  if (pendingEntity === "PROFILE_OR_MARKS") {
+    where.verificationRequests = {
+      some: {
+        status: "PENDING",
+        entityType: { in: ["PROFILE", "MARKS"] },
+      },
+    };
+  } else if (pendingEntity === "INTERNSHIP") {
+    where.internships = {
+      some: {
+        isVerified: false,
+      },
+    };
+  } else if (pendingEntity === "ACHIEVEMENT") {
+    where.achievements = {
+      some: {
+        isVerified: false,
+      },
+    };
   }
 
   const cacheKey = `admin:students:list:${JSON.stringify(parsed.data)}`;

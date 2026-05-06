@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useMemo, useRef } from "react";
+import { useEffect, useState, useCallback, useMemo, useRef, type ComponentType } from "react";
 import { toast } from "sonner";
 import { useNavigate, useSearchParams } from "react-router";
 import { useAuth } from "@/context/AuthContext";
@@ -28,6 +28,18 @@ import {
   type StudentListFilters,
   type StudentListResponse,
   type CreateFacultyPayload,
+  listStartups,
+  createStartup,
+  updateStartup,
+  deleteStartup,
+  listAmbassadors,
+  createAmbassadorAssignment,
+  deleteAmbassadorAssignment,
+  AMBASSADOR_ROLE_OPTIONS,
+  type StartupItem,
+  type StartupPayload,
+  type AmbassadorAssignment,
+  type AmbassadorRole,
 } from "@/lib/adminApi";
 import {
   adminListJobs,
@@ -54,7 +66,12 @@ import {
   type EventType,
   type CreateEventPayload,
 } from "@/lib/eventsApi";
-import { DEPARTMENT_LABELS, departmentLabel, type Department } from "@/lib/studentApi";
+import {
+  DEPARTMENT_LABELS,
+  departmentLabel,
+  type Department,
+  type AcademicYear,
+} from "@/lib/studentApi";
 import {
   exportStudentsToExcel,
   exportStudentsToPdf,
@@ -82,10 +99,26 @@ import {
   CheckCircle2,
   Inbox,
   Columns3,
+  Rocket,
+  ShieldCheck,
+  Trash2,
+  Pencil,
+  Plus,
+  Search,
+  Mail,
+  MapPin,
+  Phone,
+  Building2,
 } from "lucide-react";
 
 const DEPARTMENTS = ["CSE", "COMPUTER", "ELECTRICAL", "MECHANICAL", "EXTC", "CIVIL"] as const;
 const YEARS = ["FIRST_YEAR", "SECOND_YEAR", "THIRD_YEAR", "FOURTH_YEAR"] as const;
+const YEAR_LABELS: Record<AcademicYear, string> = {
+  FIRST_YEAR: "1st Year",
+  SECOND_YEAR: "2nd Year",
+  THIRD_YEAR: "3rd Year",
+  FOURTH_YEAR: "4th Year",
+};
 
 const TAB_TITLES: Record<AdminTab, { title: string; subtitle: string }> = {
   overview: {
@@ -112,9 +145,26 @@ const TAB_TITLES: Record<AdminTab, { title: string; subtitle: string }> = {
     title: "Events",
     subtitle: "Schedule drives, workshops, and seminars.",
   },
+  startups: {
+    title: "Startups",
+    subtitle: "Manage startup partners, contacts, and details.",
+  },
+  ambassadors: {
+    title: "Student Ambassador",
+    subtitle: "Manage TPO volunteer assignments and served academic years.",
+  },
 };
 
-const ADMIN_TABS: AdminTab[] = ["overview", "approvals", "students", "faculty", "jobs", "events"];
+const ADMIN_TABS: AdminTab[] = [
+  "overview",
+  "approvals",
+  "students",
+  "faculty",
+  "jobs",
+  "events",
+  "startups",
+  "ambassadors",
+];
 
 export function AdminDashboard() {
   const { user } = useAuth();
@@ -124,10 +174,15 @@ export function AdminDashboard() {
     ? (tabParam as AdminTab)
     : "overview";
 
-  const setTab = (t: AdminTab) => {
+  const setTab = (
+    t: AdminTab,
+    pendingEntity?: "PROFILE_OR_MARKS" | "INTERNSHIP" | "ACHIEVEMENT"
+  ) => {
     const next = new URLSearchParams(searchParams);
     if (t === "overview") next.delete("tab");
     else next.set("tab", t);
+    if (pendingEntity) next.set("pendingEntity", pendingEntity);
+    else next.delete("pendingEntity");
     setSearchParams(next, { replace: true });
   };
 
@@ -175,6 +230,8 @@ export function AdminDashboard() {
             {tab === "faculty" && <FacultyTab />}
             {tab === "jobs" && <JobsTab />}
             {tab === "events" && <EventsTab />}
+            {tab === "startups" && <StartupsTab />}
+            {tab === "ambassadors" && <AmbassadorsTab />}
           </div>
         </main>
       </div>
@@ -184,7 +241,14 @@ export function AdminDashboard() {
 
 // ==================== OVERVIEW ====================
 
-function OverviewTab({ onNavigate }: { onNavigate: (tab: AdminTab) => void }) {
+function OverviewTab({
+  onNavigate,
+}: {
+  onNavigate: (
+    tab: AdminTab,
+    pendingEntity?: "PROFILE_OR_MARKS" | "INTERNSHIP" | "ACHIEVEMENT"
+  ) => void;
+}) {
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [reportBusy, setReportBusy] = useState(false);
@@ -253,6 +317,7 @@ function OverviewTab({ onNavigate }: { onNavigate: (tab: AdminTab) => void }) {
     value: number;
     icon: typeof UserPlus;
     target: AdminTab;
+    pendingEntity?: "PROFILE_OR_MARKS" | "INTERNSHIP" | "ACHIEVEMENT";
   };
   const pendingCards: PendingCard[] = [
     {
@@ -266,18 +331,21 @@ function OverviewTab({ onNavigate }: { onNavigate: (tab: AdminTab) => void }) {
       value: stats.pending.profileOrMarksVerifications,
       icon: ClipboardCheck,
       target: "students",
+      pendingEntity: "PROFILE_OR_MARKS",
     },
     {
       label: "Internships",
       value: stats.pending.internshipVerifications,
       icon: Briefcase,
       target: "students",
+      pendingEntity: "INTERNSHIP",
     },
     {
       label: "Achievements",
       value: stats.pending.achievementVerifications,
       icon: Award,
       target: "students",
+      pendingEntity: "ACHIEVEMENT",
     },
   ];
 
@@ -425,7 +493,7 @@ function OverviewTab({ onNavigate }: { onNavigate: (tab: AdminTab) => void }) {
                     <li key={c.label}>
                       <button
                         type="button"
-                        onClick={() => onNavigate(c.target)}
+                        onClick={() => onNavigate(c.target, c.pendingEntity)}
                         disabled={!isUrgent}
                         className={`group flex w-full items-center gap-4 px-5 py-3.5 text-left transition-colors ${
                           isUrgent
@@ -760,9 +828,21 @@ const STUDENT_COLS_STORAGE_KEY = "admin.students.visibleCols.v1";
 
 function StudentsTab() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const pendingEntityParam = searchParams.get("pendingEntity");
+  const pendingEntity =
+    pendingEntityParam === "PROFILE_OR_MARKS" ||
+    pendingEntityParam === "INTERNSHIP" ||
+    pendingEntityParam === "ACHIEVEMENT"
+      ? pendingEntityParam
+      : undefined;
   const [data, setData] = useState<StudentListResponse | null>(null);
   const [loading, setLoading] = useState(false);
-  const [filters, setFilters] = useState<StudentListFilters>({ page: 1, limit: 20 });
+  const [filters, setFilters] = useState<StudentListFilters>({
+    page: 1,
+    limit: 20,
+    pendingEntity,
+  });
   const [busyId, setBusyId] = useState<number | null>(null);
   const [exporting, setExporting] = useState<"xlsx" | "pdf" | null>(null);
 
@@ -870,6 +950,13 @@ function StudentsTab() {
   }, []);
 
   useEffect(() => {
+    setFilters((prev) => {
+      if (prev.pendingEntity === pendingEntity) return prev;
+      return { ...prev, page: 1, pendingEntity };
+    });
+  }, [pendingEntity]);
+
+  useEffect(() => {
     load(filters);
   }, [load, filters]);
 
@@ -879,6 +966,21 @@ function StudentsTab() {
   ) => {
     setFilters((prev) => ({ ...prev, [key]: value, page: 1 }));
   };
+
+  const clearPendingFilter = () => {
+    const next = new URLSearchParams(searchParams);
+    next.delete("pendingEntity");
+    setSearchParams(next, { replace: true });
+  };
+
+  const pendingFilterLabel =
+    pendingEntity === "PROFILE_OR_MARKS"
+      ? "Profile / Marks pending review"
+      : pendingEntity === "INTERNSHIP"
+        ? "Internships pending review"
+        : pendingEntity === "ACHIEVEMENT"
+          ? "Achievements pending review"
+          : null;
 
   const handleGraduate = async (id: number) => {
     if (!window.confirm("Move this student to ALUMNI? They will receive an invite email.")) return;
@@ -917,6 +1019,22 @@ function StudentsTab() {
 
   return (
     <div className="space-y-4">
+      {pendingFilterLabel && (
+        <Card>
+          <CardContent className="flex flex-wrap items-center justify-between gap-3 py-4">
+            <div>
+              <p className="text-sm font-medium text-neutral-900">{pendingFilterLabel}</p>
+              <p className="text-xs text-muted-foreground">
+                This list is filtered from the overview pending-review queue.
+              </p>
+            </div>
+            <Button variant="outline" size="sm" onClick={clearPendingFilter}>
+              Clear pending filter
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
       <Card>
         <CardHeader>
           <CardTitle>Filters</CardTitle>
@@ -978,7 +1096,9 @@ function StudentsTab() {
             <div className="flex items-end">
               <Button
                 variant="outline"
-                onClick={() => setFilters({ page: 1, limit: 20 })}
+                onClick={() =>
+                  setFilters({ page: 1, limit: 20, pendingEntity: filters.pendingEntity })
+                }
                 className="w-full"
               >
                 Clear
@@ -2113,6 +2233,556 @@ const EVENT_TYPES: EventType[] = [
   "WEBINAR",
   "OTHER",
 ];
+
+function StartupsTab() {
+  const emptyForm: StartupPayload = {
+    name: "",
+    tagline: "",
+    industry: "",
+    website: "",
+    location: "",
+    contactName: "",
+    contactEmail: "",
+    contactPhone: "",
+    notes: "",
+    isActive: true,
+  };
+  const [items, setItems] = useState<StartupItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [editing, setEditing] = useState<StartupItem | null>(null);
+  const [form, setForm] = useState<StartupPayload>(emptyForm);
+  const [saving, setSaving] = useState(false);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      setItems(await listStartups());
+    } catch (e) {
+      toast.error(extractErrorMessage(e));
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  const startCreate = () => {
+    setEditing(null);
+    setForm(emptyForm);
+    setShowForm(true);
+  };
+
+  const startEdit = (item: StartupItem) => {
+    setEditing(item);
+    setForm({
+      name: item.name,
+      tagline: item.tagline ?? "",
+      industry: item.industry ?? "",
+      website: item.website ?? "",
+      location: item.location ?? "",
+      contactName: item.contactName ?? "",
+      contactEmail: item.contactEmail ?? "",
+      contactPhone: item.contactPhone ?? "",
+      foundedYear: item.foundedYear ?? undefined,
+      notes: item.notes ?? "",
+      isActive: item.isActive,
+    });
+    setShowForm(true);
+  };
+
+  const handleSave = async () => {
+    if (!form.name?.trim()) {
+      toast.error("Startup name is required");
+      return;
+    }
+    setSaving(true);
+    try {
+      if (editing) {
+        await updateStartup(editing.id, form);
+        toast.success("Startup updated");
+      } else {
+        await createStartup(form);
+        toast.success("Startup added");
+      }
+      setShowForm(false);
+      setEditing(null);
+      setForm(emptyForm);
+      await load();
+    } catch (e) {
+      toast.error(extractErrorMessage(e));
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Delete this startup?")) return;
+    try {
+      await deleteStartup(id);
+      toast.success("Startup deleted");
+      load();
+    } catch (e) {
+      toast.error(extractErrorMessage(e));
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 className="text-lg font-semibold text-neutral-900">Startup Directory</h2>
+          <p className="text-sm text-neutral-500">
+            Add startup partners and keep their working details in one place.
+          </p>
+        </div>
+        <Button onClick={startCreate}>
+          <Plus className="mr-1.5 h-4 w-4" />
+          Add Startup
+        </Button>
+      </div>
+
+      {showForm && (
+        <Card>
+          <CardHeader>
+            <CardTitle>{editing ? "Edit startup" : "Add startup"}</CardTitle>
+            <CardDescription>
+              Track the startup, contact owner, and any notes the admin team needs.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid gap-4 md:grid-cols-2">
+              <Field>
+                <FieldLabel>Name *</FieldLabel>
+                <Input value={form.name ?? ""} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+              </Field>
+              <Field>
+                <FieldLabel>Tagline</FieldLabel>
+                <Input value={form.tagline ?? ""} onChange={(e) => setForm({ ...form, tagline: e.target.value })} />
+              </Field>
+              <Field>
+                <FieldLabel>Industry</FieldLabel>
+                <Input value={form.industry ?? ""} onChange={(e) => setForm({ ...form, industry: e.target.value })} />
+              </Field>
+              <Field>
+                <FieldLabel>Website</FieldLabel>
+                <Input value={form.website ?? ""} onChange={(e) => setForm({ ...form, website: e.target.value })} />
+              </Field>
+              <Field>
+                <FieldLabel>Location</FieldLabel>
+                <Input value={form.location ?? ""} onChange={(e) => setForm({ ...form, location: e.target.value })} />
+              </Field>
+              <Field>
+                <FieldLabel>Founded year</FieldLabel>
+                <Input
+                  type="number"
+                  value={form.foundedYear ?? ""}
+                  onChange={(e) =>
+                    setForm({
+                      ...form,
+                      foundedYear: e.target.value ? Number(e.target.value) : undefined,
+                    })
+                  }
+                />
+              </Field>
+              <Field>
+                <FieldLabel>Contact name</FieldLabel>
+                <Input value={form.contactName ?? ""} onChange={(e) => setForm({ ...form, contactName: e.target.value })} />
+              </Field>
+              <Field>
+                <FieldLabel>Contact email</FieldLabel>
+                <Input value={form.contactEmail ?? ""} onChange={(e) => setForm({ ...form, contactEmail: e.target.value })} />
+              </Field>
+              <Field>
+                <FieldLabel>Contact phone</FieldLabel>
+                <Input value={form.contactPhone ?? ""} onChange={(e) => setForm({ ...form, contactPhone: e.target.value })} />
+              </Field>
+              <Field>
+                <FieldLabel>Status</FieldLabel>
+                <select
+                  className="h-9 w-full rounded-md border bg-background px-3 text-sm"
+                  value={form.isActive ? "active" : "inactive"}
+                  onChange={(e) => setForm({ ...form, isActive: e.target.value === "active" })}
+                >
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                </select>
+              </Field>
+            </div>
+            <Field>
+              <FieldLabel>Notes</FieldLabel>
+              <textarea
+                className="min-h-28 w-full rounded-md border bg-background px-3 py-2 text-sm"
+                value={form.notes ?? ""}
+                onChange={(e) => setForm({ ...form, notes: e.target.value })}
+              />
+            </Field>
+            <div className="flex justify-end gap-2">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowForm(false);
+                  setEditing(null);
+                  setForm(emptyForm);
+                }}
+                disabled={saving}
+              >
+                Cancel
+              </Button>
+              <Button onClick={handleSave} disabled={saving}>
+                {saving ? "Saving..." : editing ? "Update Startup" : "Create Startup"}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {loading ? (
+        <div className="text-sm text-muted-foreground">Loading...</div>
+      ) : items.length === 0 ? (
+        <Card>
+          <CardContent className="p-8 text-center">
+            <Rocket className="mx-auto h-8 w-8 text-neutral-300" />
+            <p className="mt-3 text-sm font-medium text-neutral-900">No startups added yet</p>
+            <p className="mt-1 text-sm text-neutral-500">
+              Add startup partners so the admin team can manage their details here.
+            </p>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="grid gap-4 xl:grid-cols-2">
+          {items.map((item) => (
+            <Card key={item.id}>
+              <CardContent className="space-y-4 p-5">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h3 className="text-base font-semibold text-neutral-900">{item.name}</h3>
+                      <Badge variant={item.isActive ? "green" : "gray"}>
+                        {item.isActive ? "Active" : "Inactive"}
+                      </Badge>
+                    </div>
+                    {item.tagline && (
+                      <p className="mt-1 text-sm text-neutral-500">{item.tagline}</p>
+                    )}
+                  </div>
+                  <div className="flex gap-2">
+                    <Button size="sm" variant="outline" onClick={() => startEdit(item)}>
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                    <Button size="sm" variant="outline" onClick={() => handleDelete(item.id)}>
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+                <div className="grid gap-2 text-sm text-neutral-600 sm:grid-cols-2">
+                  <StartupMeta icon={Building2} label="Industry" value={item.industry ?? "—"} />
+                  <StartupMeta icon={MapPin} label="Location" value={item.location ?? "—"} />
+                  <StartupMeta icon={UsersIcon} label="Contact" value={item.contactName ?? "—"} />
+                  <StartupMeta icon={Phone} label="Phone" value={item.contactPhone ?? "—"} />
+                  <StartupMeta icon={Mail} label="Email" value={item.contactEmail ?? "—"} />
+                  <StartupMeta
+                    icon={Rocket}
+                    label="Founded"
+                    value={item.foundedYear ? String(item.foundedYear) : "—"}
+                  />
+                </div>
+                {item.website && (
+                  <a
+                    href={item.website}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex text-sm font-medium text-neutral-700 underline-offset-4 hover:text-neutral-900 hover:underline"
+                  >
+                    Visit website
+                  </a>
+                )}
+                {item.notes && (
+                  <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-3 text-sm text-neutral-700">
+                    {item.notes}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function AmbassadorsTab() {
+  const [assignments, setAssignments] = useState<AmbassadorAssignment[]>([]);
+  const [students, setStudents] = useState<StudentListItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showAdd, setShowAdd] = useState(false);
+  const [studentSearch, setStudentSearch] = useState("");
+  const [selectedStudentId, setSelectedStudentId] = useState<number | null>(null);
+  const [roleName, setRoleName] = useState<AmbassadorRole>("TPO Head");
+  const [servedAcademicYear, setServedAcademicYear] = useState<AcademicYear>("FIRST_YEAR");
+  const [saving, setSaving] = useState(false);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      const [assignmentData, studentData] = await Promise.all([
+        listAmbassadors(),
+        listStudents({ page: 1, limit: 100, role: "STUDENT" }),
+      ]);
+      setAssignments(assignmentData);
+      setStudents(studentData.items);
+    } catch (e) {
+      toast.error(extractErrorMessage(e));
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  const filteredStudents = students.filter((student) => {
+    const haystack = `${student.fullName} ${student.emailId} ${student.studentId ?? ""}`.toLowerCase();
+    return haystack.includes(studentSearch.toLowerCase());
+  });
+
+  const handleRemove = async (id: string) => {
+    if (!confirm("Remove this assignment?")) return;
+    try {
+      await deleteAmbassadorAssignment(id);
+      toast.success("Assignment removed");
+      load();
+    } catch (e) {
+      toast.error(extractErrorMessage(e));
+    }
+  };
+
+  const grouped = assignments.reduce<Record<string, AmbassadorAssignment[]>>((acc, item) => {
+    const key = item.roleName;
+    acc[key] = acc[key] ? [...acc[key], item] : [item];
+    return acc;
+  }, {});
+
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 className="text-lg font-semibold text-neutral-900">TPO volunteer list</h2>
+          <p className="text-sm text-neutral-500">
+            Assign existing students to ambassador and operational roles with the academic year they served.
+          </p>
+        </div>
+        <Button onClick={() => setShowAdd((v) => !v)}>
+          <Plus className="mr-1.5 h-4 w-4" />
+          {showAdd ? "Close" : "Add Student Ambassador"}
+        </Button>
+      </div>
+
+      {showAdd && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Add volunteer assignment</CardTitle>
+            <CardDescription>
+              Pick an existing student, then assign the role and served academic year.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid gap-4 md:grid-cols-3">
+              <Field>
+                <FieldLabel>Role</FieldLabel>
+                <select
+                  className="h-9 w-full rounded-md border bg-background px-3 text-sm"
+                  value={roleName}
+                  onChange={(e) => setRoleName(e.target.value as AmbassadorRole)}
+                >
+                  {AMBASSADOR_ROLE_OPTIONS.map((role) => (
+                    <option key={role} value={role}>
+                      {role}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+              <Field>
+                <FieldLabel>Served academic year</FieldLabel>
+                <select
+                  className="h-9 w-full rounded-md border bg-background px-3 text-sm"
+                  value={servedAcademicYear}
+                  onChange={(e) => setServedAcademicYear(e.target.value as AcademicYear)}
+                >
+                  {YEARS.map((year) => (
+                    <option key={year} value={year}>
+                      {YEAR_LABELS[year]}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+              <Field>
+                <FieldLabel>Search students</FieldLabel>
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+                  <Input
+                    value={studentSearch}
+                    onChange={(e) => setStudentSearch(e.target.value)}
+                    placeholder="Name, email, or ID"
+                    className="pl-9"
+                  />
+                </div>
+              </Field>
+            </div>
+
+            <div className="max-h-80 overflow-y-auto rounded-lg border border-neutral-200">
+              {filteredStudents.length === 0 ? (
+                <div className="p-4 text-sm text-neutral-500">No students found.</div>
+              ) : (
+                <ul className="divide-y divide-neutral-100">
+                  {filteredStudents.map((student) => (
+                    <li key={student.id}>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedStudentId(student.id)}
+                        className={`flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition ${
+                          selectedStudentId === student.id
+                            ? "bg-neutral-900 text-white"
+                            : "hover:bg-neutral-50"
+                        }`}
+                      >
+                        <div>
+                          <p className="text-sm font-medium">{student.fullName}</p>
+                          <p className={`text-xs ${selectedStudentId === student.id ? "text-neutral-300" : "text-neutral-500"}`}>
+                            {student.emailId} {student.studentId ? `· ${student.studentId}` : ""}
+                          </p>
+                        </div>
+                        <span className={`text-xs ${selectedStudentId === student.id ? "text-neutral-300" : "text-neutral-500"}`}>
+                          {student.academicYear ? YEAR_LABELS[student.academicYear] : "—"}
+                        </span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setShowAdd(false)} disabled={saving}>
+                Cancel
+              </Button>
+              <Button
+                onClick={async () => {
+                  if (!selectedStudentId) {
+                    toast.error("Choose a student first");
+                    return;
+                  }
+                  setSaving(true);
+                  try {
+                    await createAmbassadorAssignment({
+                      studentId: selectedStudentId,
+                      roleName,
+                      servedAcademicYear,
+                    });
+                    toast.success("Volunteer assignment added");
+                    setShowAdd(false);
+                    setSelectedStudentId(null);
+                    setStudentSearch("");
+                    await load();
+                  } catch (e) {
+                    toast.error(extractErrorMessage(e));
+                  } finally {
+                    setSaving(false);
+                  }
+                }}
+                disabled={saving}
+              >
+                {saving ? "Adding..." : "Add Assignment"}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {loading ? (
+        <div className="text-sm text-muted-foreground">Loading...</div>
+      ) : assignments.length === 0 ? (
+        <Card>
+          <CardContent className="p-8 text-center">
+            <ShieldCheck className="mx-auto h-8 w-8 text-neutral-300" />
+            <p className="mt-3 text-sm font-medium text-neutral-900">No volunteer assignments yet</p>
+            <p className="mt-1 text-sm text-neutral-500">
+              Add students to TPO head, media, drive, LinkedIn, coding club, and other teams here.
+            </p>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="grid gap-4 lg:grid-cols-2">
+          {AMBASSADOR_ROLE_OPTIONS.map((role) => {
+            const roleItems = grouped[role] ?? [];
+            return (
+              <Card key={role}>
+                <CardHeader>
+                  <CardTitle className="text-base">{role}</CardTitle>
+                  <CardDescription>
+                    {roleItems.length} assignment{roleItems.length === 1 ? "" : "s"}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {roleItems.length === 0 ? (
+                    <p className="text-sm text-neutral-500">No students assigned.</p>
+                  ) : (
+                    <ul className="space-y-3">
+                      {roleItems.map((assignment) => (
+                        <li
+                          key={assignment.id}
+                          className="flex items-center justify-between gap-3 rounded-lg border border-neutral-200 px-3 py-3"
+                        >
+                          <div>
+                            <p className="text-sm font-medium text-neutral-900">
+                              {assignment.student.fullName}
+                            </p>
+                            <p className="text-xs text-neutral-500">
+                              {assignment.student.studentId ?? assignment.student.emailId}
+                            </p>
+                            <p className="mt-1 text-xs text-neutral-600">
+                              Served in {YEAR_LABELS[assignment.servedAcademicYear]}
+                            </p>
+                          </div>
+                          <Button size="sm" variant="outline" onClick={() => handleRemove(assignment.id)}>
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function StartupMeta({
+  icon: Icon,
+  label,
+  value,
+}: {
+  icon: ComponentType<{ className?: string }>;
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="flex items-start gap-2">
+      <Icon className="mt-0.5 h-4 w-4 text-neutral-400" />
+      <div className="min-w-0">
+        <p className="text-[11px] uppercase tracking-wide text-neutral-400">{label}</p>
+        <p className="truncate text-sm text-neutral-700">{value}</p>
+      </div>
+    </div>
+  );
+}
 
 function EventsTab() {
   const [events, setEvents] = useState<EventItem[]>([]);

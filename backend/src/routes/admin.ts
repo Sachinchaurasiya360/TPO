@@ -41,6 +41,17 @@ import {
   cancelEvent,
   deleteEvent,
 } from "../controller/admin.events.controller";
+import {
+  listStartups,
+  createStartup,
+  updateStartup,
+  deleteStartup,
+} from "../controller/admin.startups.controller";
+import {
+  listAmbassadorAssignments,
+  createAmbassadorAssignment,
+  deleteAmbassadorAssignment,
+} from "../controller/admin.ambassadors.controller";
 
 const router = express.Router();
 
@@ -90,5 +101,16 @@ router.post("/events", createEvent);
 router.patch("/events/:id", updateEvent);
 router.post("/events/:id/cancel", cancelEvent);
 router.delete("/events/:id", deleteEvent);
+
+// Startups
+router.get("/startups", listStartups);
+router.post("/startups", createStartup);
+router.patch("/startups/:id", updateStartup);
+router.delete("/startups/:id", deleteStartup);
+
+// Student ambassadors / volunteers
+router.get("/ambassadors", listAmbassadorAssignments);
+router.post("/ambassadors", createAmbassadorAssignment);
+router.delete("/ambassadors/:id", deleteAmbassadorAssignment);
 
 export default router;

@@ -47,6 +47,7 @@ export interface StudentListItem {
   resumeUrl: string | null;
   isVerified: boolean;
   isActive: boolean;
+  ambassadorAssignments: AmbassadorAssignment[];
   createdAt: string;
 }
 
@@ -68,6 +69,7 @@ export interface StudentListFilters {
   isActive?: boolean;
   minCgpa?: number;
   search?: string;
+  pendingEntity?: "PROFILE_OR_MARKS" | "INTERNSHIP" | "ACHIEVEMENT";
 }
 
 export interface StudentProject {
@@ -109,6 +111,68 @@ export interface StudentDetailResponse {
   projects: StudentProject[];
   pendingVerifications: Array<Record<string, unknown>>;
 }
+
+export interface StartupItem {
+  id: string;
+  name: string;
+  tagline: string | null;
+  industry: string | null;
+  website: string | null;
+  location: string | null;
+  contactName: string | null;
+  contactEmail: string | null;
+  contactPhone: string | null;
+  foundedYear: number | null;
+  notes: string | null;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface StartupPayload {
+  name: string;
+  tagline?: string;
+  industry?: string;
+  website?: string;
+  location?: string;
+  contactName?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  foundedYear?: number;
+  notes?: string;
+  isActive?: boolean;
+}
+
+export interface AmbassadorAssignment {
+  id: string;
+  roleName: string;
+  servedAcademicYear: AcademicYear;
+  createdAt: string;
+  student: {
+    id: number;
+    fullName: string;
+    emailId: string;
+    studentId: string | null;
+    department: Department | null;
+    academicYear: AcademicYear | null;
+    profilePic: string | null;
+  };
+}
+
+export const AMBASSADOR_ROLE_OPTIONS = [
+  "TPO Head",
+  "TPO Co-Head",
+  "Magazine Team",
+  "Drive Team",
+  "Database Team",
+  "Industry Relation Team",
+  "LinkedIn Team",
+  "Coding Club Team",
+  "Media Team",
+  "Event Management Team",
+] as const;
+
+export type AmbassadorRole = (typeof AMBASSADOR_ROLE_OPTIONS)[number];
 
 export interface FacultyListItem {
   id: number;
@@ -283,4 +347,44 @@ export const addStudentNote = async (studentId: number, content: string): Promis
 
 export const deleteStudentNote = async (studentId: number, noteId: string): Promise<void> => {
   await api.delete(`/admin/students/${studentId}/notes/${noteId}`);
+};
+
+export const listStartups = async (): Promise<StartupItem[]> => {
+  const { data } = await api.get<{ items: StartupItem[] }>("/admin/startups");
+  return data.items;
+};
+
+export const createStartup = async (payload: StartupPayload): Promise<StartupItem> => {
+  const { data } = await api.post<{ startup: StartupItem }>("/admin/startups", payload);
+  return data.startup;
+};
+
+export const updateStartup = async (
+  id: string,
+  payload: Partial<StartupPayload>
+): Promise<StartupItem> => {
+  const { data } = await api.patch<{ startup: StartupItem }>(`/admin/startups/${id}`, payload);
+  return data.startup;
+};
+
+export const deleteStartup = async (id: string): Promise<void> => {
+  await api.delete(`/admin/startups/${id}`);
+};
+
+export const listAmbassadors = async (): Promise<AmbassadorAssignment[]> => {
+  const { data } = await api.get<{ items: AmbassadorAssignment[] }>("/admin/ambassadors");
+  return data.items;
+};
+
+export const createAmbassadorAssignment = async (payload: {
+  studentId: number;
+  roleName: AmbassadorRole;
+  servedAcademicYear: AcademicYear;
+}): Promise<AmbassadorAssignment> => {
+  const { data } = await api.post<{ assignment: AmbassadorAssignment }>("/admin/ambassadors", payload);
+  return data.assignment;
+};
+
+export const deleteAmbassadorAssignment = async (id: string): Promise<void> => {
+  await api.delete(`/admin/ambassadors/${id}`);
 };
