@@ -16,11 +16,16 @@ import {
   updateProfile,
   uploadProfilePic,
   uploadResume,
+  getMarks,
+  updateMarks,
+  uploadMarksheet,
   type StudentProfile,
   DEPARTMENT_LABELS,
   type Department,
   type AcademicYear,
   type UpdateProfilePayload,
+  type Marks,
+  type UpdateMarksPayload,
 } from "@/lib/studentApi";
 import { validateFileSize } from "@/lib/fileUpload";
 import { MAX_PROFILE_PIC_BYTES } from "@/lib/fileUpload";
@@ -89,6 +94,7 @@ export function StudentDashboard() {
   const { refresh } = useAuth();
 
   const [profile, setProfile] = useState<StudentProfile | null>(null);
+  const [marks, setMarks] = useState<Marks | null>(null);
   const [form, setForm] = useState<FormState | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -98,9 +104,13 @@ export function StudentDashboard() {
   const load = async () => {
     setLoading(true);
     try {
-      const data = await getProfile();
-      setProfile(data.user);
-      setForm(toFormState(data.user));
+      const [profileData, marksData] = await Promise.all([
+        getProfile(),
+        getMarks(),
+      ]);
+      setProfile(profileData.user);
+      setMarks(marksData.marks);
+      setForm(toFormState(profileData.user));
     } catch (e) {
       toast.error(extractErrorMessage(e));
     } finally {
@@ -400,6 +410,48 @@ export function StudentDashboard() {
               </div>
             </Section>
 
+            {/* Academic Marksheets */}
+            <Section
+              title="Academic Marksheets"
+              subtitle="Upload your marksheets and enter your scores. Changes require faculty verification."
+            >
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  <MarksheetField
+                    label="10th (SSC) %"
+                    field="sscPercentage"
+                    urlField="sscMarksheetUrl"
+                    marks={marks}
+                    onUpdate={setMarks}
+                  />
+                  <MarksheetField
+                    label="12th (HSC) %"
+                    field="hscPercentage"
+                    urlField="hscMarksheetUrl"
+                    marks={marks}
+                    onUpdate={setMarks}
+                  />
+                  <MarksheetField
+                    label="Diploma %"
+                    field="diplomaPercentage"
+                    urlField="diplomaMarksheetUrl"
+                    marks={marks}
+                    onUpdate={setMarks}
+                  />
+                  {[1, 2, 3, 4, 5, 6].map((sem) => (
+                    <MarksheetField
+                      key={sem}
+                      label={`Semester ${sem} CGPA`}
+                      field={`sem${sem}` as keyof Marks}
+                      urlField={`sem${sem}MarksheetUrl` as keyof Marks}
+                      marks={marks}
+                      onUpdate={setMarks}
+                    />
+                  ))}
+                </div>
+              </div>
+            </Section>
+
             <div className="flex justify-end">
               <button
                 type="submit"
@@ -512,4 +564,137 @@ function FormSelect({
     </div>
   );
 }
+
+function MarksheetField({
+  label,
+  field,
+  urlField,
+  marks,
+  onUpdate,
+}: {
+  label: string;
+  field: keyof Marks;
+  urlField: keyof Marks;
+  marks: Marks | null;
+  onUpdate: (m: Marks) => void;
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [value, setValue] = useState<string>(
+    marks ? String(marks[field] ?? "") : ""
+  );
+
+  useEffect(() => {
+    if (marks) {
+      setValue(String(marks[field] ?? ""));
+    }
+  }, [marks, field]);
+
+  const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!validateFileSize(file)) {
+      if (inputRef.current) inputRef.current.value = "";
+      return;
+    }
+    setUploading(true);
+    try {
+      const { url } = await uploadMarksheet(file, urlField as string);
+      if (marks) {
+        onUpdate({ ...marks, [urlField]: url });
+      }
+      toast.success(`${label} marksheet uploaded.`);
+    } catch (err) {
+      toast.error(extractErrorMessage(err));
+    } finally {
+      setUploading(false);
+      if (inputRef.current) inputRef.current.value = "";
+    }
+  };
+
+  const handleBlur = async () => {
+    if (!marks) return;
+    const num = value.trim() === "" ? null : Number(value);
+    if (num === marks[field]) return;
+    if (num !== null && (Number.isNaN(num) || num < 0 || num > 100)) {
+      toast.error("Invalid score value");
+      setValue(String(marks[field] ?? ""));
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const res = await updateMarks({ [field]: num });
+      onUpdate(res.marks);
+      if (res.pendingFieldCount > 0) {
+        toast.success("Score submitted for verification.");
+      }
+    } catch (err) {
+      toast.error(extractErrorMessage(err));
+      setValue(String(marks[field] ?? ""));
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const currentUrl = marks ? (marks[urlField] as string | null) : null;
+
+  return (
+    <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-3">
+      <label className="text-[10px] font-semibold uppercase tracking-wider text-neutral-500">
+        {label}
+      </label>
+      <div className="mt-1.5 flex flex-col gap-2">
+        <div className="flex items-center gap-2">
+          <input
+            type="number"
+            step="0.01"
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            onBlur={handleBlur}
+            disabled={saving}
+            placeholder="Score"
+            className="h-8 w-full rounded border border-neutral-200 bg-white px-2 text-xs transition focus:border-neutral-900 focus:outline-none disabled:opacity-60"
+          />
+          {saving && <Loader2 className="h-3 w-3 animate-spin text-neutral-400" />}
+        </div>
+        <div className="flex items-center gap-2">
+          <input
+            ref={inputRef}
+            type="file"
+            accept="application/pdf"
+            className="hidden"
+            onChange={onFileChange}
+          />
+          <button
+            type="button"
+            onClick={() => inputRef.current?.click()}
+            disabled={uploading}
+            className="flex h-8 flex-1 items-center justify-center gap-1.5 rounded border border-neutral-200 bg-white text-[10px] font-medium text-neutral-700 transition hover:border-neutral-900 hover:text-neutral-900 disabled:opacity-60"
+          >
+            {uploading ? (
+              <Loader2 className="h-3 w-3 animate-spin" />
+            ) : (
+              <Upload className="h-3 w-3" />
+            )}
+            {currentUrl ? "Update File" : "Upload File"}
+          </button>
+          {currentUrl && (
+            <a
+              href={currentUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="flex h-8 w-8 items-center justify-center rounded border border-neutral-200 bg-white text-neutral-600 transition hover:border-neutral-900 hover:text-neutral-900"
+              title="View Marksheet"
+            >
+              <ExternalLink className="h-3.5 w-3.5" />
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 

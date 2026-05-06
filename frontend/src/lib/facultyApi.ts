@@ -1,7 +1,7 @@
 import { api } from "./api";
 import type { Department, AcademicYear, FieldDiff } from "./studentApi";
 
-export type VerificationEntityType = "PROFILE" | "MARKS" | "INTERNSHIP" | "ACHIEVEMENT";
+export type VerificationEntityType = "PROFILE" | "MARKS" | "INTERNSHIP" | "ACHIEVEMENT" | "CERTIFICATE";
 export type VerificationStatus = "PENDING" | "APPROVED" | "REJECTED";
 
 export interface FacultyStats {
@@ -10,6 +10,7 @@ export interface FacultyStats {
     profileAndMarks: number;
     internships: number;
     achievements: number;
+    certificates: number;
     total: number;
   };
   totalStudents: number;
@@ -69,10 +70,25 @@ export interface AchievementQueueItem extends BaseQueueItem {
   };
 }
 
+export interface CertificateQueueItem extends BaseQueueItem {
+  kind: "CERTIFICATE";
+  entityType: "CERTIFICATE";
+  data: {
+    title: string;
+    issuingOrg: string;
+    issueDate: string | null;
+    expiryDate: string | null;
+    credentialId: string | null;
+    credentialUrl: string | null;
+    certificateUrl: string | null;
+  };
+}
+
 export type QueueItem =
   | VerificationRequestItem
   | InternshipQueueItem
-  | AchievementQueueItem;
+  | AchievementQueueItem
+  | CertificateQueueItem;
 
 export interface DeptStudentListItem {
   id: number;
@@ -119,6 +135,7 @@ export interface DeptStudentDetail {
   marks: Record<string, unknown> | null;
   internships: Array<Record<string, unknown>>;
   achievements: Array<Record<string, unknown>>;
+  certificates: Array<Record<string, unknown>>;
   pendingVerifications: Array<Record<string, unknown>>;
 }
 
@@ -163,6 +180,13 @@ export const reviewAchievement = async (
   payload: { isVerified: boolean; remarks?: string }
 ): Promise<void> => {
   await api.post(`/faculty/achievements/${id}/review`, payload);
+};
+
+export const reviewCertificate = async (
+  id: string,
+  payload: { isVerified: boolean; remarks?: string }
+): Promise<void> => {
+  await api.post(`/faculty/certificates/${id}/review`, payload);
 };
 
 export const listDeptStudents = async (

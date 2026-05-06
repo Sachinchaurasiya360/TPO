@@ -105,6 +105,7 @@ export interface Marks {
   userId: number;
   sscPercentage: number | null;
   hscPercentage: number | null;
+  diplomaPercentage: number | null;
   sem1: number | null;
   sem2: number | null;
   sem3: number | null;
@@ -113,6 +114,19 @@ export interface Marks {
   sem6: number | null;
   sem7: number | null;
   sem8: number | null;
+
+  sscMarksheetUrl: string | null;
+  hscMarksheetUrl: string | null;
+  diplomaMarksheetUrl: string | null;
+  sem1MarksheetUrl: string | null;
+  sem2MarksheetUrl: string | null;
+  sem3MarksheetUrl: string | null;
+  sem4MarksheetUrl: string | null;
+  sem5MarksheetUrl: string | null;
+  sem6MarksheetUrl: string | null;
+  sem7MarksheetUrl: string | null;
+  sem8MarksheetUrl: string | null;
+
   isVerified: boolean;
   updatedAt: string;
 }
@@ -132,6 +146,7 @@ export type UpdateMarksPayload = Partial<
     Marks,
     | "sscPercentage"
     | "hscPercentage"
+    | "diplomaPercentage"
     | "sem1"
     | "sem2"
     | "sem3"
@@ -140,6 +155,17 @@ export type UpdateMarksPayload = Partial<
     | "sem6"
     | "sem7"
     | "sem8"
+    | "sscMarksheetUrl"
+    | "hscMarksheetUrl"
+    | "diplomaMarksheetUrl"
+    | "sem1MarksheetUrl"
+    | "sem2MarksheetUrl"
+    | "sem3MarksheetUrl"
+    | "sem4MarksheetUrl"
+    | "sem5MarksheetUrl"
+    | "sem6MarksheetUrl"
+    | "sem7MarksheetUrl"
+    | "sem8MarksheetUrl"
   >
 >;
 
@@ -325,6 +351,62 @@ export const deleteProject = async (id: string): Promise<void> => {
   await api.delete(`/student/projects/${id}`);
 };
 
+// =================== CERTIFICATE ===================
+
+export interface Certificate {
+  id: string;
+  title: string;
+  issuingOrg: string;
+  issueDate: string | null;
+  expiryDate: string | null;
+  credentialId: string | null;
+  credentialUrl: string | null;
+  certificateUrl: string | null;
+  isVerified: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CertificatePayload {
+  title: string;
+  issuingOrg: string;
+  issueDate?: string;
+  expiryDate?: string;
+  credentialId?: string;
+  credentialUrl?: string;
+  certificateUrl?: string;
+}
+
+export const listCertificates = async (): Promise<{ items: Certificate[] }> => {
+  const { data } = await api.get<{ items: Certificate[] }>("/student/certificates");
+  return data;
+};
+
+export const createCertificate = async (
+  payload: CertificatePayload
+): Promise<{ certificate: Certificate }> => {
+  const { data } = await api.post<{ certificate: Certificate }>(
+    "/student/certificates",
+    payload
+  );
+  return data;
+};
+
+export const updateCertificate = async (
+  id: string,
+  payload: Partial<CertificatePayload>
+): Promise<{ certificate: Certificate }> => {
+  const { data } = await api.patch<{ certificate: Certificate }>(
+    `/student/certificates/${id}`,
+    payload
+  );
+  return data;
+};
+
+export const deleteCertificate = async (id: string): Promise<void> => {
+  await api.delete(`/student/certificates/${id}`);
+};
+
 // =================== GENERIC UPLOADS ===================
 
 const upload = async (path: string, file: File): Promise<{ url: string }> => {
@@ -338,3 +420,19 @@ const upload = async (path: string, file: File): Promise<{ url: string }> => {
 
 export const uploadCertificate = (file: File) =>
   upload("/student/uploads/certificate", file);
+
+export const uploadMarksheet = async (
+  file: File,
+  field: string
+): Promise<{ url: string }> => {
+  const form = new FormData();
+  form.append("file", file);
+  const { data } = await api.post<{ url: string }>(
+    `/student/marks/upload/${field}`,
+    form,
+    {
+      headers: { "Content-Type": "multipart/form-data" },
+    }
+  );
+  return data;
+};

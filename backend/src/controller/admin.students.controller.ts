@@ -98,7 +98,7 @@ export const getStudentDetail = async (req: Request, res: Response) => {
 
   try {
     const result = await cached(`student:detail:${id}`, async () => {
-      const [user, marks, internships, achievements, projects, pendingVerifications] =
+      const [user, marks, internships, achievements, projects, certificates, pendingVerifications] =
         await Promise.all([
           prisma.user.findFirst({
             where: { id, role: { in: ["STUDENT", "ALUMNI"] } },
@@ -122,13 +122,17 @@ export const getStudentDetail = async (req: Request, res: Response) => {
             where: { userId: id },
             orderBy: { createdAt: "desc" },
           }),
+          prisma.certificate.findMany({
+            where: { userId: id },
+            orderBy: { createdAt: "desc" },
+          }),
           prisma.verificationRequest.findMany({
             where: { userId: id, status: "PENDING" },
             orderBy: { createdAt: "desc" },
           }),
         ]);
 
-      return { user, marks, internships, achievements, projects, pendingVerifications };
+      return { user, marks, internships, achievements, projects, certificates, pendingVerifications };
     });
 
     if (!result.user) return res.status(404).json({ message: "Student not found" });

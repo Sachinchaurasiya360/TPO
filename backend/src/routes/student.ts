@@ -8,7 +8,7 @@ import {
   uploadResume,
   uploadCertificate,
 } from "../controller/student.controller";
-import { getMarks, updateMarks } from "../controller/marks.controller";
+import { getMarks, updateMarks, uploadMarksheet } from "../controller/marks.controller";
 import {
   listInternships,
   createInternship,
@@ -27,6 +27,12 @@ import {
   updateProject,
   deleteProject,
 } from "../controller/project.controller";
+import {
+  listCertificates,
+  createCertificate,
+  updateCertificate,
+  deleteCertificate,
+} from "../controller/certificate.controller";
 import {
   listEligibleJobs,
   getEligibleJob,
@@ -57,6 +63,12 @@ router.post(
 // F03 - Marks
 router.get("/marks", getMarks);
 router.patch("/marks", updateMarks);
+router.post(
+  "/marks/upload/:field",
+  pdfUpload.single("file"),
+  handleUploadError,
+  uploadMarksheet
+);
 
 // F04 - Internships
 router.get("/internships", listInternships);
@@ -83,6 +95,12 @@ router.post(
   handleUploadError,
   uploadCertificate
 );
+
+// Certificates
+router.get("/certificates", listCertificates);
+router.post("/certificates", createCertificate);
+router.patch("/certificates/:id", updateCertificate);
+router.delete("/certificates/:id", deleteCertificate);
 
 // F08 - Jobs & Applications
 router.get("/jobs", listEligibleJobs);

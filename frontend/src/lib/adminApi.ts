@@ -83,6 +83,19 @@ export interface StudentProject {
   createdAt: string;
 }
 
+export interface StudentCertificate {
+  id: string;
+  title: string;
+  issuingOrg: string;
+  issueDate: string | null;
+  expiryDate: string | null;
+  credentialId: string | null;
+  credentialUrl: string | null;
+  certificateUrl: string | null;
+  isVerified: boolean;
+  createdAt: string;
+}
+
 export interface StudentDetailResponse {
   user: StudentListItem & {
     parentsContactNo: string | null;
@@ -92,6 +105,7 @@ export interface StudentDetailResponse {
   marks: Record<string, unknown> | null;
   internships: Array<Record<string, unknown>>;
   achievements: Array<Record<string, unknown>>;
+  certificates: StudentCertificate[];
   projects: StudentProject[];
   pendingVerifications: Array<Record<string, unknown>>;
 }

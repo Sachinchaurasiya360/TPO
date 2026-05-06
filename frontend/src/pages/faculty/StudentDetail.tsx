@@ -14,6 +14,7 @@ import {
   BadgeCheck,
   Users,
   Sparkles,
+  ShieldCheck,
 } from "lucide-react";
 import {
   getDeptStudentDetail,
@@ -335,6 +336,70 @@ export function FacultyStudentDetail() {
                     </li>
                   );
                 })}
+              </ul>
+            )}
+          </Section>
+
+          {/* Certificates */}
+          <Section title={`Certificates (${certificates?.length || 0})`}>
+            {!certificates || certificates.length === 0 ? (
+              <EmptyRow label="No certificates added yet." />
+            ) : (
+              <ul className="grid gap-3 sm:grid-cols-2">
+                {certificates.map((c: any) => (
+                  <li
+                    key={c.id}
+                    className="rounded-xl border border-neutral-200 bg-neutral-50 p-4"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <ShieldCheck className="h-4 w-4 flex-shrink-0 text-neutral-400" />
+                          <p className="truncate font-medium text-neutral-900">
+                            {c.title}
+                          </p>
+                        </div>
+                        <p className="mt-1 text-xs text-neutral-600">
+                          {c.issuingOrg}
+                        </p>
+                      </div>
+                      {c.isVerified ? (
+                        <span className="flex-shrink-0 rounded bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
+                          Verified
+                        </span>
+                      ) : (
+                        <span className="flex-shrink-0 rounded bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-800">
+                          Pending
+                        </span>
+                      )}
+                    </div>
+                    <div className="mt-2.5 flex flex-wrap gap-x-4 gap-y-1 text-[10px] text-neutral-500">
+                      <div>
+                        <span className="font-medium text-neutral-700">Issued:</span>{" "}
+                        {c.issueDate ? new Date(c.issueDate).toLocaleDateString() : "—"}
+                      </div>
+                      {c.expiryDate && (
+                        <div>
+                          <span className="font-medium text-neutral-700">Expires:</span>{" "}
+                          {new Date(c.expiryDate).toLocaleDateString()}
+                        </div>
+                      )}
+                    </div>
+                    {c.certificateUrl && (
+                      <div className="mt-3">
+                        <a
+                          href={c.certificateUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-1 text-xs font-medium text-neutral-900 underline"
+                        >
+                          <ExternalLink className="h-3 w-3" />
+                          View Document
+                        </a>
+                      </div>
+                    )}
+                  </li>
+                ))}
               </ul>
             )}
           </Section>

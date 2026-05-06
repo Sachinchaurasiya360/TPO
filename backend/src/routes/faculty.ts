@@ -6,6 +6,7 @@ import {
   reviewVerificationRequest,
   reviewInternship,
   reviewAchievement,
+  reviewCertificate,
   listDeptStudents,
   getDeptStudentDetail,
   listDeptAlumni,
@@ -33,6 +34,7 @@ router.get("/verifications", listPendingVerifications);
 router.post("/verifications/:id/review", reviewVerificationRequest);
 router.post("/internships/:id/review", reviewInternship);
 router.post("/achievements/:id/review", reviewAchievement);
+router.post("/certificates/:id/review", reviewCertificate);
 
 // Department students
 router.get("/students", listDeptStudents);

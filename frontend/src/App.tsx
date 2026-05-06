@@ -22,6 +22,7 @@ import { StudentApplications } from "@/pages/student/Applications";
 import { Projects } from "@/pages/student/Projects";
 import { StudentAlumniFeed } from "@/pages/student/AlumniFeed";
 import { StudentAlumniDirectory } from "@/pages/student/AlumniDirectory";
+import { Certificates } from "@/pages/student/Certificates";
 
 // Role dashboards
 import { FacultyDashboard } from "@/pages/faculty/Dashboard";
@@ -150,6 +151,14 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={["STUDENT"]}>
                 <StudentAlumniDirectory />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/student/certificates"
+            element={
+              <ProtectedRoute allowedRoles={["STUDENT"]}>
+                <Certificates />
               </ProtectedRoute>
             }
           />

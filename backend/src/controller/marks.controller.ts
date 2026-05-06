@@ -7,10 +7,12 @@ import {
   upsertVerificationRequest,
   getPendingVerification,
 } from "../lib/verification";
+import { uploadBuffer, deleteByPublicId, extractPublicIdFromUrl } from "../lib/cloudinary";
 
 const NUMERIC_FIELDS = [
   "sscPercentage",
   "hscPercentage",
+  "diplomaPercentage",
   "sem1",
   "sem2",
   "sem3",
@@ -19,6 +21,20 @@ const NUMERIC_FIELDS = [
   "sem6",
   "sem7",
   "sem8",
+] as const;
+
+const MARKSHEET_FIELDS = [
+  "sscMarksheetUrl",
+  "hscMarksheetUrl",
+  "diplomaMarksheetUrl",
+  "sem1MarksheetUrl",
+  "sem2MarksheetUrl",
+  "sem3MarksheetUrl",
+  "sem4MarksheetUrl",
+  "sem5MarksheetUrl",
+  "sem6MarksheetUrl",
+  "sem7MarksheetUrl",
+  "sem8MarksheetUrl",
 ] as const;
 
 const ensureMarksRow = async (userId: number) => {
@@ -89,5 +105,53 @@ export const updateMarks = async (req: Request, res: Response) => {
   } catch (error) {
     logger.error({ error }, "updateMarks failed");
     return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const uploadMarksheet = async (req: Request, res: Response) => {
+  if (!req.file) {
+    return res.status(400).json({ message: "No file uploaded" });
+  }
+
+  const { field } = req.params;
+  if (!MARKSHEET_FIELDS.includes(field as any)) {
+    return res.status(400).json({ message: "Invalid field" });
+  }
+
+  const userId = req.user!.id;
+  try {
+    const current = await ensureMarksRow(userId);
+
+    const result = await uploadBuffer(req.file.buffer, {
+      folder: "tpo/marksheets",
+      resourceType: "raw",
+      publicId: `marksheet-${field}-user-${userId}`,
+    });
+
+    await prisma.marks.update({
+      where: { userId },
+      data: { [field]: result.secure_url },
+    });
+
+    // Note: We don't verify marksheets through the same diff system yet, 
+    // but the marks row has isVerified. Usually marksheet uploads should 
+    // also trigger a verification request or set isVerified to false.
+    await prisma.marks.update({
+      where: { userId },
+      data: { isVerified: false }
+    });
+
+    const oldUrl = (current as any)[field];
+    if (oldUrl && oldUrl !== result.secure_url) {
+      const oldPublicId = extractPublicIdFromUrl(oldUrl);
+      if (oldPublicId && oldPublicId !== result.public_id) {
+        deleteByPublicId(oldPublicId, "raw").catch(() => {});
+      }
+    }
+
+    return res.status(200).json({ url: result.secure_url });
+  } catch (error) {
+    logger.error({ error }, "uploadMarksheet failed");
+    return res.status(500).json({ message: "Upload failed" });
   }
 };

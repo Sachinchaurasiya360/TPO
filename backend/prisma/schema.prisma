@@ -213,10 +213,35 @@ model User {
   testSubmissions       TestSubmission[]    @relation("StudentSubmissions")
   submissionReviews     TestSubmission[]    @relation("FacultySubmissionReviews")
 
+  // Relations - certificates
+  certificates          Certificate[]
+
   @@index([department])
   @@index([fullName])
   @@index([role])
   @@index([emailId])
+}
+
+// ==================== CERTIFICATE ====================
+
+model Certificate {
+  id              String    @id @default(uuid())
+  userId          Int
+  student         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  title           String
+  issuingOrg      String
+  issueDate       DateTime?
+  expiryDate      DateTime?
+  credentialId    String?
+  credentialUrl   String?
+  certificateUrl  String?
+
+  isVerified      Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([userId])
 }
 
 // ==================== VERIFICATION ====================
@@ -253,6 +278,7 @@ model Marks {
 
   sscPercentage     Float?
   hscPercentage     Float?
+  diplomaPercentage Float?
   sem1              Float?
   sem2              Float?
   sem3              Float?
@@ -262,16 +288,17 @@ model Marks {
   sem7              Float?
   sem8              Float?
 
-  sscMarksheetUrl   String?
-  hscMarksheetUrl   String?
-  sem1MarksheetUrl  String?
-  sem2MarksheetUrl  String?
-  sem3MarksheetUrl  String?
-  sem4MarksheetUrl  String?
-  sem5MarksheetUrl  String?
-  sem6MarksheetUrl  String?
-  sem7MarksheetUrl  String?
-  sem8MarksheetUrl  String?
+  sscMarksheetUrl     String?
+  hscMarksheetUrl     String?
+  diplomaMarksheetUrl String?
+  sem1MarksheetUrl    String?
+  sem2MarksheetUrl    String?
+  sem3MarksheetUrl    String?
+  sem4MarksheetUrl    String?
+  sem5MarksheetUrl    String?
+  sem6MarksheetUrl    String?
+  sem7MarksheetUrl    String?
+  sem8MarksheetUrl    String?
 
   isVerified        Boolean  @default(false)
   updatedAt         DateTime @updatedAt

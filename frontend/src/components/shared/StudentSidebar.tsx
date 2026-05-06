@@ -14,6 +14,7 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
+  ShieldCheck,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useLogout } from "@/lib/useLogout";
@@ -32,6 +33,7 @@ const items: NavItem[] = [
   { label: "Projects", path: "/student/projects", icon: FolderGit2 },
   { label: "Internships", path: "/student/internship", icon: BookOpen },
   { label: "Achievements", path: "/student/achievement", icon: Award },
+  { label: "Certificates", path: "/student/certificates", icon: ShieldCheck },
   { label: "Aptitude", path: "/student/aptitude", icon: Brain },
   { label: "Alumni Feed", path: "/student/alumni-feed", icon: Megaphone },
   { label: "Alumni Directory", path: "/student/alumni-directory", icon: UsersRound },

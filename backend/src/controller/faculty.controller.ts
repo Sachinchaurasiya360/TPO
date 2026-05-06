@@ -44,6 +44,7 @@ export const getFacultyStats = async (req: Request, res: Response) => {
       pendingVerificationRequests,
       unverifiedInternships,
       unverifiedAchievements,
+      unverifiedCertificates,
       totalStudents,
       upcomingEvents,
     ] = await Promise.all([
@@ -65,6 +66,12 @@ export const getFacultyStats = async (req: Request, res: Response) => {
           student: { department: dept, role: "STUDENT", isActive: true },
         },
       }),
+      prisma.certificate.count({
+        where: {
+          isVerified: false,
+          student: { department: dept, role: "STUDENT", isActive: true },
+        },
+      }),
       prisma.user.count({
         where: { role: "STUDENT", department: dept, isActive: true },
       }),
@@ -79,7 +86,8 @@ export const getFacultyStats = async (req: Request, res: Response) => {
         profileAndMarks: pendingVerificationRequests,
         internships: unverifiedInternships,
         achievements: unverifiedAchievements,
-        total: pendingVerificationRequests + unverifiedInternships + unverifiedAchievements,
+        certificates: unverifiedCertificates,
+        total: pendingVerificationRequests + unverifiedInternships + unverifiedAchievements + unverifiedCertificates,
       },
       totalStudents,
       upcomingEvents,
@@ -97,7 +105,7 @@ export const listPendingVerifications = async (req: Request, res: Response) => {
   if (!dept) return;
 
   try {
-    const [requests, internships, achievements] = await Promise.all([
+    const [requests, internships, achievements, certificates] = await Promise.all([
       prisma.verificationRequest.findMany({
         where: {
           status: "PENDING",
@@ -115,6 +123,14 @@ export const listPendingVerifications = async (req: Request, res: Response) => {
         include: { student: { select: STUDENT_STUDENT_SELECT } },
       }),
       prisma.achievement.findMany({
+        where: {
+          isVerified: false,
+          student: { department: dept, role: "STUDENT", isActive: true },
+        },
+        orderBy: { createdAt: "asc" },
+        include: { student: { select: STUDENT_STUDENT_SELECT } },
+      }),
+      prisma.certificate.findMany({
         where: {
           isVerified: false,
           student: { department: dept, role: "STUDENT", isActive: true },
@@ -168,6 +184,23 @@ export const listPendingVerifications = async (req: Request, res: Response) => {
         },
         createdAt: a.createdAt,
         student: a.student,
+      })),
+      ...certificates.map((c) => ({
+        kind: "CERTIFICATE" as const,
+        id: c.id,
+        entityType: "CERTIFICATE" as const,
+        entityId: c.id,
+        data: {
+          title: c.title,
+          issuingOrg: c.issuingOrg,
+          issueDate: c.issueDate,
+          expiryDate: c.expiryDate,
+          credentialId: c.credentialId,
+          credentialUrl: c.credentialUrl,
+          certificateUrl: c.certificateUrl,
+        },
+        createdAt: c.createdAt,
+        student: c.student,
       })),
     ].sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
 
@@ -307,7 +340,7 @@ export const reviewVerificationRequest = async (req: Request, res: Response) => 
 const reviewEntityFlag = async (
   req: Request,
   res: Response,
-  entityType: "INTERNSHIP" | "ACHIEVEMENT"
+  entityType: "INTERNSHIP" | "ACHIEVEMENT" | "CERTIFICATE"
 ) => {
   const dept = requireDept(req, res);
   if (!dept) return;
@@ -333,8 +366,10 @@ const reviewEntityFlag = async (
 
     if (entityType === "INTERNSHIP") {
       await prisma.internship.update({ where: { id }, data: { isVerified } });
-    } else {
+    } else if (entityType === "ACHIEVEMENT") {
       await prisma.achievement.update({ where: { id }, data: { isVerified } });
+    } else {
+      await prisma.certificate.update({ where: { id }, data: { isVerified } });
     }
 
     await prisma.notification.create({
@@ -375,6 +410,9 @@ export const reviewInternship = (req: Request, res: Response) =>
 
 export const reviewAchievement = (req: Request, res: Response) =>
   reviewEntityFlag(req, res, "ACHIEVEMENT");
+
+export const reviewCertificate = (req: Request, res: Response) =>
+  reviewEntityFlag(req, res, "CERTIFICATE");
 
 // ==================== DEPT STUDENTS ====================
 
@@ -517,32 +555,36 @@ export const getDeptStudentDetail = async (req: Request, res: Response) => {
     return res.status(400).json({ message: "Invalid id" });
   }
 
-  try {
-    const [user, marks, internships, achievements, pendingVerifications] =
-      await Promise.all([
-        prisma.user.findFirst({
-          where: { id, role: "STUDENT", department: dept },
-          select: {
-            ...DEPT_STUDENT_SELECT,
-            parentsContactNo: true,
-            skills: true,
-            socialProfile: true,
-          },
-        }),
-        prisma.marks.findUnique({ where: { userId: id } }),
-        prisma.internship.findMany({
-          where: { userId: id },
-          orderBy: { startDate: "desc" },
-        }),
-        prisma.achievement.findMany({
-          where: { userId: id },
-          orderBy: { createdAt: "desc" },
-        }),
-        prisma.verificationRequest.findMany({
-          where: { userId: id, status: "PENDING" },
-          orderBy: { createdAt: "desc" },
-        }),
-      ]);
+    try {
+      const [user, marks, internships, achievements, certificates, pendingVerifications] =
+        await Promise.all([
+          prisma.user.findFirst({
+            where: { id, role: "STUDENT", department: dept },
+            select: {
+              ...DEPT_STUDENT_SELECT,
+              parentsContactNo: true,
+              skills: true,
+              socialProfile: true,
+            },
+          }),
+          prisma.marks.findUnique({ where: { userId: id } }),
+          prisma.internship.findMany({
+            where: { userId: id },
+            orderBy: { startDate: "desc" },
+          }),
+          prisma.achievement.findMany({
+            where: { userId: id },
+            orderBy: { createdAt: "desc" },
+          }),
+          prisma.certificate.findMany({
+            where: { userId: id },
+            orderBy: { createdAt: "desc" },
+          }),
+          prisma.verificationRequest.findMany({
+            where: { userId: id, status: "PENDING" },
+            orderBy: { createdAt: "desc" },
+          }),
+        ]);
 
     if (!user) {
       return res
@@ -555,6 +597,7 @@ export const getDeptStudentDetail = async (req: Request, res: Response) => {
       marks,
       internships,
       achievements,
+      certificates,
       pendingVerifications,
     });
   } catch (error) {

@@ -93,6 +93,7 @@ const cgpa = z.number().min(0).max(10).optional();
 export const updateMarksSchema = z.object({
   sscPercentage: pct,
   hscPercentage: pct,
+  diplomaPercentage: pct,
   sem1: cgpa,
   sem2: cgpa,
   sem3: cgpa,
@@ -126,6 +127,18 @@ export const achievementSchema = z.object({
   category: z.string().optional(),
   certificateUrl: z.string().url().optional(),
   achievementDate: z.string().datetime().optional().or(z.string().optional()),
+});
+
+// ==================== CERTIFICATE ====================
+
+export const certificateSchema = z.object({
+  title: z.string().min(1),
+  issuingOrg: z.string().min(1),
+  issueDate: z.string().datetime().optional().or(z.string().optional()),
+  expiryDate: z.string().datetime().optional().or(z.string().optional()),
+  credentialId: z.string().optional(),
+  credentialUrl: z.string().url().optional().or(z.literal("")),
+  certificateUrl: z.string().url().optional().or(z.literal("")),
 });
 
 // ==================== PROJECT ====================

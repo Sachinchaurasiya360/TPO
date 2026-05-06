@@ -14,6 +14,7 @@ import {
 type ScoreKey =
   | "sscPercentage"
   | "hscPercentage"
+  | "diplomaPercentage"
   | "sem1"
   | "sem2"
   | "sem3"
@@ -33,6 +34,7 @@ interface Row {
 const ROWS: Row[] = [
   { label: "SSC", scoreKey: "sscPercentage", unit: "%", max: 100 },
   { label: "HSC", scoreKey: "hscPercentage", unit: "%", max: 100 },
+  { label: "Diploma", scoreKey: "diplomaPercentage", unit: "%", max: 100 },
   { label: "Semester 1", scoreKey: "sem1", unit: "CGPA", max: 10 },
   { label: "Semester 2", scoreKey: "sem2", unit: "CGPA", max: 10 },
   { label: "Semester 3", scoreKey: "sem3", unit: "CGPA", max: 10 },

@@ -17,6 +17,7 @@ import {
   reviewVerificationRequest,
   reviewInternship,
   reviewAchievement,
+  reviewCertificate,
   listDeptStudents,
   listDeptAlumni,
   listDeptFaculty,
@@ -35,12 +36,14 @@ import {
   ClipboardCheck,
   Briefcase,
   Award,
+  ShieldCheck,
   Inbox,
   Users as UsersIcon,
   Calendar,
   CheckCircle2,
   ArrowRight,
   FileText,
+  ExternalLink,
 } from "lucide-react";
 import { FacultyAptitudeTab } from "@/components/aptitude/FacultyAptitude";
 
@@ -231,6 +234,11 @@ function OverviewTab({
       value: stats.pending.achievements,
       icon: Award,
     },
+    {
+      label: "Certificates",
+      value: stats.pending.certificates,
+      icon: ShieldCheck,
+    },
   ];
 
   const totalPending = stats.pending.total;
@@ -418,6 +426,7 @@ const ENTITY_BADGE: Record<string, string> = {
   MARKS: "bg-indigo-50 text-indigo-700 ring-indigo-200",
   INTERNSHIP: "bg-purple-50 text-purple-700 ring-purple-200",
   ACHIEVEMENT: "bg-amber-50 text-amber-800 ring-amber-200",
+  CERTIFICATE: "bg-emerald-50 text-emerald-800 ring-emerald-200",
 };
 
 function QueueTab() {
@@ -450,8 +459,10 @@ function QueueTab() {
         await reviewVerificationRequest(item.id, { status: "APPROVED" });
       } else if (item.kind === "INTERNSHIP") {
         await reviewInternship(item.id, { isVerified: true });
-      } else {
+      } else if (item.kind === "ACHIEVEMENT") {
         await reviewAchievement(item.id, { isVerified: true });
+      } else {
+        await reviewCertificate(item.id, { isVerified: true });
       }
       toast.success("Approved");
       await refresh();
@@ -477,8 +488,13 @@ function QueueTab() {
           isVerified: false,
           remarks: remarks || undefined,
         });
-      } else {
+      } else if (item.kind === "ACHIEVEMENT") {
         await reviewAchievement(item.id, {
+          isVerified: false,
+          remarks: remarks || undefined,
+        });
+      } else {
+        await reviewCertificate(item.id, {
           isVerified: false,
           remarks: remarks || undefined,
         });
@@ -690,6 +706,50 @@ function QueueItemBody({ item }: { item: QueueItem }) {
               className="text-xs font-medium text-blue-600 underline"
             >
               View certificate
+            </a>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  if (item.kind === "CERTIFICATE") {
+    const d = item.data;
+    return (
+      <div className="grid grid-cols-1 gap-x-6 gap-y-1 text-xs sm:grid-cols-2">
+        <Row label="Title" value={d.title} />
+        <Row label="Issuing Org" value={d.issuingOrg} />
+        <Row
+          label="Issue Date"
+          value={d.issueDate ? new Date(d.issueDate).toLocaleDateString() : "—"}
+        />
+        <Row
+          label="Expiry Date"
+          value={d.expiryDate ? new Date(d.expiryDate).toLocaleDateString() : "—"}
+        />
+        <Row label="Credential ID" value={d.credentialId ?? "—"} />
+        {d.credentialUrl && (
+          <div className="sm:col-span-2">
+            <a
+              href={d.credentialUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="text-xs font-medium text-blue-600 underline"
+            >
+              Credential Link
+            </a>
+          </div>
+        )}
+        {d.certificateUrl && (
+          <div className="sm:col-span-2 mt-1">
+            <a
+              href={d.certificateUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-md bg-neutral-900 px-3 py-1.5 text-[11px] font-medium text-white transition hover:bg-neutral-800"
+            >
+              <ExternalLink className="h-3 w-3" />
+              View Certificate PDF
             </a>
           </div>
         )}
