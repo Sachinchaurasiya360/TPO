@@ -25,7 +25,6 @@ import {
   type AcademicYear,
   type UpdateProfilePayload,
   type Marks,
-  type UpdateMarksPayload,
 } from "@/lib/studentApi";
 import { validateFileSize } from "@/lib/fileUpload";
 import { MAX_PROFILE_PIC_BYTES } from "@/lib/fileUpload";
