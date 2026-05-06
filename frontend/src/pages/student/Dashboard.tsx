@@ -361,7 +361,7 @@ export function StudentDashboard() {
             </Section>
 
             {/* Resume */}
-            <Section title="Resume" subtitle="PDF only, max 2MB.">
+            <Section title="Resume" subtitle="PDF only, max 1MB.">
               <div className="flex flex-wrap items-center gap-4">
                 <div className="flex h-12 w-12 items-center justify-center rounded-lg border border-neutral-200 bg-neutral-50">
                   <FileText className="h-5 w-5 text-neutral-500" />
@@ -438,7 +438,7 @@ export function StudentDashboard() {
                     marks={marks}
                     onUpdate={setMarks}
                   />
-                  {[1, 2, 3, 4, 5, 6].map((sem) => (
+                  {[1, 2, 3, 4, 5, 6, 7, 8].map((sem) => (
                     <MarksheetField
                       key={sem}
                       label={`Semester ${sem} CGPA`}
@@ -617,8 +617,10 @@ function MarksheetField({
     if (!marks) return;
     const num = value.trim() === "" ? null : Number(value);
     if (num === marks[field]) return;
-    if (num !== null && (Number.isNaN(num) || num < 0 || num > 100)) {
-      toast.error("Invalid score value");
+    const isSem = (field as string).startsWith("sem");
+    const max = isSem ? 10 : 100;
+    if (num !== null && (Number.isNaN(num) || num < 0 || num > max)) {
+      toast.error(`Invalid score value (max ${max})`);
       setValue(String(marks[field] ?? ""));
       return;
     }

@@ -6,10 +6,13 @@ import { extractErrorMessage } from "@/lib/api";
 import {
   getMarks,
   updateMarks,
+  uploadMarksheet,
+  validateFileSize,
   type Marks,
   type PendingVerification,
   type UpdateMarksPayload,
 } from "@/lib/studentApi";
+import { ExternalLink, FileText, Upload } from "lucide-react";
 
 type ScoreKey =
   | "sscPercentage"
@@ -27,22 +30,23 @@ type ScoreKey =
 interface Row {
   label: string;
   scoreKey: ScoreKey;
+  urlKey: string;
   unit: string;
   max: number;
 }
 
 const ROWS: Row[] = [
-  { label: "SSC", scoreKey: "sscPercentage", unit: "%", max: 100 },
-  { label: "HSC", scoreKey: "hscPercentage", unit: "%", max: 100 },
-  { label: "Diploma", scoreKey: "diplomaPercentage", unit: "%", max: 100 },
-  { label: "Semester 1", scoreKey: "sem1", unit: "CGPA", max: 10 },
-  { label: "Semester 2", scoreKey: "sem2", unit: "CGPA", max: 10 },
-  { label: "Semester 3", scoreKey: "sem3", unit: "CGPA", max: 10 },
-  { label: "Semester 4", scoreKey: "sem4", unit: "CGPA", max: 10 },
-  { label: "Semester 5", scoreKey: "sem5", unit: "CGPA", max: 10 },
-  { label: "Semester 6", scoreKey: "sem6", unit: "CGPA", max: 10 },
-  { label: "Semester 7", scoreKey: "sem7", unit: "CGPA", max: 10 },
-  { label: "Semester 8", scoreKey: "sem8", unit: "CGPA", max: 10 },
+  { label: "SSC", scoreKey: "sscPercentage", urlKey: "sscMarksheetUrl", unit: "%", max: 100 },
+  { label: "HSC", scoreKey: "hscPercentage", urlKey: "hscMarksheetUrl", unit: "%", max: 100 },
+  { label: "Diploma", scoreKey: "diplomaPercentage", urlKey: "diplomaMarksheetUrl", unit: "%", max: 100 },
+  { label: "Semester 1", scoreKey: "sem1", urlKey: "sem1MarksheetUrl", unit: "CGPA", max: 10 },
+  { label: "Semester 2", scoreKey: "sem2", urlKey: "sem2MarksheetUrl", unit: "CGPA", max: 10 },
+  { label: "Semester 3", scoreKey: "sem3", urlKey: "sem3MarksheetUrl", unit: "CGPA", max: 10 },
+  { label: "Semester 4", scoreKey: "sem4", urlKey: "sem4MarksheetUrl", unit: "CGPA", max: 10 },
+  { label: "Semester 5", scoreKey: "sem5", urlKey: "sem5MarksheetUrl", unit: "CGPA", max: 10 },
+  { label: "Semester 6", scoreKey: "sem6", urlKey: "sem6MarksheetUrl", unit: "CGPA", max: 10 },
+  { label: "Semester 7", scoreKey: "sem7", urlKey: "sem7MarksheetUrl", unit: "CGPA", max: 10 },
+  { label: "Semester 8", scoreKey: "sem8", urlKey: "sem8MarksheetUrl", unit: "CGPA", max: 10 },
 ];
 
 export function Marks() {
@@ -131,6 +135,18 @@ export function Marks() {
     (r) => scores[r.scoreKey] && scores[r.scoreKey].trim() !== ""
   ).length;
 
+  const handleUpload = async (row: Row, file: File) => {
+    if (!validateFileSize(file)) return;
+    const toastId = toast.loading(`Uploading ${row.label} marksheet...`);
+    try {
+      const { url } = await uploadMarksheet(file, row.urlKey);
+      setMarks((prev) => (prev ? { ...prev, [row.urlKey]: url, isVerified: false } : null));
+      toast.success(`${row.label} marksheet uploaded.`, { id: toastId });
+    } catch (e) {
+      toast.error(extractErrorMessage(e), { id: toastId });
+    }
+  };
+
   return (
     <StudentLayout
       title="Academic marks"
@@ -213,7 +229,9 @@ export function Marks() {
                     key={r.scoreKey}
                     row={r}
                     value={scores[r.scoreKey] ?? ""}
+                    currentUrl={(marks as any)[r.urlKey]}
                     onChange={(v) => setScore(r.scoreKey, v)}
+                    onUpload={(file) => handleUpload(r, file)}
                   />
                 ))}
               </div>
@@ -268,24 +286,31 @@ function StatCard({
 function ScoreField({
   row,
   value,
+  currentUrl,
   onChange,
+  onUpload,
 }: {
   row: Row;
   value: string;
+  currentUrl?: string | null;
   onChange: (v: string) => void;
+  onUpload: (file: File) => void;
 }) {
   return (
-    <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-3">
-      <label
-        htmlFor={row.scoreKey}
-        className="flex items-center justify-between text-xs font-medium text-neutral-700"
-      >
-        <span>{row.label}</span>
-        <span className="rounded bg-white px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-neutral-500">
+    <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-4">
+      <div className="flex items-center justify-between">
+        <label
+          htmlFor={row.scoreKey}
+          className="text-xs font-semibold uppercase tracking-wider text-neutral-500"
+        >
+          {row.label}
+        </label>
+        <span className="rounded bg-white px-1.5 py-0.5 text-[10px] font-bold text-neutral-400">
           {row.unit}
         </span>
-      </label>
-      <div className="mt-2 flex items-center gap-2">
+      </div>
+
+      <div className="mt-3 flex items-center gap-3">
         <input
           id={row.scoreKey}
           type="number"
@@ -294,9 +319,50 @@ function ScoreField({
           max={row.max}
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          placeholder={row.unit === "%" ? "0 – 100" : "0 – 10"}
-          className="h-10 flex-1 rounded-md border border-neutral-200 bg-white px-3 text-sm text-neutral-900 placeholder-neutral-400 transition focus:border-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900/10"
+          placeholder={row.unit === "%" ? "0.00" : "0.00"}
+          className="h-10 w-24 rounded-md border border-neutral-200 bg-white px-3 text-sm font-medium text-neutral-900 transition focus:border-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900/10"
         />
+
+        <div className="flex flex-1 items-center gap-2">
+          {currentUrl ? (
+            <div className="flex h-10 flex-1 items-center justify-between rounded-md border border-neutral-200 bg-white px-3">
+              <div className="flex items-center gap-2 min-w-0">
+                <FileText className="h-4 w-4 shrink-0 text-neutral-400" />
+                <span className="truncate text-xs text-neutral-600">
+                  Marksheet uploaded
+                </span>
+              </div>
+              <a
+                href={currentUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="ml-2 shrink-0 text-neutral-400 hover:text-neutral-900"
+                title="View marksheet"
+              >
+                <ExternalLink className="h-3.5 w-3.5" />
+              </a>
+            </div>
+          ) : (
+            <div className="flex h-10 flex-1 items-center justify-center rounded-md border border-dashed border-neutral-300 bg-white px-3 text-neutral-400">
+              <span className="text-[10px] font-medium italic">
+                No marksheet
+              </span>
+            </div>
+          )}
+
+          <label className="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-md border border-neutral-200 bg-white transition hover:border-neutral-900 hover:bg-neutral-50">
+            <Upload className="h-4 w-4 text-neutral-600" />
+            <input
+              type="file"
+              className="hidden"
+              accept=".pdf,.jpg,.jpeg,.png"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) onUpload(file);
+              }}
+            />
+          </label>
+        </div>
       </div>
     </div>
   );
