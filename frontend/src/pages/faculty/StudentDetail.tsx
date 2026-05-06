@@ -75,7 +75,7 @@ export function FacultyStudentDetail() {
 
   if (!data) return null;
 
-  const { user, marks, internships, achievements } = data;
+  const { user, marks, internships, achievements, certificates } = data;
   const initials = user.fullName?.slice(0, 2).toUpperCase() || "ST";
 
   return (
