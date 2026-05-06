@@ -52,10 +52,12 @@ export function FacultySidebar({ active, onSelect }: FacultySidebarProps) {
   const visibleItems = items.filter((i) => !i.hodOnly || user?.isHOD);
 
   return (
+    <>
+    {/* Desktop sidebar */}
     <aside
       className={`${
         collapsed ? "w-16" : "w-60"
-      } group sticky top-0 flex h-screen flex-shrink-0 flex-col border-r border-neutral-200 bg-white transition-[width] duration-200`}
+      } group sticky top-0 hidden h-screen flex-shrink-0 flex-col border-r border-neutral-200 bg-white transition-[width] duration-200 md:flex`}
     >
       <button
         onClick={() => setCollapsed((c) => !c)}
@@ -162,5 +164,33 @@ export function FacultySidebar({ active, onSelect }: FacultySidebarProps) {
         </button>
       </div>
     </aside>
+
+    {/* Mobile bottom nav */}
+    <nav className="fixed bottom-0 left-0 right-0 z-40 flex items-center justify-around gap-1 overflow-x-auto border-t border-neutral-200 bg-white px-1 py-1 md:hidden">
+      {visibleItems.map((item) => {
+        const Icon = item.icon;
+        const isActive = active === item.key;
+        return (
+          <button
+            key={item.key}
+            onClick={() => onSelect(item.key)}
+            className={`flex min-w-16 flex-shrink-0 flex-col items-center gap-0.5 rounded-md px-2 py-1.5 text-[10px] font-medium transition ${
+              isActive ? "text-neutral-900" : "text-neutral-400"
+            }`}
+          >
+            <Icon className={`h-5 w-5 ${isActive ? "stroke-[2.5]" : ""}`} />
+            <span className="max-w-16 truncate">{item.label}</span>
+          </button>
+        );
+      })}
+      <button
+        onClick={handleLogout}
+        className="flex min-w-16 flex-shrink-0 flex-col items-center gap-0.5 rounded-md px-2 py-1.5 text-[10px] font-medium text-neutral-400 transition"
+      >
+        <LogOut className="h-5 w-5" />
+        <span>Logout</span>
+      </button>
+    </nav>
+    </>
   );
 }

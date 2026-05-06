@@ -180,6 +180,14 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/alumni/students/:id"
+            element={
+              <ProtectedRoute allowedRoles={["FACULTY"]}>
+                <FacultyStudentDetail />
+              </ProtectedRoute>
+            }
+          />
 
           {/* Admin */}
           <Route

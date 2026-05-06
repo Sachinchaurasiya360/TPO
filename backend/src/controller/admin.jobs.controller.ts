@@ -2,8 +2,7 @@ import { Request, Response } from "express";
 import prisma from "../lib/prisma";
 import logger from "../../utils/logger/logger";
 import { sendMail } from "../lib/mail";
-import { applicationStatusEmail, newJobPostedEmail } from "../lib/emailTemplates";
-import { enqueueBroadcast } from "../lib/broadcast";
+import { applicationStatusEmail } from "../lib/emailTemplates";
 import {
   jobSchema,
   updateJobSchema,
@@ -109,19 +108,7 @@ export const createJob = async (req: Request, res: Response) => {
         })),
       });
 
-      const { subject, html } = newJobPostedEmail(
-        "{{fullName}}",
-        job.companyName,
-        job.jobTitle,
-        `${process.env.FRONTEND_URL}/student/jobs`
-      );
-      enqueueBroadcast({
-        type: "JOB_POSTED",
-        subject,
-        htmlBody: html,
-        recipientIds,
-        createdById: req.user!.id,
-      }).catch((e) => logger.error({ e }, "Job broadcast enqueue failed"));
+
     }
 
     return res.status(201).json({ job, eligibleCount: eligible.length });

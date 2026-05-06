@@ -162,7 +162,7 @@ export function AdminSidebar({ active, onSelect }: AdminSidebarProps) {
     </aside>
 
     {/* Mobile bottom nav — visible only on small screens */}
-    <nav className="fixed bottom-0 left-0 right-0 z-40 flex items-center justify-around border-t border-neutral-200 bg-white px-2 py-1 md:hidden">
+    <nav className="fixed bottom-0 left-0 right-0 z-40 flex items-center justify-around gap-1 overflow-x-auto border-t border-neutral-200 bg-white px-1 py-1 md:hidden">
       {items.map((item) => {
         const Icon = item.icon;
         const isActive = active === item.key;
@@ -170,18 +170,18 @@ export function AdminSidebar({ active, onSelect }: AdminSidebarProps) {
           <button
             key={item.key}
             onClick={() => onSelect(item.key)}
-            className={`flex flex-col items-center gap-0.5 rounded-md px-2 py-1.5 text-[10px] font-medium transition ${
+            className={`flex min-w-16 flex-shrink-0 flex-col items-center gap-0.5 rounded-md px-2 py-1.5 text-[10px] font-medium transition ${
               isActive ? "text-neutral-900" : "text-neutral-400"
             }`}
           >
             <Icon className={`h-5 w-5 ${ isActive ? "stroke-[2.5]" : ""}`} />
-            <span>{item.label}</span>
+            <span className="max-w-16 truncate">{item.label}</span>
           </button>
         );
       })}
       <button
         onClick={handleLogout}
-        className="flex flex-col items-center gap-0.5 rounded-md px-2 py-1.5 text-[10px] font-medium text-neutral-400 transition"
+        className="flex min-w-16 flex-shrink-0 flex-col items-center gap-0.5 rounded-md px-2 py-1.5 text-[10px] font-medium text-neutral-400 transition"
       >
         <LogOut className="h-5 w-5" />
         <span>Logout</span>

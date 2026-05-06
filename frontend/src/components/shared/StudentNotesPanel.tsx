@@ -101,8 +101,8 @@ export function StudentNotesPanel({ studentId, fetchNotes, addNote, deleteNote }
     user?.role === "ADMIN" || note.author.id === user?.id;
 
   return (
-    <section className="rounded-2xl border border-neutral-200 bg-white p-6">
-      <div className="mb-5 flex items-center gap-2">
+    <section className="rounded-xl border border-neutral-200 bg-white p-4 sm:rounded-2xl sm:p-6">
+      <div className="mb-5 flex flex-wrap items-center gap-2">
         <StickyNote className="h-4 w-4 text-neutral-500" />
         <h3 className="text-sm font-semibold uppercase tracking-wide text-neutral-500">
           Internal Notes
@@ -123,7 +123,7 @@ export function StudentNotesPanel({ studentId, fetchNotes, addNote, deleteNote }
           rows={3}
           className="w-full resize-none rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-neutral-900 placeholder-neutral-400 transition focus:border-neutral-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-neutral-900/10"
         />
-        <div className="mt-2 flex items-center justify-between gap-3">
+        <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
           <span className="text-xs text-neutral-400">{text.length}/2000</span>
           <button
             type="submit"
@@ -154,7 +154,7 @@ export function StudentNotesPanel({ studentId, fetchNotes, addNote, deleteNote }
               key={note.id}
               className="group rounded-xl border border-neutral-200 bg-neutral-50 p-4"
             >
-              <div className="flex items-start justify-between gap-3">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div className="flex min-w-0 items-start gap-2.5">
                   {note.author.profilePic ? (
                     <img
@@ -190,7 +190,7 @@ export function StudentNotesPanel({ studentId, fetchNotes, addNote, deleteNote }
                     type="button"
                     onClick={() => handleDelete(note.id)}
                     disabled={deletingId === note.id}
-                    className="flex-shrink-0 rounded p-1 text-neutral-400 opacity-0 transition hover:bg-red-50 hover:text-red-600 group-hover:opacity-100 disabled:cursor-not-allowed disabled:opacity-40"
+                    className="self-start rounded p-1 text-neutral-400 opacity-100 transition hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-40 sm:flex-shrink-0 sm:opacity-0 sm:group-hover:opacity-100"
                     title="Delete note"
                   >
                     {deletingId === note.id ? (

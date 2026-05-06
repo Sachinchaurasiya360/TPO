@@ -131,6 +131,13 @@ export interface DeptStudentDetail {
     parentsContactNo: string | null;
     skills: string[];
     socialProfile: string | null;
+    alumniProfile: {
+      currentOrg: string | null;
+      currentRole: string | null;
+      package: string | null;
+      graduationYear: number | null;
+      placedBy: string | null;
+    } | null;
   };
   marks: Record<string, unknown> | null;
   internships: Array<Record<string, unknown>>;

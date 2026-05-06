@@ -555,41 +555,50 @@ export const getDeptStudentDetail = async (req: Request, res: Response) => {
     return res.status(400).json({ message: "Invalid id" });
   }
 
-    try {
-      const [user, marks, internships, achievements, certificates, pendingVerifications] =
-        await Promise.all([
-          prisma.user.findFirst({
-            where: { id, role: "STUDENT", department: dept },
-            select: {
-              ...DEPT_STUDENT_SELECT,
-              parentsContactNo: true,
-              skills: true,
-              socialProfile: true,
+  try {
+    const [user, marks, internships, achievements, certificates, pendingVerifications] =
+      await Promise.all([
+        prisma.user.findFirst({
+          where: { id, role: { in: ["STUDENT", "ALUMNI"] }, department: dept },
+          select: {
+            ...DEPT_STUDENT_SELECT,
+            parentsContactNo: true,
+            skills: true,
+            socialProfile: true,
+            alumniProfile: {
+              select: {
+                currentOrg: true,
+                currentRole: true,
+                package: true,
+                graduationYear: true,
+                placedBy: true,
+              },
             },
-          }),
-          prisma.marks.findUnique({ where: { userId: id } }),
-          prisma.internship.findMany({
-            where: { userId: id },
-            orderBy: { startDate: "desc" },
-          }),
-          prisma.achievement.findMany({
-            where: { userId: id },
-            orderBy: { createdAt: "desc" },
-          }),
-          prisma.certificate.findMany({
-            where: { userId: id },
-            orderBy: { createdAt: "desc" },
-          }),
-          prisma.verificationRequest.findMany({
-            where: { userId: id, status: "PENDING" },
-            orderBy: { createdAt: "desc" },
-          }),
-        ]);
+          },
+        }),
+        prisma.marks.findUnique({ where: { userId: id } }),
+        prisma.internship.findMany({
+          where: { userId: id },
+          orderBy: { startDate: "desc" },
+        }),
+        prisma.achievement.findMany({
+          where: { userId: id },
+          orderBy: { createdAt: "desc" },
+        }),
+        prisma.certificate.findMany({
+          where: { userId: id },
+          orderBy: { createdAt: "desc" },
+        }),
+        prisma.verificationRequest.findMany({
+          where: { userId: id, status: "PENDING" },
+          orderBy: { createdAt: "desc" },
+        }),
+      ]);
 
     if (!user) {
       return res
         .status(404)
-        .json({ message: "Student not found in your department" });
+        .json({ message: "Student or alumni not found in your department" });
     }
 
     return res.status(200).json({

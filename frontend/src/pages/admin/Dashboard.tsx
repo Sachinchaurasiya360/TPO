@@ -1500,7 +1500,6 @@ function FilterSelect({ label, value, options, onChange, getLabel }: FilterSelec
 // ==================== JOBS ====================
 
 const JOB_TYPES: JobType[] = ["FULL_TIME", "INTERNSHIP", "PPO"];
-const LOCATION_TYPES: LocationType[] = ["ON_SITE", "REMOTE", "HYBRID"];
 const APP_STATUSES: ApplicationStatus[] = [
   "APPLIED",
   "SHORTLISTED",

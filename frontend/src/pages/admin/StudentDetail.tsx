@@ -80,47 +80,48 @@ export function StudentDetail() {
 
       <div className="flex-1 flex flex-col min-w-0">
         <header className="sticky top-0 z-30 border-b border-neutral-200 bg-white">
-          <div className="mx-auto flex h-16 max-w-6xl items-center gap-4 px-6">
+          <div className="mx-auto flex min-h-16 max-w-6xl items-center gap-3 px-4 py-3 sm:gap-4 md:px-6">
             <Link
               to="/admin?tab=students"
-              className="inline-flex items-center gap-1.5 text-sm text-neutral-600 hover:text-neutral-900"
+              className="inline-flex flex-shrink-0 items-center gap-1.5 text-sm text-neutral-600 hover:text-neutral-900"
             >
               <ArrowLeft className="h-4 w-4" />
               Back
             </Link>
-            <div className="h-4 w-px bg-neutral-200" />
-            <h1 className="text-sm font-semibold text-neutral-900">
+            <div className="hidden h-4 w-px bg-neutral-200 sm:block" />
+            <h1 className="min-w-0 flex-1 truncate text-sm font-semibold text-neutral-900">
               Student details
             </h1>
             <button
               onClick={() => exportStudentProfileToPdf(data)}
-              className="ml-auto inline-flex items-center gap-1.5 rounded-md border border-neutral-200 px-3 py-1.5 text-sm font-medium text-neutral-700 hover:border-neutral-900 hover:text-neutral-900"
+              className="inline-flex flex-shrink-0 items-center gap-1.5 rounded-md border border-neutral-200 px-2.5 py-1.5 text-sm font-medium text-neutral-700 hover:border-neutral-900 hover:text-neutral-900 sm:px-3"
             >
               <Download className="h-3.5 w-3.5" />
-              Export PDF
+              <span className="hidden sm:inline">Export PDF</span>
+              <span className="sm:hidden">PDF</span>
             </button>
           </div>
         </header>
 
-        <main className="mx-auto w-full max-w-6xl space-y-6 px-4 py-6 pb-24 md:px-6 md:py-8 md:pb-8">
+        <main className="mx-auto w-full max-w-6xl space-y-4 px-3 py-4 pb-24 sm:px-4 sm:py-6 md:space-y-6 md:px-6 md:py-8 md:pb-8">
         {/* Profile header */}
-        <section className="rounded-2xl border border-neutral-200 bg-white p-6">
-          <div className="flex flex-wrap items-start gap-5">
+        <section className="rounded-xl border border-neutral-200 bg-white p-4 sm:rounded-2xl sm:p-6">
+          <div className="flex flex-col items-start gap-4 sm:flex-row sm:flex-wrap sm:gap-5">
             {user.profilePic ? (
               <img
                 src={user.profilePic}
                 alt={user.fullName}
-                className="h-20 w-20 rounded-full object-cover ring-1 ring-neutral-200"
+                className="h-16 w-16 rounded-full object-cover ring-1 ring-neutral-200 sm:h-20 sm:w-20"
               />
             ) : (
-              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-neutral-900 text-lg font-bold text-white">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-neutral-900 text-base font-bold text-white sm:h-20 sm:w-20 sm:text-lg">
                 {initials}
               </div>
             )}
 
-            <div className="min-w-0 flex-1">
+            <div className="min-w-0 flex-1 self-stretch">
               <div className="flex flex-wrap items-center gap-2">
-                <h2 className="text-2xl font-semibold tracking-tight text-neutral-900">
+                <h2 className="min-w-0 break-words text-xl font-semibold tracking-tight text-neutral-900 sm:text-2xl">
                   {user.fullName}
                 </h2>
                 <span
@@ -193,7 +194,7 @@ export function StudentDetail() {
                     href={user.resumeUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center gap-1.5 rounded-md border border-neutral-200 px-3 py-1.5 font-medium text-neutral-700 hover:border-neutral-900 hover:text-neutral-900"
+                    className="inline-flex min-w-0 items-center gap-1.5 rounded-md border border-neutral-200 px-3 py-1.5 font-medium text-neutral-700 hover:border-neutral-900 hover:text-neutral-900"
                   >
                     <FileText className="h-4 w-4" />
                     Resume
@@ -205,7 +206,7 @@ export function StudentDetail() {
                     href={user.socialProfile}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center gap-1.5 rounded-md border border-neutral-200 px-3 py-1.5 font-medium text-neutral-700 hover:border-neutral-900 hover:text-neutral-900"
+                    className="inline-flex min-w-0 items-center gap-1.5 rounded-md border border-neutral-200 px-3 py-1.5 font-medium text-neutral-700 hover:border-neutral-900 hover:text-neutral-900"
                   >
                     LinkedIn
                     <ExternalLink className="h-3 w-3" />
@@ -215,7 +216,7 @@ export function StudentDetail() {
             </div>
 
             {user.avgCgpa !== null && user.avgCgpa !== undefined && (
-              <div className="rounded-xl border border-neutral-200 bg-neutral-50 px-5 py-4 text-center">
+              <div className="w-full rounded-xl border border-neutral-200 bg-neutral-50 px-5 py-4 text-center sm:w-auto">
                 <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
                   Avg CGPA
                 </p>
@@ -257,7 +258,7 @@ export function StudentDetail() {
                   key={p.id}
                   className="rounded-xl border border-neutral-200 bg-neutral-50 p-4"
                 >
-                  <div className="flex items-start justify-between gap-3">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
                         <FolderGit2 className="h-4 w-4 flex-shrink-0 text-neutral-400" />
@@ -294,7 +295,7 @@ export function StudentDetail() {
                     </div>
                   )}
                   {(p.projectUrl || p.repoUrl) && (
-                    <div className="mt-3 flex gap-3 text-xs">
+                    <div className="mt-3 flex flex-wrap gap-3 text-xs">
                       {p.projectUrl && (
                         <a
                           href={p.projectUrl}
@@ -354,8 +355,8 @@ export function StudentDetail() {
                 const it = i as Record<string, unknown>;
                 return (
                   <li key={String(it.id)} className="py-3">
-                    <div className="flex flex-wrap items-start justify-between gap-2">
-                      <div>
+                    <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
+                      <div className="min-w-0">
                         <p className="font-medium text-neutral-900">
                           {String(it.role)} · {String(it.companyName)}
                         </p>
@@ -392,8 +393,8 @@ export function StudentDetail() {
                 const ac = a as Record<string, unknown>;
                 return (
                   <li key={String(ac.id)} className="py-3">
-                    <div className="flex flex-wrap items-start justify-between gap-2">
-                      <div>
+                    <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
+                      <div className="min-w-0">
                         <p className="font-medium text-neutral-900">
                           {String(ac.title)}
                         </p>
@@ -505,7 +506,7 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section className="rounded-2xl border border-neutral-200 bg-white p-6">
+    <section className="rounded-xl border border-neutral-200 bg-white p-4 sm:rounded-2xl sm:p-6">
       <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-neutral-500">
         {title}
       </h3>

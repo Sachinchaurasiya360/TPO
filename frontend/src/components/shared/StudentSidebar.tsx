@@ -10,11 +10,11 @@ import {
   Brain,
   FolderGit2,
   Megaphone,
-  UsersRound,
   LogOut,
   ChevronLeft,
   ChevronRight,
   ShieldCheck,
+  UsersRound,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useLogout } from "@/lib/useLogout";

@@ -30,7 +30,6 @@ import {
   type DeptStudentFilters,
   type DeptFacultyItem,
   type AlumniListItem,
-  type AlumniListResponse,
 } from "@/lib/facultyApi";
 import {
   ClipboardCheck,
@@ -114,10 +113,10 @@ export function FacultyDashboard() {
       <FacultySidebar active={tab} onSelect={setTab} />
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b border-neutral-200 bg-white px-6">
-          <div>
+        <header className="sticky top-0 z-30 flex min-h-16 items-center justify-between gap-3 border-b border-neutral-200 bg-white px-4 py-3 md:px-6">
+          <div className="min-w-0">
             <h1 className="text-lg font-semibold text-neutral-900">{title}</h1>
-            <p className="text-xs text-neutral-500">
+            <p className="line-clamp-2 text-xs text-neutral-500">
               {subtitle}
               {user?.department && (
                 <>
@@ -129,7 +128,7 @@ export function FacultyDashboard() {
               )}
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-shrink-0 items-center gap-3">
             {user && <NotificationBell />}
             <div className="hidden items-center gap-2 sm:flex">
               {user?.profilePic ? (
@@ -158,7 +157,7 @@ export function FacultyDashboard() {
           </div>
         </header>
 
-        <main className="flex-1 p-6">
+        <main className="flex-1 p-4 pb-24 md:p-6 md:pb-6">
           <div className="mx-auto max-w-7xl">
             {tab === "overview" && <OverviewTab onNavigate={setTab} />}
             {tab === "queue" && <QueueTab />}
@@ -1091,7 +1090,12 @@ function AlumniTab() {
                             {a.fullName.slice(0, 2).toUpperCase()}
                           </div>
                         )}
-                        <span className="font-medium text-neutral-900">{a.fullName}</span>
+                        <Link
+                          to={`/alumni/students/${a.id}`}
+                          className="font-medium text-neutral-900 hover:text-neutral-600 hover:underline"
+                        >
+                          {a.fullName}
+                        </Link>
                       </div>
                     </td>
                     <td className="px-4 py-3 text-neutral-600">{a.alumniProfile?.currentOrg ?? "—"}</td>
