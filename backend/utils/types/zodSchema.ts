@@ -100,7 +100,7 @@ export const ambassadorRoleValues = [
 export const ambassadorAssignmentSchema = z.object({
   studentId: z.coerce.number().int().positive(),
   roleName: z.enum(ambassadorRoleValues),
-  servedAcademicYear: z.nativeEnum(AcademicYear),
+  servedAcademicYear: z.string().regex(/^\d{4}-\d{2}$/, "Format must be YYYY-YY e.g. 2024-25"),
 });
 
 // ==================== PROFILE UPDATE ====================

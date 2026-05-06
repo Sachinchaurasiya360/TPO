@@ -18,6 +18,11 @@ import {
   listStudents,
   getStudentDetail,
   graduateStudent,
+  listAdminPendingVerifications,
+  adminReviewVerificationRequest,
+  adminReviewInternship,
+  adminReviewAchievement,
+  adminReviewCertificate,
 } from "../controller/admin.students.controller";
 import {
   listStudentNotes,
@@ -76,6 +81,13 @@ router.patch("/faculty/:id", updateFaculty);
 router.get("/students", listStudents);
 router.get("/students/:id", getStudentDetail);
 router.post("/students/:id/graduate", graduateStudent);
+
+// Admin verification queue (all departments)
+router.get("/verifications", listAdminPendingVerifications);
+router.post("/verifications/:id/review", adminReviewVerificationRequest);
+router.post("/internships/:id/review", adminReviewInternship);
+router.post("/achievements/:id/review", adminReviewAchievement);
+router.post("/certificates/:id/review", adminReviewCertificate);
 
 // Student notes
 router.get("/students/:id/notes", listStudentNotes);
