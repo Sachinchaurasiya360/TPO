@@ -22,8 +22,8 @@ import {
   type StudentListItem,
 } from "@/lib/adminApi";
 import { ShieldCheck, Plus, Search, Trash2 } from "lucide-react";
-import { departmentLabel, type AcademicYear } from "@/lib/studentApi";
-import { YEARS, YEAR_LABELS } from "./shared";
+import { departmentLabel } from "@/lib/studentApi";
+import { YEAR_LABELS } from "./shared";
 
 export function AmbassadorsTab() {
   const [assignments, setAssignments] = useState<AmbassadorAssignment[]>([]);
@@ -37,18 +37,19 @@ export function AmbassadorsTab() {
     const y = new Date().getFullYear();
     return `${y}-${String(y + 1).slice(-2)}`;
   });
-  const [yearFilter, setYearFilter] = useState<AcademicYear | "">("");
+  const [yearFilter, setYearFilter] = useState<string>("");
   const [saving, setSaving] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const [assignmentData, studentData] = await Promise.all([
+      const [assignmentData, studentData, alumniData] = await Promise.all([
         listAmbassadors(),
         listStudents({ page: 1, limit: 100, role: "STUDENT" }),
+        listStudents({ page: 1, limit: 100, role: "ALUMNI" }),
       ]);
       setAssignments(assignmentData);
-      setStudents(studentData.items);
+      setStudents([...studentData.items, ...alumniData.items]);
     } catch (e) {
       toast.error(extractErrorMessage(e));
     } finally {
@@ -86,7 +87,7 @@ export function AmbassadorsTab() {
   })();
 
   const filteredAssignments = yearFilter
-    ? assignments.filter((a) => a.student.academicYear === yearFilter)
+    ? assignments.filter((a) => a.servedAcademicYear === yearFilter)
     : assignments;
 
   const grouped = filteredAssignments.reduce<Record<string, AmbassadorAssignment[]>>(
@@ -121,16 +122,16 @@ export function AmbassadorsTab() {
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <div>
-              <label className="text-xs text-muted-foreground">Filter by student year</label>
+              <label className="text-xs text-muted-foreground">Filter by served year</label>
               <select
                 className="h-9 w-40 rounded-md border bg-background px-3 text-sm"
                 value={yearFilter}
-                onChange={(e) => setYearFilter(e.target.value as AcademicYear | "")}
+                onChange={(e) => setYearFilter(e.target.value)}
               >
                 <option value="">All years</option>
-                {YEARS.map((y) => (
-                  <option key={y} value={y}>
-                    {YEAR_LABELS[y]}
+                {servedYearOptions.map((yr) => (
+                  <option key={yr} value={yr}>
+                    {yr}
                   </option>
                 ))}
               </select>
@@ -267,7 +268,7 @@ export function AmbassadorsTab() {
                               : "text-neutral-500"
                           }`}
                         >
-                          {student.academicYear ? YEAR_LABELS[student.academicYear] : "—"}
+                          {student.academicYear ? YEAR_LABELS[student.academicYear] : "Alumni"}
                         </span>
                       </button>
                     </li>
