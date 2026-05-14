@@ -1,9 +1,0 @@
-{
-  "buildCommand": "npx prisma generate && npx tsc -p tsconfig.json && npm run db:deploy || true",
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/src/index.ts"
-    }
-  ]
-}

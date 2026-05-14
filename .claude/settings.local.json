@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -I https://cdn.simpleicons.org/tcs)",
+      "Bash(curl -I https://cdn.simpleicons.org/infosys)",
+      "Bash(curl -I https://cdn.simpleicons.org/wipro)",
+      "Bash(curl -I https://cdn.simpleicons.org/cognizant)",
+      "Bash(curl -I https://cdn.simpleicons.org/techmahindra)",
+      "Bash(curl -I https://cdn.simpleicons.org/hcltech)",
+      "Bash(curl -I https://cdn.simpleicons.org/hcl)",
+      "Bash(findstr /v \"npm warn\")",
+      "Bash(Get-ChildItem -Path 'c:\\\\CodeBase\\\\TPO\\\\src\\\\app\\\\api\\\\v1' -Recurse -Include 'route.ts')",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Bash(Sort-Object)",
+      "Bash(mkdir -p \"c:\\\\CodeBase\\\\TPO\\\\src\\\\app\\\\api\\\\v1\\\\student\\\\internships\\\\[id]\" \"c:\\\\CodeBase\\\\TPO\\\\src\\\\app\\\\api\\\\v1\\\\student\\\\achievements\\\\[id]\" \"c:\\\\CodeBase\\\\TPO\\\\src\\\\app\\\\api\\\\v1\\\\student\\\\projects\\\\[id]\" \"c:\\\\CodeBase\\\\TPO\\\\src\\\\app\\\\api\\\\v1\\\\student\\\\certificates\\\\[id]\")",
+      "Bash(New-Item -ItemType Directory -Force \"c:\\\\CodeBase\\\\TPO\\\\src\\\\app\\\\api\\\\v1\\\\student\\\\profile\\\\profile-pic\")",
+      "Bash(Out-Null)",
+      "Bash(New-Item -ItemType Directory -Force \"c:\\\\CodeBase\\\\TPO\\\\src\\\\app\\\\api\\\\v1\\\\student\\\\profile\\\\resume\")",
+      "Bash(New-Item -ItemType Directory -Force \"c:\\\\CodeBase\\\\TPO\\\\src\\\\app\\\\api\\\\v1\\\\student\\\\uploads\\\\certificate\")",
+      "Bash(Write-Output \"Directories created\")",
+      "Bash(New-Item -ItemType Directory -Force \"c:/CodeBase/TPO/src/app/api/v1/aptitude/student/tests\")",
+      "Bash(New-Item -ItemType Directory -Force \"c:/CodeBase/TPO/src/app/api/v1/aptitude/student/tests/[id]/start\")",
+      "Bash(New-Item -ItemType Directory -Force \"c:/CodeBase/TPO/src/app/api/v1/aptitude/student/submissions/[id]/submit\")",
+      "Bash(New-Item -ItemType Directory -Force \"c:/CodeBase/TPO/src/app/api/v1/aptitude/student/submissions/[id]\")",
+      "PowerShell(New-Item -ItemType Directory -Force \"c:\\\\CodeBase\\\\TPO\\\\src\\\\app\\\\api\\\\v1\\\\student\\\\profile\\\\profile-pic\")",
+      "PowerShell(New-Item -ItemType Directory -Force \"c:\\\\CodeBase\\\\TPO\\\\src\\\\app\\\\api\\\\v1\\\\student\\\\profile\\\\resume\")",
+      "PowerShell(New-Item -ItemType Directory -Force \"c:\\\\CodeBase\\\\TPO\\\\src\\\\app\\\\api\\\\v1\\\\student\\\\uploads\\\\certificate\")",
+      "Bash(mkdir -p \"c:/CodeBase/TPO/src/app/api/v1/aptitude/student/tests\" \"c:/CodeBase/TPO/src/app/api/v1/aptitude/student/tests/[id]/start\" \"c:/CodeBase/TPO/src/app/api/v1/aptitude/student/submissions/[id]/submit\" && echo \"done\")",
+      "Bash(Remove-Item -Recurse -Force \"c:\\\\CodeBase\\\\TPO\\\\src\\\\app\\\\student\\\\certificates\")",
+      "Bash(Remove-Item -Force \"c:\\\\CodeBase\\\\TPO\\\\src\\\\pages\\\\student\\\\Certificates.tsx\")"
+    ],
+    "additionalDirectories": [
+      "c:\\CodeBase\\TPO\\src\\app\\api\\v1\\student\\internships",
+      "c:\\CodeBase\\TPO\\src\\app\\api\\v1\\aptitude\\student\\tests\\[id]"
+    ]
+  }
+}
