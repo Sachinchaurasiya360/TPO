@@ -30,6 +30,7 @@ import { extractErrorMessage } from "@/lib/api/base";
 import { AdminSidebar, type AdminTab } from "@/components/shared/AdminSidebar";
 import { exportStudentProfileToPdf } from "@/lib/studentProfileExport";
 import { StudentNotesPanel } from "@/components/shared/StudentNotesPanel";
+import { resumeViewUrl } from "@/lib/utils";
 
 export function StudentDetail() {
   const { id } = useParams<{ id: string }>();
@@ -252,7 +253,7 @@ export function StudentDetail() {
               <div className="mt-4 flex flex-wrap gap-3 text-sm">
                 {user.resumeUrl && (
                   <a
-                    href={user.resumeUrl}
+                    href={resumeViewUrl(user.resumeUrl)}
                     target="_blank"
                     rel="noreferrer"
                     className="inline-flex min-w-0 items-center gap-1.5 rounded-md border border-neutral-200 px-3 py-1.5 font-medium text-neutral-700 hover:border-neutral-900 hover:text-neutral-900"
@@ -565,6 +566,17 @@ export function StudentDetail() {
                             {String(it.duration)}
                           </p>
                         ) : null}
+                        {it.certificateUrl ? (
+                          <a
+                            href={String(it.certificateUrl)}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="mt-1 inline-flex items-center gap-1 text-xs font-medium text-neutral-900 underline"
+                          >
+                            <ExternalLink className="h-3 w-3" />
+                            View certificate
+                          </a>
+                        ) : null}
                       </div>
                       {(it as { isVerified?: boolean }).isVerified ? (
                         <span className="rounded bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
@@ -602,6 +614,17 @@ export function StudentDetail() {
                           <p className="text-xs text-neutral-500">
                             {String(ac.category)}
                           </p>
+                        ) : null}
+                        {ac.certificateUrl ? (
+                          <a
+                            href={String(ac.certificateUrl)}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="mt-1 inline-flex items-center gap-1 text-xs font-medium text-neutral-900 underline"
+                          >
+                            <ExternalLink className="h-3 w-3" />
+                            View certificate
+                          </a>
                         ) : null}
                       </div>
                       {(ac as { isVerified?: boolean }).isVerified ? (

@@ -1,6 +1,4 @@
 ﻿"use client";
-import { toast } from "sonner";
-
 
 import { useEffect, useState, useCallback } from "react";
 import { toast } from "sonner";
@@ -34,6 +32,7 @@ import {
   type AlumniPostType,
   type AcademicHistoryResponse,
 } from "@/lib/api/alumni";
+import { resumeViewUrl } from "@/lib/utils";
 import {
   AlumniFeedView,
   AlumniDirectoryView,
@@ -1151,7 +1150,7 @@ function AcademicHistoryTab() {
               <div className="mt-2 flex flex-wrap gap-3 text-xs text-neutral-500">
                 {user.resumeUrl && (
                   <a
-                    href={user.resumeUrl}
+                    href={resumeViewUrl(user.resumeUrl)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-1 text-blue-600 hover:underline"

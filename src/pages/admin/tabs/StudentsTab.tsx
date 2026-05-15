@@ -34,8 +34,7 @@ type StudentColKey =
   | "department"
   | "year"
   | "cgpa"
-  | "placed"
-  | "status";
+  | "placed";
 
 const STUDENT_COLS: { key: StudentColKey; label: string }[] = [
   { key: "email", label: "Email" },
@@ -44,7 +43,6 @@ const STUDENT_COLS: { key: StudentColKey; label: string }[] = [
   { key: "year", label: "Year" },
   { key: "cgpa", label: "CGPA" },
   { key: "placed", label: "Placed" },
-  { key: "status", label: "Status" },
 ];
 
 const DEFAULT_STUDENT_COLS: Record<StudentColKey, boolean> = {
@@ -54,10 +52,9 @@ const DEFAULT_STUDENT_COLS: Record<StudentColKey, boolean> = {
   year: true,
   cgpa: true,
   placed: true,
-  status: true,
 };
 
-const STUDENT_COLS_STORAGE_KEY = "admin.students.visibleCols.v1";
+const STUDENT_COLS_STORAGE_KEY = "admin.students.visibleCols.v2";
 
 export function StudentsTab() {
   const router = useRouter();
@@ -452,7 +449,6 @@ export function StudentsTab() {
                       {visibleCols.year && <th className="py-2 pr-4">Year</th>}
                       {visibleCols.cgpa && <th className="py-2 pr-4">CGPA</th>}
                       {visibleCols.placed && <th className="py-2 pr-4">Placed</th>}
-                      {visibleCols.status && <th className="py-2 pr-4">Status</th>}
                       <th className="py-2 pr-4 text-right">Actions</th>
                     </tr>
                   </thead>
@@ -498,24 +494,6 @@ export function StudentsTab() {
                             >
                               {s.isPlaced ? "Placed" : "Not Placed"}
                             </span>
-                          </td>
-                        )}
-                        {visibleCols.status && (
-                          <td className="py-3 pr-4">
-                            <span
-                              className={`text-xs px-2 py-0.5 rounded ${
-                                s.isActive
-                                  ? "bg-green-100 text-green-800"
-                                  : "bg-gray-200 text-gray-700"
-                              }`}
-                            >
-                              {s.isActive ? "Active" : "Inactive"}
-                            </span>
-                            {!s.isVerified && (
-                              <span className="ml-1 text-xs px-2 py-0.5 rounded bg-yellow-100 text-yellow-800">
-                                Unverified
-                              </span>
-                            )}
                           </td>
                         )}
                         <td className="py-3 pr-4 text-right space-x-2">

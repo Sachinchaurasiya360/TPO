@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FieldGroup, Field, FieldLabel } from "@/components/ui/field";
 import { extractErrorMessage } from "@/lib/api/base";
+import { resumeViewUrl } from "@/lib/utils";
 import {
   adminListJobs,
   adminCreateJob,
@@ -427,7 +428,7 @@ function JobApplicantsView({
                       {a.student.resumeUrl && (
                         <a
                           className="text-xs text-blue-600 underline"
-                          href={a.student.resumeUrl}
+                          href={resumeViewUrl(a.student.resumeUrl)}
                           target="_blank"
                           rel="noreferrer"
                         >

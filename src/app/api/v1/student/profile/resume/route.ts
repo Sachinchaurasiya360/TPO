@@ -16,6 +16,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: "No file provided" }, { status: 400 });
     }
 
+    if ((file as File).type !== "application/pdf") {
+      return NextResponse.json({ message: "Only PDF files are accepted" }, { status: 400 });
+    }
+
     if (file.size > MAX_FILE_SIZE_BYTES) {
       return NextResponse.json({ message: "File exceeds 2 MB limit" }, { status: 400 });
     }
@@ -24,6 +28,7 @@ export async function POST(request: NextRequest) {
     const result = await uploadBuffer(buffer, {
       folder: "tpo/resumes",
       resourceType: "raw",
+      publicId: `resume-${user.id}.pdf`,
     });
 
     await prisma.user.update({

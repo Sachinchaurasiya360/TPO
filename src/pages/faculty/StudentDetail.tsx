@@ -28,6 +28,7 @@ import {
 } from "@/lib/api/faculty";
 import { departmentLabel } from "@/lib/api/student";
 import { extractErrorMessage } from "@/lib/api/base";
+import { resumeViewUrl } from "@/lib/utils";
 import {
   FacultySidebar,
   type FacultyTab,
@@ -59,7 +60,7 @@ export function FacultyStudentDetail() {
         setLoading(false);
       }
     })();
-  }, [id, navigate]);
+  }, [id, router]);
 
   const handleSelectTab = (t: FacultyTab) => {
     router.push(t === "overview" ? "/faculty" : `/faculty?tab=${t}`);
@@ -188,7 +189,7 @@ export function FacultyStudentDetail() {
                 <div className="mt-4 flex flex-wrap gap-3 text-sm">
                   {user.resumeUrl && (
                     <a
-                      href={user.resumeUrl}
+                      href={resumeViewUrl(user.resumeUrl)}
                       target="_blank"
                       rel="noreferrer"
                       className="inline-flex items-center gap-1.5 rounded-md border border-neutral-200 px-3 py-1.5 font-medium text-neutral-700 hover:border-neutral-900 hover:text-neutral-900"
@@ -287,11 +288,19 @@ export function FacultyStudentDetail() {
                   label="SSC %"
                   value={marks.sscPercentage as number | null}
                   suffix="%"
+                  pdfUrl={marks.sscMarksheetUrl as string | null}
                 />
                 <Metric
                   label="HSC %"
                   value={marks.hscPercentage as number | null}
                   suffix="%"
+                  pdfUrl={marks.hscMarksheetUrl as string | null}
+                />
+                <Metric
+                  label="Diploma %"
+                  value={marks.diplomaPercentage as number | null}
+                  suffix="%"
+                  pdfUrl={marks.diplomaMarksheetUrl as string | null}
                 />
                 {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
                   <Metric
@@ -299,6 +308,10 @@ export function FacultyStudentDetail() {
                     label={`Sem ${n}`}
                     value={
                       (marks[`sem${n}` as keyof typeof marks] as number | null) ??
+                      null
+                    }
+                    pdfUrl={
+                      (marks[`sem${n}MarksheetUrl` as keyof typeof marks] as string | null) ??
                       null
                     }
                   />
@@ -325,6 +338,17 @@ export function FacultyStudentDetail() {
                             <p className="text-xs text-neutral-500">
                               {String(it.duration)}
                             </p>
+                          ) : null}
+                          {it.certificateUrl ? (
+                            <a
+                              href={String(it.certificateUrl)}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="mt-1 inline-flex items-center gap-1 text-xs font-medium text-neutral-900 underline"
+                            >
+                              <ExternalLink className="h-3 w-3" />
+                              View certificate
+                            </a>
                           ) : null}
                         </div>
                         {(it as { isVerified?: boolean }).isVerified ? (
@@ -362,6 +386,17 @@ export function FacultyStudentDetail() {
                             <p className="text-xs text-neutral-500">
                               {String(ac.category)}
                             </p>
+                          ) : null}
+                          {ac.certificateUrl ? (
+                            <a
+                              href={String(ac.certificateUrl)}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="mt-1 inline-flex items-center gap-1 text-xs font-medium text-neutral-900 underline"
+                            >
+                              <ExternalLink className="h-3 w-3" />
+                              View certificate
+                            </a>
                           ) : null}
                         </div>
                         {(ac as { isVerified?: boolean }).isVerified ? (
@@ -501,10 +536,12 @@ function Metric({
   label,
   value,
   suffix,
+  pdfUrl,
 }: {
   label: string;
   value: number | null;
   suffix?: string;
+  pdfUrl?: string | null;
 }) {
   return (
     <div className="rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2.5">
@@ -514,6 +551,17 @@ function Metric({
       <p className="mt-0.5 text-base font-semibold text-neutral-900">
         {value !== null && value !== undefined ? `${value}${suffix ?? ""}` : "—"}
       </p>
+      {pdfUrl && (
+        <a
+          href={pdfUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="mt-1.5 inline-flex items-center gap-1 text-[10px] font-medium text-neutral-600 underline hover:text-neutral-900"
+        >
+          <ExternalLink className="h-2.5 w-2.5" />
+          Marksheet
+        </a>
+      )}
     </div>
   );
 }

@@ -8,30 +8,30 @@ export async function POST(
 ) {
   const user = await getAuthUser(request);
   if (!user) return unauthorized();
-  if (user.role !== "ADMIN") return forbidden();
+  if (user.role !== "FACULTY") return forbidden();
 
   const { id } = await params;
-  const body = await request.json();
-  const { status, remarks } = body as { status: string; remarks?: string };
+  const body = await request.json() as { status: string; remarks?: string };
+  const { status, remarks } = body;
 
   if (!["APPROVED", "REJECTED"].includes(status)) {
     return NextResponse.json({ message: "Invalid status" }, { status: 400 });
   }
 
   try {
-    const vr = await prisma.verificationRequest.findUnique({ where: { id } });
-    if (!vr) {
-      return NextResponse.json({ message: "Not found" }, { status: 404 });
-    }
+    const vr = await prisma.verificationRequest.findUnique({
+      where: { id },
+      include: { student: { select: { department: true } } },
+    });
+
+    if (!vr) return NextResponse.json({ message: "Not found" }, { status: 404 });
     if (vr.status !== "PENDING") {
       return NextResponse.json({ message: "Already reviewed" }, { status: 409 });
     }
+    if (vr.student.department !== user.department) return forbidden();
 
     if (status === "APPROVED") {
-      const changes = vr.changes as Record<
-        string,
-        { oldValue: unknown; newValue: unknown }
-      >;
+      const changes = vr.changes as Record<string, { oldValue: unknown; newValue: unknown }>;
       const updates: Record<string, unknown> = {};
       for (const [field, diff] of Object.entries(changes)) {
         updates[field] = diff.newValue;
@@ -46,9 +46,6 @@ export async function POST(
           update: updates,
         });
       }
-    } else if (status === "REJECTED" && vr.entityType === "PROFILE") {
-      await prisma.user.delete({ where: { id: vr.userId } });
-      return NextResponse.json({ message: "Student account deleted" });
     }
 
     await prisma.verificationRequest.update({
@@ -63,7 +60,7 @@ export async function POST(
 
     return NextResponse.json({ message: "Review submitted" });
   } catch (error) {
-    console.error("[admin/verifications/review]", error);
+    console.error("[faculty/verifications/review POST]", error);
     return NextResponse.json({ message: "Internal server error" }, { status: 500 });
   }
 }

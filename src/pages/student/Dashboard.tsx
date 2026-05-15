@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { StudentLayout } from "@/components/shared/StudentLayout";
 import { extractErrorMessage } from "@/lib/api/base";
+import { resumeViewUrl } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 import {
   getProfile,
@@ -382,7 +383,7 @@ export function StudentDashboard() {
                 <div className="min-w-0 flex-1">
                   {profile.resumeUrl ? (
                     <a
-                      href={profile.resumeUrl}
+                      href={resumeViewUrl(profile.resumeUrl)}
                       target="_blank"
                       rel="noreferrer"
                       className="inline-flex items-center gap-1.5 text-sm font-medium text-neutral-900 hover:underline"
