@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
   if (user.role !== "ADMIN") return forbidden();
 
   try {
-    const events = await prisma.event.findMany({ orderBy: { date: "desc" } });
+    const events = await prisma.event.findMany({ orderBy: { eventDate: "desc" } });
     return NextResponse.json({ events });
   } catch (error) {
     console.error("[admin/events GET]", error);

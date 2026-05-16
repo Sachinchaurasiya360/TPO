@@ -1,3 +1,3 @@
 "use client";
 
-export { FacultyDetail as default } from "@/pages/admin/FacultyDetail";
+export { FacultyDetail as default } from "@/views/admin/FacultyDetail";

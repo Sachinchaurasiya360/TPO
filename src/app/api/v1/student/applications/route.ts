@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
 
   try {
     const applications = await prisma.jobApplication.findMany({
-      where: { userId: user.id },
+      where: { studentId: user.id },
       include: { job: true },
       orderBy: { appliedAt: "desc" },
     });
@@ -27,12 +27,12 @@ export async function POST(request: NextRequest) {
 
   try {
     const { jobId } = await request.json();
-    const existing = await prisma.jobApplication.findFirst({ where: { userId: user.id, jobId } });
+    const existing = await prisma.jobApplication.findFirst({ where: { studentId: user.id, jobId } });
     if (existing) {
       return NextResponse.json({ message: "Already applied to this job." }, { status: 409 });
     }
     const application = await prisma.jobApplication.create({
-      data: { userId: user.id, jobId },
+      data: { studentId: user.id, jobId },
     });
     return NextResponse.json({ application }, { status: 201 });
   } catch (error) {

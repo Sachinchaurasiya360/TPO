@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
-export { default } from "@/pages/public/LandingPage";
+export { default } from "@/views/public/LandingPage";
 

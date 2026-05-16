@@ -93,7 +93,7 @@ export function FacultyStudentDetail() {
         <header className="sticky top-0 z-30 border-b border-neutral-200 bg-white">
           <div className="mx-auto flex min-h-16 max-w-6xl items-center gap-3 px-4 py-3 sm:gap-4 md:px-6">
             <Link
-              to={backTo}
+              href={backTo}
               className="inline-flex flex-shrink-0 items-center gap-1.5 text-sm text-neutral-600 hover:text-neutral-900"
             >
               <ArrowLeft className="h-4 w-4" />

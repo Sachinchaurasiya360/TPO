@@ -15,6 +15,8 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
+  LibraryBig,
+  Brain,
 } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
@@ -29,7 +31,9 @@ export type AdminTab =
   | "jobs"
   | "events"
   | "startups"
-  | "ambassadors";
+  | "ambassadors"
+  | "resources"
+  | "aptitude";
 
 interface Item {
   key: AdminTab;
@@ -47,6 +51,8 @@ const items: Item[] = [
   { key: "events", label: "Events", icon: Calendar },
   { key: "startups", label: "Startups", icon: Rocket },
   { key: "ambassadors", label: "Student Ambassador", icon: ShieldCheck },
+  { key: "resources", label: "Resources", icon: LibraryBig },
+  { key: "aptitude", label: "Aptitude Results", icon: Brain },
 ];
 
 interface AdminSidebarProps {

@@ -124,6 +124,15 @@ enum SubmissionStatus {
   IN_PROGRESS
   SUBMITTED
   REVIEWED
+  DISQUALIFIED
+}
+
+enum ResourceFileType {
+  QUESTION_PAPER
+  SYLLABUS
+  EXAM_FORM
+  OTHER_FORM
+  OTHER
 }
 
 enum BroadcastStatus {
@@ -216,6 +225,9 @@ model User {
   aptitudeTestsCreated  AptitudeTest[]      @relation("AptitudeTestAuthor")
   testSubmissions       TestSubmission[]    @relation("StudentSubmissions")
   submissionReviews     TestSubmission[]    @relation("FacultySubmissionReviews")
+
+  // Relations - resources
+  resourcesAdded        Resource[]
 
   // Relations - certificates
   certificates          Certificate[]
@@ -589,6 +601,7 @@ model AptitudeTest {
   createdBy        User         @relation("AptitudeTestAuthor", fields: [createdById], references: [id])
 
   questions        Question[]
+  sections         AptitudeSection[]
   submissions      TestSubmission[]
 
   createdAt        DateTime     @default(now())
@@ -598,20 +611,37 @@ model AptitudeTest {
   @@index([createdById])
 }
 
+model AptitudeSection {
+  id          String       @id @default(cuid())
+  testId      Int
+  test        AptitudeTest @relation(fields: [testId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  order       Int          @default(0)
+  timeLimit   Int?
+  questions   Question[]
+  createdAt   DateTime     @default(now())
+
+  @@index([testId])
+}
+
 model Question {
-  id            Int          @id @default(autoincrement())
+  id            Int              @id @default(autoincrement())
   testId        Int
-  test          AptitudeTest @relation(fields: [testId], references: [id], onDelete: Cascade)
+  test          AptitudeTest     @relation(fields: [testId], references: [id], onDelete: Cascade)
+  sectionId     String?
+  section       AptitudeSection? @relation(fields: [sectionId], references: [id])
 
   question      String
   option1       String
   option2       String?
   option3       String?
   option4       String?
-  correctOption String       // "1" | "2" | "3" | "4"
+  correctOption String
   marks         Int
 
   @@index([testId])
+  @@index([sectionId])
 }
 
 model TestSubmission {
@@ -625,10 +655,11 @@ model TestSubmission {
   startedAt       DateTime         @default(now())
   submittedAt     DateTime?
 
-  answers         Json             // { [questionId: string]: "1"|"2"|"3"|"4" }
-  autoScore       Int?             // Auto-graded from MCQs
-  finalScore      Int?             // Faculty-verified
+  answers         Json
+  autoScore       Int?
+  finalScore      Int?
   tabSwitchCount  Int              @default(0)
+  violations      Int              @default(0)
 
   status          SubmissionStatus @default(IN_PROGRESS)
   reviewedById    Int?
@@ -665,6 +696,28 @@ model BroadcastJob {
 
   @@index([status])
   @@index([createdAt])
+}
+
+// ==================== RESOURCES ====================
+
+model Resource {
+  id           String          @id @default(cuid())
+  title        String
+  description  String?
+  fileUrl      String
+  fileType     ResourceFileType
+  department   Department?
+  academicYear AcademicYear?
+  addedById    Int
+  addedBy      User            @relation(fields: [addedById], references: [id])
+  isActive     Boolean         @default(true)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  @@index([department])
+  @@index([academicYear])
+  @@index([fileType])
+  @@index([addedById])
 }
 
 // ==================== STUDENT NOTES ====================

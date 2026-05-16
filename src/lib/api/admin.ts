@@ -1,5 +1,5 @@
 import { api } from "./base";
-import type { Department, AcademicYear, FieldDiff } from "./studentApi";
+import type { Department, AcademicYear, FieldDiff } from "./student";
 
 export type Role = "ADMIN" | "FACULTY" | "STUDENT" | "ALUMNI";
 

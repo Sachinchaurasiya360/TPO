@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getAuthUser, unauthorized, forbidden } from "@/lib/apiAuth";
-import { Prisma } from "../../../../../prisma/output/prismaclient";
+import { Prisma } from "../../../../../../prisma/output/prismaclient";
 
 export async function GET(request: NextRequest) {
   const user = await getAuthUser(request);

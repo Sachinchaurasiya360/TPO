@@ -1,3 +1,3 @@
 "use client";
 
-export { ForgotPassword as default } from "@/pages/public/ForgotPassword";
+export { ForgotPassword as default } from "@/views/public/ForgotPassword";

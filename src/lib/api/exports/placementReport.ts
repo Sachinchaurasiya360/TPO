@@ -1,8 +1,8 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
-import { DEPARTMENT_LABELS, type Department } from "./studentApi";
-import type { PlacementReportItem } from "./adminApi";
+import { DEPARTMENT_LABELS, type Department } from "../student";
+import type { PlacementReportItem } from "../admin";
 
 const timestamp = (): string => {
   const d = new Date();

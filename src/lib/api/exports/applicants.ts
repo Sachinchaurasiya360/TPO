@@ -1,8 +1,8 @@
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import { departmentLabel } from "./studentApi";
-import type { Job, JobApplication } from "./jobsApi";
+import { departmentLabel } from "../student";
+import type { Job, JobApplication } from "../jobs";
 
 const HEADERS = [
   "Name",

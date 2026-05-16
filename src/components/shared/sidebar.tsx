@@ -20,7 +20,7 @@ const items: SidebarItem[] = [
 
 export function Sidebar() {
   const router = useRouter();
-  const { pathname } = usePathname();
+  const pathname = usePathname();
 
   return (
     <div className="h-screen w-40 bg-gray-100 border-r">

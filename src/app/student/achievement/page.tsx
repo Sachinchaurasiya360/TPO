@@ -1,4 +1,4 @@
 ﻿"use client";
 
-export { Achievement as default } from "@/pages/student/Achievement";
+export { Achievement as default } from "@/views/student/Achievement";
 

@@ -1,4 +1,4 @@
 ﻿"use client";
 
-export { Aptitude as default } from "@/pages/student/Aptitude";
+export { Aptitude as default } from "@/views/student/Aptitude";
 

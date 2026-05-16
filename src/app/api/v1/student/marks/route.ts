@@ -105,7 +105,7 @@ export async function PATCH(request: NextRequest) {
       data: {
         userId: user.id,
         entityType: "MARKS",
-        changes,
+        changes: changes as never,
         status: "PENDING",
       },
     });

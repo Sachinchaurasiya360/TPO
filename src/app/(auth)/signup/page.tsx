@@ -1,3 +1,3 @@
 "use client";
 
-export { Signup as default } from "@/pages/public/Signup";
+export { Signup as default } from "@/views/public/Signup";

@@ -1,5 +1,5 @@
 import { api } from "./base";
-import type { Department } from "./studentApi";
+import type { Department } from "./student";
 
 export type AlumniPostType =
   | "MENTORSHIP"

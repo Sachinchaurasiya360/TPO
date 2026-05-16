@@ -1,5 +1,6 @@
 ﻿"use client";
 
+import { Suspense } from "react";
 import Link from "next/link";
 import { ArrowLeft, Briefcase, GraduationCap, ShieldCheck } from "lucide-react";
 import { LoginForm } from "@/components/login-form";
@@ -70,7 +71,7 @@ export function Login() {
 
         <div className="flex-1 flex items-center justify-center p-6 md:p-10">
           <div className="w-full max-w-md">
-            <LoginForm />
+            <Suspense><LoginForm /></Suspense>
           </div>
         </div>
 

@@ -1,7 +1,7 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import { DEPARTMENT_LABELS, type Department } from "./studentApi";
-import type { StudentDetailResponse } from "./adminApi";
+import { DEPARTMENT_LABELS, type Department } from "../student";
+import type { StudentDetailResponse } from "../admin";
 
 const timestamp = (): string => {
   const d = new Date();

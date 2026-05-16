@@ -16,6 +16,7 @@ import {
   ChevronLeft,
   ChevronRight,
   UsersRound,
+  LibraryBig,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useLogout } from "@/lib/api/useLogout";
@@ -37,6 +38,7 @@ const items: NavItem[] = [
   { label: "Aptitude", path: "/student/aptitude", icon: Brain },
   { label: "Alumni Feed", path: "/student/alumni-feed", icon: Megaphone },
   { label: "Alumni Directory", path: "/student/alumni-directory", icon: UsersRound },
+  { label: "Resources", path: "/student/resources", icon: LibraryBig },
 ];
 
 export function StudentSidebar() {

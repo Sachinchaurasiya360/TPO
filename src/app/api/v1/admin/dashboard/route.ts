@@ -13,8 +13,8 @@ export async function GET(request: NextRequest) {
       prisma.user.count({ where: { role: "FACULTY", isVerified: true } }),
       prisma.user.count({ where: { role: "ALUMNI", isVerified: true } }),
       prisma.user.count({ where: { isVerified: false, isActive: true } }),
-      prisma.job.count({ where: { isActive: true } }),
-      prisma.event.count({ where: { date: { gte: new Date() } } }),
+      prisma.job.count({ where: { status: "OPEN" } }),
+      prisma.event.count({ where: { eventDate: { gte: new Date() }, status: "UPCOMING" } }),
     ]);
 
     return NextResponse.json({

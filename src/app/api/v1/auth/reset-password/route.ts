@@ -19,8 +19,8 @@ export async function POST(request: NextRequest) {
   try {
     const user = await prisma.user.findFirst({
       where: {
-        resetToken: token,
-        resetTokenExpiry: { gt: new Date() },
+        resetPasswordToken: token,
+        resetPasswordExpires: { gt: new Date() },
       },
     });
 
@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
     const hashed = await bcrypt.hash(password, 10);
     await prisma.user.update({
       where: { id: user.id },
-      data: { password: hashed, resetToken: null, resetTokenExpiry: null },
+      data: { password: hashed, resetPasswordToken: null, resetPasswordExpires: null },
     });
 
     return NextResponse.json({ message: "Password reset successfully." });

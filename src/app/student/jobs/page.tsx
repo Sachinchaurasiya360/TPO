@@ -1,4 +1,4 @@
 ﻿"use client";
 
-export { StudentJobs as default } from "@/pages/student/Jobs";
+export { StudentJobs as default } from "@/views/student/Jobs";
 

@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
 
     const token = jwt.sign({ id: user.id, role: user.role, emailId: user.emailId }, JWT_SECRET, { expiresIn: "7d" });
 
-    await sendMail({ to: emailId, subject: "Welcome to TPO Portal", html: welcomeEmail(fullName) });
+    await sendMail({ to: emailId, ...welcomeEmail(fullName) });
 
     const response = NextResponse.json(
       { message: "Account created. Pending admin approval.", userId: user.id },

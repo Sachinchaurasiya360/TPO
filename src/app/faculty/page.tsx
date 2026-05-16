@@ -1,3 +1,8 @@
 "use client";
 
-export { FacultyDashboard as default } from "@/pages/faculty/Dashboard";
+import { Suspense } from "react";
+import { FacultyDashboard } from "@/views/faculty/Dashboard";
+
+export default function Page() {
+  return <Suspense><FacultyDashboard /></Suspense>;
+}

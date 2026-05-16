@@ -1,4 +1,4 @@
 ﻿"use client";
 
-export { StudentAlumniFeed as default } from "@/pages/student/AlumniFeed";
+export { StudentAlumniFeed as default } from "@/views/student/AlumniFeed";
 

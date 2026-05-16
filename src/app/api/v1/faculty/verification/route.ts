@@ -11,10 +11,10 @@ export async function GET(request: NextRequest) {
     const requests = await prisma.verificationRequest.findMany({
       where: {
         status: "PENDING",
-        student: { department: user.department ?? undefined },
+        student: { department: (user.department ?? undefined) as never },
       },
       include: {
-        student: { select: { id: true, fullName: true, studentId: true, department: true, profileImage: true } },
+        student: { select: { id: true, fullName: true, studentId: true, department: true, profilePic: true } },
       },
       orderBy: { createdAt: "desc" },
     });
@@ -37,7 +37,7 @@ export async function PATCH(request: NextRequest) {
       data: {
         status: action === "approve" ? "APPROVED" : "REJECTED",
         reviewedById: user.id,
-        reviewComment: comment,
+        remarks: comment,
         reviewedAt: new Date(),
       },
     });

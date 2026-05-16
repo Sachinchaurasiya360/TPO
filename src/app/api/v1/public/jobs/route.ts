@@ -4,7 +4,7 @@ import prisma from "@/lib/prisma";
 export async function GET() {
   try {
     const jobs = await prisma.job.findMany({
-      where: { isActive: true },
+      where: { status: "OPEN" },
       orderBy: { createdAt: "desc" },
     });
     return NextResponse.json({ jobs });

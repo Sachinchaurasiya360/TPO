@@ -29,7 +29,7 @@ export function LoginForm({
       const { data } = await api.post("/auth/signin", formData);
       login(data.user);
       toast.success("Login successful");
-      router.push(from ?? roleLandingPath(data.user.role), { replace: true });
+      router.replace(from ?? roleLandingPath(data.user.role));
     } catch (error) {
       toast.error(extractErrorMessage(error));
       setFormData((f) => ({ ...f, password: "" }));

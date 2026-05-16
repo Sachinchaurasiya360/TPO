@@ -2,12 +2,18 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getAuthUser, unauthorized, forbidden } from "@/lib/apiAuth";
 
+const includeAll = {
+  questions: { orderBy: { id: "asc" as const } },
+  sections: { orderBy: { order: "asc" as const } },
+  _count: { select: { questions: true, submissions: true } },
+};
+
 async function resolveTest(id: string, facultyId: number) {
   const testId = Number(id);
   if (Number.isNaN(testId)) return null;
   return prisma.aptitudeTest.findFirst({
     where: { id: testId, createdById: facultyId },
-    include: { questions: true, _count: { select: { questions: true, submissions: true } } },
+    include: includeAll,
   });
 }
 
@@ -59,7 +65,9 @@ export async function PATCH(
       isHomework?: boolean;
       department?: string | null;
       eligibleYears?: string[];
+      sections?: Array<{ name: string; description?: string; order: number; timeLimit?: number | null }>;
       questions?: Array<{
+        sectionId?: string | null;
         question: string;
         option1: string;
         option2?: string | null;
@@ -70,7 +78,7 @@ export async function PATCH(
       }>;
     };
 
-    const { questions, ...meta } = body;
+    const { questions, sections, ...meta } = body;
 
     const updates: Record<string, unknown> = {};
     if (meta.title !== undefined) updates.title = meta.title;
@@ -85,28 +93,54 @@ export async function PATCH(
     if ("department" in meta) updates.department = meta.department ?? null;
     if (meta.eligibleYears !== undefined) updates.eligibleYears = meta.eligibleYears;
 
+    // Replace sections if provided
+    let newSectionIds: string[] = [];
+    if (sections !== undefined) {
+      await prisma.aptitudeSection.deleteMany({ where: { testId } });
+      const created = await Promise.all(
+        sections.map((s) =>
+          prisma.aptitudeSection.create({
+            data: {
+              testId,
+              name: s.name,
+              description: s.description ?? null,
+              order: s.order,
+              timeLimit: s.timeLimit ?? null,
+            },
+          })
+        )
+      );
+      newSectionIds = created.map((s) => s.id);
+    }
+
     // Replace questions if provided
     if (questions !== undefined) {
       updates.totalMarks = questions.reduce((s, q) => s + q.marks, 0);
       await prisma.question.deleteMany({ where: { testId } });
       await prisma.question.createMany({
-        data: questions.map((q) => ({
-          testId,
-          question: q.question,
-          option1: q.option1,
-          option2: q.option2 ?? null,
-          option3: q.option3 ?? null,
-          option4: q.option4 ?? null,
-          correctOption: q.correctOption,
-          marks: q.marks,
-        })),
+        data: questions.map((q) => {
+          const secId = q.sectionId && q.sectionId.startsWith("section:")
+            ? newSectionIds[Number(q.sectionId.replace("section:", ""))]
+            : (q.sectionId ?? null);
+          return {
+            testId,
+            sectionId: secId || null,
+            question: q.question,
+            option1: q.option1,
+            option2: q.option2 ?? null,
+            option3: q.option3 ?? null,
+            option4: q.option4 ?? null,
+            correctOption: q.correctOption,
+            marks: q.marks,
+          };
+        }),
       });
     }
 
     const test = await prisma.aptitudeTest.update({
       where: { id: testId },
       data: updates as never,
-      include: { questions: true, _count: { select: { questions: true, submissions: true } } },
+      include: includeAll,
     });
 
     return NextResponse.json({ test });

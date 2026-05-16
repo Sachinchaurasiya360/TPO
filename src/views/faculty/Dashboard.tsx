@@ -1,7 +1,4 @@
 ﻿"use client";
-import { toast } from "sonner";
-
-
 import { useEffect, useState, useCallback } from "react";
 import { toast } from "sonner";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -50,6 +47,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { FacultyAptitudeTab } from "@/components/aptitude/FacultyAptitude";
+import { ResourcesView } from "@/components/resources/ResourcesView";
 
 const YEARS = [
   "FIRST_YEAR",
@@ -65,6 +63,7 @@ const FACULTY_TABS: FacultyTab[] = [
   "alumni",
   "faculty",
   "aptitude",
+  "resources",
 ];
 
 const TAB_TITLES: Record<FacultyTab, { title: string; subtitle: string }> = {
@@ -91,6 +90,10 @@ const TAB_TITLES: Record<FacultyTab, { title: string; subtitle: string }> = {
   aptitude: {
     title: "Aptitude Tests",
     subtitle: "Create, publish, and review tests and homework.",
+  },
+  resources: {
+    title: "Resources",
+    subtitle: "Manage question papers, syllabi, and forms for your department.",
   },
 };
 
@@ -171,6 +174,13 @@ export function FacultyDashboard() {
             {tab === "alumni" && <AlumniTab />}
             {tab === "faculty" && user?.isHOD && <FacultyTabPanel />}
             {tab === "aptitude" && <FacultyAptitudeTab />}
+            {tab === "resources" && (
+              <ResourcesView
+                canAdd={!!user?.isHOD}
+                canDelete={false}
+                forceDepartment={(user?.department ?? null) as import("@/lib/api/student").Department | null}
+              />
+            )}
           </div>
         </main>
       </div>
@@ -942,7 +952,7 @@ function StudentsTab() {
                     >
                       <td className="px-5 py-3 font-medium">
                         <Link
-                          to={`/faculty/students/${s.id}`}
+                          href={`/faculty/students/${s.id}`}
                           className="text-neutral-900 hover:text-neutral-600 hover:underline"
                         >
                           {s.fullName}
@@ -1097,7 +1107,7 @@ function AlumniTab() {
                           </div>
                         )}
                         <Link
-                          to={`/alumni/students/${a.id}`}
+                          href={`/alumni/students/${a.id}`}
                           className="font-medium text-neutral-900 hover:text-neutral-600 hover:underline"
                         >
                           {a.fullName}

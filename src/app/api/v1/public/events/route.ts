@@ -4,7 +4,7 @@ import prisma from "@/lib/prisma";
 export async function GET() {
   try {
     const events = await prisma.event.findMany({
-      orderBy: { date: "desc" },
+      orderBy: { eventDate: "desc" },
     });
     return NextResponse.json({ events });
   } catch (error) {

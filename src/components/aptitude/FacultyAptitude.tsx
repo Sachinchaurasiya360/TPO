@@ -34,6 +34,7 @@ import {
   type SubmissionRecord,
   type TestStatus,
   type AptitudeQuestion,
+  type AptitudeSection,
   type OptionNumber,
 } from "@/lib/api/aptitude";
 import type { AcademicYear, Department } from "@/lib/api/student";
@@ -235,7 +236,7 @@ function TestsList({
                       Years:{" "}
                       {t.eligibleYears.length === 0
                         ? "All"
-                        : t.eligibleYears.map((y) => YEAR_LABELS[y]).join(", ")}
+                        : t.eligibleYears.map((y) => YEAR_LABELS[y as AcademicYear]).join(", ")}
                     </span>
                     <span>{t._count.submissions} submissions</span>
                   </div>
@@ -322,8 +323,9 @@ function StatusChip({ status }: { status: TestStatus }) {
 
 // ==================== EDITOR ====================
 
-type EditorState = Omit<CreateTestInput, "questions"> & {
+type EditorState = Omit<CreateTestInput, "questions" | "sections"> & {
   questions: AptitudeQuestion[];
+  sections: AptitudeSection[];
 };
 
 const blankQuestion = (): AptitudeQuestion => ({
@@ -349,6 +351,7 @@ const initialState = (): EditorState => ({
   department: null,
   eligibleYears: [],
   questions: [blankQuestion()],
+  sections: [],
 });
 
 function AptitudeEditor({
@@ -384,6 +387,13 @@ function AptitudeEditor({
           isHomework: t.isHomework,
           department: t.department,
           eligibleYears: t.eligibleYears,
+          sections: (t.sections ?? []).map((s) => ({
+            id: s.id,
+            name: s.name,
+            description: s.description,
+            order: s.order,
+            timeLimit: s.timeLimit,
+          })),
           questions: t.questions.map((q) => ({
             id: q.id,
             question: q.question,
@@ -459,7 +469,14 @@ function AptitudeEditor({
     const payload: CreateTestInput = {
       ...state,
       rules,
+      sections: state.sections.map((s, idx) => ({
+        name: s.name,
+        description: s.description,
+        order: idx,
+        timeLimit: s.timeLimit ?? null,
+      })),
       questions: state.questions.map((q) => ({
+        sectionId: q.sectionId ?? null,
         question: q.question,
         option1: q.option1,
         option2: q.option2 || null,
@@ -681,6 +698,85 @@ function AptitudeEditor({
 
       <div className="rounded-lg border border-neutral-200 bg-white p-5">
         <div className="flex flex-wrap items-center justify-between gap-2">
+          <h3 className="text-sm font-semibold text-neutral-900">Sections (optional)</h3>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() =>
+              setState((s) => ({
+                ...s,
+                sections: [
+                  ...s.sections,
+                  { name: "", description: "", order: s.sections.length, timeLimit: null },
+                ],
+              }))
+            }
+          >
+            <Plus className="h-3.5 w-3.5" /> Add section
+          </Button>
+        </div>
+        {state.sections.length === 0 ? (
+          <p className="mt-3 text-xs text-neutral-500">
+            No sections — all questions will be in a single unlabelled group. Add sections to organise questions (e.g. "Section A: Verbal", "Section B: Quant").
+          </p>
+        ) : (
+          <ol className="mt-3 space-y-2">
+            {state.sections.map((sec, idx) => (
+              <li key={idx} className="flex items-start gap-2 rounded-md border border-neutral-200 p-3">
+                <span className="mt-1.5 text-xs font-semibold text-neutral-400 w-5">{idx + 1}</span>
+                <div className="flex-1 grid gap-2 sm:grid-cols-3">
+                  <Field label="Section name" className="sm:col-span-2">
+                    <Input
+                      value={sec.name}
+                      onChange={(e) =>
+                        setState((s) => ({
+                          ...s,
+                          sections: s.sections.map((v, i) =>
+                            i === idx ? { ...v, name: e.target.value } : v
+                          ),
+                        }))
+                      }
+                      placeholder="e.g. Section A: Verbal"
+                    />
+                  </Field>
+                  <Field label="Time limit (min, optional)">
+                    <Input
+                      type="number"
+                      min={0}
+                      value={sec.timeLimit ?? ""}
+                      onChange={(e) =>
+                        setState((s) => ({
+                          ...s,
+                          sections: s.sections.map((v, i) =>
+                            i === idx
+                              ? { ...v, timeLimit: e.target.value ? Number(e.target.value) : null }
+                              : v
+                          ),
+                        }))
+                      }
+                      placeholder="None"
+                    />
+                  </Field>
+                </div>
+                <button
+                  onClick={() =>
+                    setState((s) => ({
+                      ...s,
+                      sections: s.sections.filter((_, i) => i !== idx),
+                    }))
+                  }
+                  className="mt-1 text-xs text-red-600 hover:underline"
+                >
+                  Remove
+                </button>
+              </li>
+            ))}
+          </ol>
+        )}
+      </div>
+
+      <div className="rounded-lg border border-neutral-200 bg-white p-5">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
             <h3 className="text-sm font-semibold text-neutral-900">Questions</h3>
             <p className="text-xs text-neutral-500">
@@ -712,6 +808,24 @@ function AptitudeEditor({
                 )}
               </div>
               <div className="mt-2 space-y-3">
+                {state.sections.length > 0 && (
+                  <Field label="Section">
+                    <select
+                      value={q.sectionId ?? ""}
+                      onChange={(e) =>
+                        updateQuestion(idx, { sectionId: e.target.value || null })
+                      }
+                      className="h-9 w-full rounded-md border border-neutral-200 bg-white px-3 text-sm"
+                    >
+                      <option value="">No section</option>
+                      {state.sections.map((s, si) => (
+                        <option key={si} value={`section:${si}`}>
+                          {s.name || `Section ${si + 1}`}
+                        </option>
+                      ))}
+                    </select>
+                  </Field>
+                )}
                 <Field label="Question">
                   <textarea
                     value={q.question}

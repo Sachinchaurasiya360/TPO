@@ -1,3 +1,3 @@
 "use client";
 
-export { Login as default } from "@/pages/public/Login";
+export { Login as default } from "@/views/public/Login";

@@ -1,3 +1,8 @@
 "use client";
 
-export { AdminDashboard as default } from "@/pages/admin/Dashboard";
+import { Suspense } from "react";
+import { AdminDashboard } from "@/views/admin/Dashboard";
+
+export default function Page() {
+  return <Suspense><AdminDashboard /></Suspense>;
+}

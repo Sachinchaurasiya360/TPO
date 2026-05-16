@@ -16,7 +16,8 @@ export type UploadFolder =
   | "tpo/resumes"
   | "tpo/certificates"
   | "tpo/marksheets"
-  | "tpo/company-logos";
+  | "tpo/company-logos"
+  | "tpo/resources";
 
 export type ResourceType = "image" | "raw" | "auto";
 

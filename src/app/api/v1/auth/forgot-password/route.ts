@@ -29,15 +29,11 @@ export async function POST(request: NextRequest) {
 
     await prisma.user.update({
       where: { id: user.id },
-      data: { resetToken: token, resetTokenExpiry: expiry },
+      data: { resetPasswordToken: token, resetPasswordExpires: expiry },
     });
 
     const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL}/reset-password/${token}`;
-    await sendMail({
-      to: emailId,
-      subject: "Reset your TPO Portal password",
-      html: passwordResetEmail(user.fullName, resetUrl),
-    });
+    await sendMail({ to: emailId, ...passwordResetEmail(user.fullName, resetUrl) });
 
     return NextResponse.json({ message: "If the email exists, a reset link was sent." });
   } catch (error) {

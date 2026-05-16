@@ -1,5 +1,5 @@
 import { api } from "./base";
-import type { Department, AcademicYear, FieldDiff } from "./studentApi";
+import type { Department, AcademicYear, FieldDiff } from "./student";
 
 export type VerificationEntityType = "PROFILE" | "MARKS" | "INTERNSHIP" | "ACHIEVEMENT" | "CERTIFICATE";
 export type VerificationStatus = "PENDING" | "APPROVED" | "REJECTED";

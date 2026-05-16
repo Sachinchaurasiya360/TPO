@@ -13,6 +13,8 @@ import { EventsTab } from "./tabs/EventsTab";
 import { StartupsTab } from "./tabs/StartupsTab";
 import { AmbassadorsTab } from "./tabs/AmbassadorsTab";
 import { AlumniTab } from "./tabs/AlumniTab";
+import { ResourcesView } from "@/components/resources/ResourcesView";
+import { AdminAptitudeResults } from "./tabs/AdminAptitudeResults";
 
 const TAB_TITLES: Record<AdminTab, { title: string; subtitle: string }> = {
   overview: {
@@ -52,6 +54,14 @@ const TAB_TITLES: Record<AdminTab, { title: string; subtitle: string }> = {
     title: "Student Ambassador",
     subtitle: "Manage TPO volunteer assignments and served academic years.",
   },
+  resources: {
+    title: "Resources",
+    subtitle: "Manage question papers, syllabi, and forms for all departments.",
+  },
+  aptitude: {
+    title: "Aptitude Results",
+    subtitle: "View all department test results, export reports, and track absent students.",
+  },
 };
 
 const ADMIN_TABS: AdminTab[] = [
@@ -64,6 +74,8 @@ const ADMIN_TABS: AdminTab[] = [
   "events",
   "startups",
   "ambassadors",
+  "resources",
+  "aptitude",
 ];
 
 export function AdminDashboard() {
@@ -132,6 +144,8 @@ export function AdminDashboard() {
             {tab === "events" && <EventsTab />}
             {tab === "startups" && <StartupsTab />}
             {tab === "ambassadors" && <AmbassadorsTab />}
+            {tab === "resources" && <ResourcesView canAdd canDelete />}
+            {tab === "aptitude" && <AdminAptitudeResults />}
           </div>
         </main>
       </div>

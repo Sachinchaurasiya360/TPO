@@ -11,10 +11,10 @@ export async function GET(request: NextRequest) {
     const student = await prisma.user.findUnique({ where: { id: user.id }, select: { department: true } });
     const jobs = await prisma.job.findMany({
       where: {
-        isActive: true,
+        status: "OPEN",
         OR: [
           { eligibleDepartments: { isEmpty: true } },
-          { eligibleDepartments: { has: student?.department ?? "" } },
+          { eligibleDepartments: { has: (student?.department ?? undefined) as never } },
         ],
       },
       orderBy: { createdAt: "desc" },

@@ -1,4 +1,4 @@
 ﻿"use client";
 
-export { StudentAlumniDirectory as default } from "@/pages/student/AlumniDirectory";
+export { StudentAlumniDirectory as default } from "@/views/student/AlumniDirectory";
 

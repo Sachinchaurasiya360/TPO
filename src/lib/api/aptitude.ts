@@ -1,5 +1,5 @@
 import { api } from "./base";
-import type { AcademicYear, Department } from "./studentApi";
+import type { AcademicYear, Department } from "./student";
 
 export type TestCategory = "APTITUDE" | "TECHNICAL" | "BEHAVIORAL";
 export type TestStatus = "DRAFT" | "PUBLISHED" | "ARCHIVED";
@@ -23,8 +23,17 @@ export const SUBMISSION_STATUS_LABELS: Record<SubmissionStatus, string> = {
   DISQUALIFIED: "Disqualified",
 };
 
+export interface AptitudeSection {
+  id?: string;
+  name: string;
+  description?: string;
+  order: number;
+  timeLimit?: number | null;
+}
+
 export interface AptitudeQuestion {
   id?: number;
+  sectionId?: string | null;
   question: string;
   option1: string;
   option2?: string | null;
@@ -63,6 +72,7 @@ export interface AptitudeTestSummary {
   updatedAt: string;
   createdById: number;
   _count: { questions: number; submissions: number };
+  sections?: AptitudeSection[];
 }
 
 export interface AptitudeTestFull extends AptitudeTestSummary {
@@ -165,7 +175,17 @@ export interface CreateTestInput {
   department: Department | null;
   eligibleYears: AcademicYear[];
   questions: AptitudeQuestion[];
+  sections: AptitudeSection[];
 }
+
+export const reportViolation = async (
+  submissionId: string
+): Promise<{ violations: number; disqualified: boolean; maxViolations: number }> => {
+  const res = await api.post<{ violations: number; disqualified: boolean; maxViolations: number }>(
+    `/aptitude/student/submissions/${submissionId}/violation`
+  );
+  return res.data;
+};
 
 // =============== Faculty ===============
 

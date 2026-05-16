@@ -1,5 +1,5 @@
 import { api } from "./base";
-import type { Department, AcademicYear } from "./studentApi";
+import type { Department, AcademicYear } from "./student";
 
 export type JobStatus = "OPEN" | "CLOSED";
 export type JobType = "FULL_TIME" | "INTERNSHIP" | "PPO";

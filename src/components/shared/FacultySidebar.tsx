@@ -12,6 +12,7 @@ import {
   ChevronLeft,
   ChevronRight,
   UserCheck,
+  LibraryBig,
 } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
@@ -23,7 +24,8 @@ export type FacultyTab =
   | "students"
   | "alumni"
   | "faculty"
-  | "aptitude";
+  | "aptitude"
+  | "resources";
 
 interface Item {
   key: FacultyTab;
@@ -39,6 +41,7 @@ const items: Item[] = [
   { key: "alumni", label: "Alumni", icon: UserCheck },
   { key: "faculty", label: "Department Faculty", icon: Users, hodOnly: true },
   { key: "aptitude", label: "Aptitude Tests", icon: Brain },
+  { key: "resources", label: "Resources", icon: LibraryBig },
 ];
 
 interface FacultySidebarProps {

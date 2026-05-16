@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     }
 
     const submission = await prisma.testSubmission.create({
-      data: { testId, userId: user.id, answers, score, submittedAt: new Date() },
+      data: { testId, studentId: user.id, answers, autoScore: score, status: "SUBMITTED", submittedAt: new Date() },
     });
 
     return NextResponse.json({ submission, score }, { status: 201 });
@@ -40,10 +40,10 @@ export async function GET(request: NextRequest) {
   if (!user) return unauthorized();
 
   try {
-    const where = user.role === "STUDENT" ? { userId: user.id } : {};
+    const where = user.role === "STUDENT" ? { studentId: user.id } : {};
     const submissions = await prisma.testSubmission.findMany({
       where,
-      include: { test: { select: { title: true } }, user: { select: { fullName: true, studentId: true } } },
+      include: { test: { select: { title: true } }, student: { select: { fullName: true, studentId: true } } },
       orderBy: { submittedAt: "desc" },
     });
     return NextResponse.json({ submissions });

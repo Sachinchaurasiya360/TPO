@@ -24,14 +24,14 @@ export async function GET(
 
     const eligible =
       job.eligibleDepartments.length === 0 ||
-      (user.department != null && job.eligibleDepartments.includes(user.department)) ||
+      (user.department != null && job.eligibleDepartments.includes(user.department as never)) ||
       job.eligibleYears.length === 0 ||
       (job.minCgpa == null);
 
     // Full eligibility check
     const departmentOk =
       job.eligibleDepartments.length === 0 ||
-      (user.department != null && job.eligibleDepartments.includes(user.department));
+      (user.department != null && job.eligibleDepartments.includes(user.department as never));
 
     const userRecord = await prisma.user.findUnique({
       where: { id: user.id },
